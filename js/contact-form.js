@@ -157,7 +157,7 @@
     const subject = data.subject || t("mailto.contact.subject", "Contact depuis votre portfolio");
     const body =
       t("mailto.contact.greeting", "Bonjour Elhadji,") + "\r\n\r\n" +
-      data.message + "\r\n\r\n— " +
+      data.message + "\r\n\r\n-- " +
       data.name + " (" + data.email + ")";
 
     window.location.href =
@@ -197,7 +197,7 @@
     setStatus("info", "form.status.sending", "Envoi du message…");
 
     try {
-      const fallbackSubject = t("mailto.contact.named", "Contact depuis votre portfolio — {name}")
+      const fallbackSubject = t("mailto.contact.named", "Contact depuis votre portfolio ({name})")
         .replace("{name}", data.name);
 
       const response = await fetch(endpoint, {
@@ -217,7 +217,7 @@
 
       if (response.ok && result.success !== false) {
         form.reset();
-        setStatus("ok", "form.status.sent", "Message envoyé — merci ! Je vous réponds sous 24 h.");
+        setStatus("ok", "form.status.sent", "Message envoyé, merci ! Je vous réponds sous 24 h.");
       } else {
         throw new Error(result.message || "Réponse invalide du service d'envoi");
       }

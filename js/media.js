@@ -71,7 +71,7 @@
     if (link._blocker) return;
     link._blocker = (event) => {
       event.preventDefault();
-      notify(link, t("cv.missing.note", "CV bientôt disponible — écrivez-moi, je vous l'envoie."));
+      notify(link, t("cv.missing.note", "CV bientôt disponible : écrivez-moi, je vous l'envoie."));
     };
     link.addEventListener("click", link._blocker);
   }
