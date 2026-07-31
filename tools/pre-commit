@@ -1,0 +1,57 @@
+#!/bin/sh
+# ══════════════════════════════════════════════════════════════
+# Garde-fou pre-commit.
+#
+# Ce fichier est la copie versionnée du hook. .git/hooks/ n'est pas
+# suivi par git : après un nouveau clone, réinstaller avec
+#
+#   cp tools/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# Deux contrôles :
+#   1. aucun tiret cadratin dans le contenu du site (html, json)
+#   2. si fr.json change, les traductions doivent suivre
+# ══════════════════════════════════════════════════════════════
+
+racine=$(git rev-parse --show-toplevel) || exit 1
+cd "$racine" || exit 1
+
+# ---------- 1. tirets cadratins ----------
+# On inspecte le contenu INDEXÉ (git show :fichier), pas le fichier sur
+# disque : c'est ce qui part réellement dans le commit.
+fautifs=$(
+  git diff --cached --name-only --diff-filter=ACM |
+  while IFS= read -r fichier; do
+    case "$fichier" in
+      *.html | *.json) ;;
+      *) continue ;;
+    esac
+    if git show ":$fichier" | grep -q '—'; then
+      printf '%s\n' "$fichier"
+    fi
+  done
+)
+
+if [ -n "$fautifs" ]; then
+  printf '%s\n' "$fautifs"
+  echo ""
+  echo "Tiret cadratin (—) détecté dans les fichiers ci-dessus."
+  echo "Le retirer sans le remplacer laisse une phrase amputée :"
+  echo "voir TIRETS-ET-SYNC-I18N.md pour le remplacement adapté au contexte."
+  exit 1
+fi
+
+# ---------- 2. traductions synchronisées ----------
+if git diff --cached --name-only --diff-filter=ACM | grep -q '^i18n/fr\.json$'; then
+  if ! command -v node > /dev/null 2>&1; then
+    echo "node introuvable : contrôle des traductions ignoré."
+    exit 0
+  fi
+  if ! node tools/i18n.js check; then
+    echo ""
+    echo "Traductions désynchronisées. Lancer : node tools/i18n.js translate"
+    exit 1
+  fi
+fi
+
+exit 0
