@@ -119,8 +119,19 @@
 }
 
 /* ---------- avatar / photo de profil ---------- */
+/* height:auto est indispensable, pas cosmétique. L'attribut
+   height="640" du HTML est une indication de présentation : elle
+   donne au bloc une hauteur définie, et aspect-ratio ne s'applique
+   qu'à une boîte dont une dimension reste auto. Sans height:auto le
+   ratio déclaré ici était donc purement décoratif, la photo gardait
+   640 px de haut à toutes les largeurs et le recadrage dérivait avec
+   la colonne : 1:3,2 à 320 px, 1:1,7 à 1440 px.
+
+   Les attributs width/height du HTML sont conservés : ils réservent
+   la place avant le décodage de l'image et protègent du CLS. */
 .profile-photo{
-  aspect-ratio:1 / 1;
+  aspect-ratio:4 / 5;
+  height:auto;
   width:100%;
   object-fit:cover;
   border-radius:var(--radius-lg);
