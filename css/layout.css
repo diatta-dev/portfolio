@@ -109,9 +109,16 @@
   line-height:1.02;letter-spacing:-.025em;
   max-width:16ch;
 }
+/* Pas de white-space:nowrap ici. En français le <em> ne contient qu'un
+   mot (« administre. ») et l'interdiction de césure ne se voyait pas ;
+   en anglais il en contient trois (« keeps them running. »), qui
+   formaient alors une ligne insécable plus large que le max-width:16ch
+   du titre. Le .line-mask étant en overflow:hidden pour la révélation
+   (css/animations.css), le dépassement était coupé net : le titre
+   affichait « keeps them runnin ». */
 .hero h1 em{
   font-style:normal;color:var(--accent);
-  position:relative;white-space:nowrap;
+  position:relative;
 }
 /* masque de révélation ligne par ligne du titre : structure dans
    animations.css (nécessaire au fonctionnement du mask, pas
