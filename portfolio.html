@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps</title>
+<meta name="description" content="Portfolio d'Elhadji Ba Diaby Diatta, développeur full stack et administrateur systèmes en transition vers l'ingénierie DevOps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   VERSION MONOFICHIER du portfolio — même contenu et même
+   palette que index.html, mais tout est inliné : aucune
+   dépendance à css/, js/ ou GSAP. Pratique pour envoyer le
+   portfolio en pièce jointe ou l'héberger n'importe où.
+   Les animations sont ici pilotées en CSS + IntersectionObserver
+   (voir le <script> en bas), pas par GSAP.
+
+   ⚠️  Si vous modifiez index.html ou css/, répercutez ici.
+   ============================================================ */
+
+/* ============================================================
+   TOKENS — palette « teal / bleu-nuit »
+     #0f1f2b  encre bleu-nuit / fond sombre
+     #1f4d5a  teal profond — signal sur fond clair
+     #5ea3a3  teal moyen — signal sur fond sombre + décor
+     #d9f1ef  teinte douce — fonds de badges
+     #f4fbfa  blanc teinté — fond de page
+   Les autres valeurs sont des dérivés de ces cinq couleurs,
+   uniquement là où le contraste l'exige.
+   ============================================================ */
+:root{
+  --bg:        #f4fbfa;   /* fond de page */
+  --surface:   #ffffff;   /* cartes */
+  --ink:       #0f1f2b;   /* encre bleu-nuit */
+  --ink-soft:  #4b626b;   /* texte secondaire (dérivé, AA sur --bg) */
+  --line:      #cbe3e0;   /* filets (dérivé de #d9f1ef) */
+
+  /* accent : une seule couleur, deux intensités selon le fond */
+  --accent:        #1f4d5a;
+  --accent-bright: #5ea3a3;
+  --accent-soft:   #d9f1ef;
+
+  /* statut « ok » — mélange des deux teals, lisible sur --bg */
+  --ok:        #3e787e;
+
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --sans: "IBM Plex Sans", system-ui, sans-serif;
+  --display: "Archivo", var(--sans);
+
+  --radius: 6px;
+  --radius-lg: 16px;
+  --maxw: 1080px;
+
+  /* glassmorphism : surfaces en verre dépoli */
+  --glass-bg:       rgba(255,255,255,.55);
+  --glass-bg-strong:rgba(255,255,255,.72);
+  --glass-border:   rgba(255,255,255,.65);
+  --glass-blur:     16px;
+  --glass-shadow:   0 10px 34px -12px rgba(15,31,43,.26);
+  --glass-inset:    inset 0 1px 0 rgba(255,255,255,.75);
+  /* halos d'arrière-plan (donnent de la matière au flou du verre) */
+  --halo-accent: rgba(94,163,163,.30);
+  --halo-deep:   rgba(31,77,90,.18);
+  --halo-mist:   rgba(217,241,239,.85);
+}
+
+/* variante sombre automatique : l'accent bascule vers le teal
+   moyen, seul lisible sur fond sombre */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:        #0f1f2b;
+    --surface:   #16303b;
+    --ink:       #f4fbfa;
+    --ink-soft:  #9dbebe;
+    --line:      #24404d;
+
+    --accent:        #5ea3a3;
+    --accent-bright: #7fbdba;
+    --accent-soft:   #1b3b46;
+    --ok:            #8cc9c4;
+
+    --glass-bg:       rgba(22,48,59,.55);
+    --glass-bg-strong:rgba(22,48,59,.74);
+    --glass-border:   rgba(217,241,239,.14);
+    --glass-shadow:   0 14px 40px -14px rgba(0,0,0,.6);
+    --glass-inset:    inset 0 1px 0 rgba(217,241,239,.10);
+    --halo-accent: rgba(94,163,163,.24);
+    --halo-deep:   rgba(31,77,90,.55);
+    --halo-mist:   rgba(217,241,239,.10);
+  }
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+img{max-width:100%;display:block}
+html{scroll-behavior:smooth}
+/* le sprite d'icones n'est qu'une bibliotheque de <symbol> */
+.icon-sprite{display:none}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:clamp(15.5px,1.1vw,16.5px);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  position:relative;
+}
+/* halos d'arrière-plan : le fond que les cartes translucides floutent */
+body::before{
+  content:"";
+  position:fixed;
+  inset:-10vmax;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(38vmax 38vmax at 12% 8%,  var(--halo-accent), transparent 60%),
+    radial-gradient(42vmax 42vmax at 88% 22%, var(--halo-mist),   transparent 62%),
+    radial-gradient(46vmax 46vmax at 78% 92%, var(--halo-deep),   transparent 60%),
+    radial-gradient(34vmax 34vmax at 20% 88%, var(--halo-accent), transparent 64%);
+  filter:saturate(115%);
+  animation:halo-drift 26s ease-in-out infinite alternate;
+}
+@keyframes halo-drift{
+  from{transform:translate3d(0,0,0) scale(1)}
+  to{transform:translate3d(2.5%,-2%,0) scale(1.08)}
+}
+::selection{background:var(--accent);color:var(--bg)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+/* ============================================================
+   BARRE DE STATUT (haut de page)
+   ============================================================ */
+.statusbar{
+  font-family:var(--mono);font-size:12px;
+  border-bottom:1px solid var(--glass-border);
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  backdrop-filter:blur(14px) saturate(160%);
+  position:sticky;top:0;z-index:50;
+}
+.statusbar-inner{
+  max-width:var(--maxw);margin:0 auto;padding:10px 24px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.statusbar .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--ok);display:inline-block;
+  animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.statusbar .sys{color:var(--ok);font-weight:500;display:flex;align-items:center;gap:8px}
+.statusbar nav{
+  margin-left:auto;display:flex;gap:20px;
+  min-width:0;overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:thin;
+}
+.statusbar nav a{
+  flex:0 0 auto;
+  text-decoration:none;color:var(--ink-soft);
+  transition:color .15s;
+}
+.statusbar nav a:hover{color:var(--accent)}
+
+/* ============================================================
+   PIPELINE — colonne de gauche, signature du site
+   ============================================================ */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.stage{
+  position:relative;
+  padding:88px 0 88px 64px;
+  opacity:1;
+  transform:none;
+}
+.stage::before{ /* ligne du pipeline, remplie au scroll via --pipeline-progress (JS) */
+  content:"";position:absolute;left:15px;top:0;bottom:0;
+  width:2px;
+  background:
+    linear-gradient(to bottom, var(--accent), var(--accent)) top/100% calc(var(--pipeline-progress, 0) * 100%) no-repeat,
+    var(--line);
+  transition:background-size .2s linear;
+}
+.stage::after{ /* nœud */
+  content:"";position:absolute;left:8px;top:104px;
+  width:16px;height:16px;border-radius:50%;
+  background:
+    radial-gradient(circle at center, var(--accent) 0 45%, transparent 46%) center/0 0 no-repeat,
+    var(--bg);
+  border:3px solid var(--accent);
+  box-shadow:0 0 0 0 rgba(94,163,163,.30);
+  transition:background-size .35s ease, box-shadow .35s ease, transform .35s ease;
+}
+.stage:first-of-type::before{top:104px}
+.stage:last-of-type::before{bottom:auto;height:104px}
+.stage.is-revealed{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .55s ease, transform .55s ease;
+}
+.stage.is-active::after{
+  background:
+    radial-gradient(circle at center, var(--accent) 0 45%, transparent 46%) center/190% 190% no-repeat,
+    var(--bg);
+  box-shadow:0 0 0 6px rgba(94,163,163,.22);
+  transform:scale(1.05);
+}
+.stage-label{
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;
+  color:var(--accent);font-weight:500;
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.stage-label .ok{color:var(--ok)}
+.stage h2{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(26px,4vw,38px);
+  letter-spacing:-.015em;margin-bottom:24px;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding-top:72px}
+.hero-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(220px,320px);
+  gap:40px;
+  align-items:start;
+}
+.hero-copy{min-width:0}
+.hero .stage-label{margin-bottom:22px}
+.hero h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(38px,7vw,72px);
+  line-height:1.02;letter-spacing:-.025em;
+  max-width:16ch;
+}
+.hero h1 em{
+  font-style:normal;color:var(--accent);
+  position:relative;white-space:nowrap;
+}
+.hero .lede{
+  margin-top:26px;max-width:56ch;
+  font-size:clamp(17px,2vw,19px);color:var(--ink-soft);
+}
+.hero .lede strong{color:var(--ink);font-weight:600}
+.hero-actions{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
+.hero-media{
+  justify-self:end;
+  width:min(100%,320px);
+}
+.profile-photo{
+  aspect-ratio:1 / 1;
+  width:100%;
+  object-fit:cover;
+  border-radius:var(--radius-lg);
+  border:1px solid var(--glass-border);
+  background:var(--surface);
+  box-shadow:var(--glass-shadow),var(--glass-inset);
+}
+.profile-meta{
+  margin-top:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  max-width:100%;
+  padding:9px 12px;
+  border-radius:99px;
+  border:1px solid var(--glass-border);
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  box-shadow:var(--glass-inset);
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--ink-soft);
+  white-space:nowrap;
+}
+.profile-meta .status{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--ok);
+  box-shadow:0 0 0 4px rgba(94,163,163,.22);
+  flex:0 0 auto;
+}
+.profile-meta .file{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.profile-meta .ok{
+  color:var(--ok);
+  font-weight:500;
+}
+.hero-seq{
+  opacity:0;
+  transform:translateY(18px);
+  animation:hero-enter .58s ease forwards;
+  animation-delay:calc(var(--hero-order, 0) * 120ms);
+}
+@keyframes hero-enter{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* ---------- boutons ---------- */
+.btn{
+  font-family:var(--mono);font-size:14px;font-weight:500;
+  text-decoration:none;padding:13px 22px;border-radius:var(--radius);
+  border:1.5px solid var(--ink);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease;
+  display:inline-flex;align-items:center;gap:9px;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--ink);color:var(--bg)}
+.btn-primary:hover{box-shadow:0 10px 24px -8px rgba(15,31,43,.45)}
+.btn-ghost{
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+  backdrop-filter:blur(10px) saturate(160%);
+  border-color:var(--glass-border);color:var(--ink);
+  box-shadow:var(--glass-inset);
+}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glass-inset),0 8px 22px -10px var(--halo-accent)}
+/* bouton posé sur le panneau sombre du contact : couleurs figées
+   (le panneau ne s'inverse pas en mode sombre) */
+.btn-mail{
+  background:var(--accent-bright);
+  border-color:var(--accent-bright);
+  color:#0f1f2b;font-weight:500;
+}
+.btn-mail:hover{
+  background:#d9f1ef;border-color:#d9f1ef;color:#0f1f2b;
+  box-shadow:0 12px 28px -10px rgba(94,163,163,.55);
+}
+
+/* mini-manifest décoratif du hero */
+.hero-manifest{
+  margin-top:52px;background:var(--glass-bg-strong);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(165%);
+  backdrop-filter:blur(var(--glass-blur)) saturate(165%);
+  border:1px solid var(--glass-border);border-radius:var(--radius-lg);
+  font-family:var(--mono);font-size:13.5px;line-height:1.8;
+  padding:22px 26px;max-width:520px;
+  box-shadow:var(--glass-shadow),var(--glass-inset);
+}
+.hero-manifest .k{color:var(--ink-soft)}
+.hero-manifest .v{color:var(--ink);font-weight:500}
+.hero-manifest .a{color:var(--accent)}
+.hero-manifest .t{color:var(--ok)}
+.hero-manifest a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-bright)}
+.hero-manifest a:hover{color:var(--ink)}
+
+/* ============================================================
+   À PROPOS
+   ============================================================ */
+.about-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:start}
+.about-grid p + p{margin-top:16px}
+.about-grid p{color:var(--ink-soft)}
+.about-grid p strong{color:var(--ink)}
+.trajectory{
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-lg);padding:24px;
+  box-shadow:var(--glass-shadow),var(--glass-inset);
+}
+.trajectory h3{
+  font-family:var(--mono);font-size:12.5px;font-weight:500;
+  letter-spacing:.06em;color:var(--ink-soft);margin-bottom:18px;
+}
+.trajectory ol{list-style:none}
+.trajectory li{
+  position:relative;padding:0 0 18px 26px;
+  font-size:15px;
+}
+.trajectory li::before{
+  content:"";position:absolute;left:6px;top:7px;
+  width:9px;height:9px;border-radius:50%;background:var(--ok);
+}
+.trajectory li::after{
+  content:"";position:absolute;left:10px;top:18px;bottom:-2px;
+  width:1.5px;background:var(--line);
+}
+.trajectory li:last-child::after{display:none}
+.trajectory li.next::before{background:var(--bg);border:2.5px solid var(--accent);left:4.5px;top:5.5px}
+.trajectory li .when{font-family:var(--mono);font-size:12px;color:var(--ink-soft);display:block}
+
+/* ============================================================
+   COMPÉTENCES
+   ============================================================ */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.skill-card{
+  position:relative;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-lg);padding:24px;
+  box-shadow:var(--glass-shadow),var(--glass-inset);
+  transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.skill-card:hover{
+  border-color:rgba(94,163,163,.55);
+  transform:translateY(-4px);
+  box-shadow:0 18px 44px -16px var(--halo-accent),var(--glass-shadow),var(--glass-inset);
+}
+.skill-card h3{
+  font-family:var(--display);font-weight:700;font-size:18px;
+  margin-bottom:6px;
+}
+.skill-card .scope{
+  font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);
+  letter-spacing:.05em;margin-bottom:16px;display:block;
+}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+  font-family:var(--mono);font-size:12.5px;
+  padding:5px 11px;border-radius:99px;
+  background:var(--glass-bg-strong);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-inset);
+  transition:transform .15s ease, border-color .15s ease;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+}
+.tag:hover{transform:translateY(-1px);border-color:rgba(94,163,163,.55)}
+.tag.learning{background:var(--accent-soft);border-color:var(--accent-bright);color:var(--accent)}
+/* logo de la techno : monochrome, il prend la couleur d'accent.
+   `fill` sert aux logos officiels (traces pleins), `color` aux
+   glyphes maison (traces au trait, stroke="currentColor"). */
+.tag .ico{
+  width:15px;height:15px;flex:0 0 auto;
+  color:var(--accent);fill:currentColor;
+  overflow:visible;
+}
+
+/* ---------- defilement continu des technos ----------
+   La piste est dupliquee par le script en bas de page : quand la
+   premiere copie sort a gauche, la suivante a deja pris sa place.
+   Au survol, l'animation se met en pause. Sans JS (ou en mouvement
+   reduit), .tags reste une liste qui passe a la ligne. */
+.tags.is-marquee{
+  flex-wrap:nowrap;
+  overflow:hidden;
+  /* de quoi ne pas rogner le soulevement d'un tag au survol */
+  padding:4px 0;margin:-4px 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
+.tags-track{
+  display:flex;gap:8px;flex:0 0 auto;
+  animation:tag-marquee var(--marquee-duration,26s) linear infinite;
+  will-change:transform;
+}
+.tags-group{display:flex;gap:8px;flex:0 0 auto}
+/* l'arret demande au survol (et au focus clavier) */
+.tags.is-marquee:hover .tags-track,
+.tags.is-marquee:focus-within .tags-track{animation-play-state:paused}
+@keyframes tag-marquee{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(var(--marquee-shift,-50%),0,0)}
+}
+.legend{
+  margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--ink-soft);
+  display:flex;gap:20px;flex-wrap:wrap;
+}
+.legend .sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:7px;border:1px solid var(--line)}
+.legend .sw.a{background:var(--accent-soft);border-color:var(--accent-bright)}
+.legend .sw.b{background:var(--bg)}
+
+/* ============================================================
+   PROJETS — cartes « manifeste de déploiement »
+   ============================================================ */
+.projects-intro{color:var(--ink-soft);max-width:60ch;margin-bottom:36px}
+.projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.project{
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-lg);overflow:hidden;
+  display:flex;flex-direction:column;
+  box-shadow:var(--glass-shadow),var(--glass-inset);
+  transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.project:hover{
+  border-color:rgba(94,163,163,.5);
+  transform:translateY(-4px);
+  box-shadow:0 22px 50px -18px rgba(15,31,43,.35),var(--glass-inset);
+}
+.project-head{
+  font-family:var(--mono);font-size:12px;
+  padding:12px 20px;border-bottom:1px solid var(--glass-border);
+  display:flex;align-items:center;gap:10px;color:var(--ink-soft);
+  background:linear-gradient(180deg,rgba(255,255,255,.28),transparent);
+}
+.badge{
+  font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;
+  margin-left:auto;letter-spacing:.03em;
+}
+.badge.repo{background:var(--accent-soft);color:var(--accent)}
+.badge.prod{background:var(--accent-soft);color:var(--ok)}
+.badge.dev{background:var(--accent-soft);color:var(--accent)}
+.project-body{padding:22px 20px 20px;display:flex;flex-direction:column;gap:14px;flex:1}
+.project h3{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01em}
+.project p{font-size:15px;color:var(--ink-soft);flex:1}
+.project .impact{
+  font-family:var(--mono);font-size:12.5px;color:var(--ok);
+  border-left:2px solid var(--ok);padding-left:12px;
+}
+.project-links{display:flex;gap:16px;padding-top:4px}
+.project-links a{
+  font-family:var(--mono);font-size:13px;font-weight:500;
+  text-decoration:none;color:var(--ink);
+  border-bottom:1.5px solid var(--accent-bright);padding-bottom:1px;
+  transition:color .15s;
+}
+.project-links a:hover{color:var(--accent)}
+
+/* carte vide, à remplir */
+.project.placeholder{
+  border-style:dashed;border-color:var(--line);background:transparent;
+  align-items:center;justify-content:center;text-align:center;
+  min-height:280px;box-shadow:none;
+}
+.project.placeholder:hover{border-color:var(--accent-bright);box-shadow:none;transform:none}
+.project.placeholder .plus{
+  font-family:var(--mono);font-size:34px;color:var(--accent);line-height:1;
+}
+.project.placeholder p{
+  font-family:var(--mono);font-size:13px;color:var(--ink-soft);
+  max-width:32ch;margin-top:12px;flex:0;
+}
+
+/* ============================================================
+   PARCOURS
+   ============================================================ */
+.xp{border-top:1px solid var(--line)}
+.xp-item{
+  display:grid;grid-template-columns:180px 1fr;gap:28px;
+  padding:26px 0;border-bottom:1px solid var(--line);
+}
+.xp-item .when{font-family:var(--mono);font-size:13px;color:var(--ink-soft);padding-top:3px}
+.xp-item h3{font-family:var(--display);font-weight:700;font-size:18px}
+.xp-item .org{font-size:14.5px;color:var(--accent);font-weight:500;font-family:var(--mono)}
+.xp-item p{font-size:15px;color:var(--ink-soft);margin-top:8px;max-width:64ch}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact-card{
+  position:relative;isolation:isolate;overflow:hidden;
+  background:
+    radial-gradient(120% 140% at 85% 0%, rgba(94,163,163,.32), transparent 55%),
+    radial-gradient(120% 140% at 0% 100%, rgba(31,77,90,.60), transparent 55%),
+    linear-gradient(155deg,#1a3f4c,#0f1f2b);
+  /* panneau toujours sombre → texte clair FIXE (ne pas utiliser var(--bg)
+     qui s'inverse en mode sombre et rendrait le texte illisible) */
+  color:#f4fbfa;
+  border:1px solid rgba(217,241,239,.14);
+  border-radius:var(--radius-lg);padding:52px 48px;
+  box-shadow:0 24px 60px -22px rgba(15,31,43,.55), inset 0 1px 0 rgba(217,241,239,.12);
+  display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:center;
+}
+.contact-card h2{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(26px,4vw,36px);letter-spacing:-.02em;
+  color:#f4fbfa;margin-bottom:14px;
+}
+.contact-card p{color:#b7d5d3;max-width:44ch}
+/* appel à l'action principal : écrire un mail, en un clic */
+.contact-cta{margin-top:26px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.contact-cta .hint{
+  font-family:var(--mono);font-size:12.5px;color:#7fa8a8;margin:0;
+}
+.contact-list{list-style:none;font-family:var(--mono);font-size:14px;display:flex;flex-direction:column;gap:14px}
+.contact-list a{
+  color:#f4fbfa;text-decoration:none;
+  border-bottom:1.5px solid var(--accent-bright);padding-bottom:2px;
+  transition:color .15s;
+}
+.contact-list a:hover{color:#5ea3a3}
+.contact-list .lbl{color:#7fa8a8;margin-right:10px}
+
+footer{
+  font-family:var(--mono);font-size:12px;color:var(--ink-soft);
+  padding:40px 24px 48px;text-align:center;
+}
+footer .up{color:var(--ok)}
+footer a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-bright)}
+footer a:hover{color:var(--ink)}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference){
+  .stage{
+    opacity:0;
+    transform:translateY(22px);
+  }
+}
+@media (max-width:900px){
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .about-grid{grid-template-columns:1fr}
+  .contact-card{grid-template-columns:1fr;padding:40px 30px}
+  .hero-grid{grid-template-columns:minmax(0,1fr) 260px}
+}
+@media (max-width:680px){
+  .wrap{padding:0 16px}
+  .statusbar-inner{padding:10px 16px;gap:12px}
+  .stage{padding-left:40px;padding-top:64px;padding-bottom:64px}
+  .stage::before{left:9px}
+  .stage::after{left:2px;top:80px}
+  .stage:first-of-type::before{top:80px}
+  .stage:last-of-type::before{height:80px}
+  .projects-grid,.skills-grid{grid-template-columns:1fr}
+  .xp-item{grid-template-columns:1fr;gap:6px}
+  .statusbar nav{width:100%;margin-left:0;padding-bottom:2px}
+  .hero{padding-top:56px}
+  .hero-grid{grid-template-columns:1fr;gap:28px}
+  .hero-media{justify-self:start;order:-1;width:min(100%,240px)}
+  .hero h1{max-width:none}
+  .hero-actions{gap:10px}
+  .hero-manifest{padding:20px 18px;max-width:none}
+  .contact-card{padding:32px 20px;gap:24px}
+  .contact-list li{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:4px;
+  }
+  .contact-list .lbl{margin-right:0}
+  .project-links{flex-wrap:wrap}
+}
+@media (max-width:420px){
+  .wrap{padding:0 12px}
+  .statusbar-inner{padding:10px 12px}
+  .stage{
+    padding-left:32px;
+    padding-top:52px;
+    padding-bottom:52px;
+  }
+  .stage::before{left:7px}
+  .stage::after{left:0;top:66px}
+  .stage:first-of-type::before{top:66px}
+  .stage:last-of-type::before{height:66px}
+  .hero h1{font-size:clamp(28px,10vw,38px)}
+  .hero .lede{font-size:16px}
+  .btn{
+    width:100%;
+    justify-content:center;
+    padding:12px 16px;
+  }
+  .hero-media{width:min(100%,200px)}
+  .profile-meta{
+    width:100%;
+    white-space:normal;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .skill-card,.trajectory,.project-body{padding:20px 16px}
+  .project-head{padding:12px 16px}
+  .contact-card{padding:28px 16px}
+  .contact-cta{width:100%}
+  footer{padding-left:12px;padding-right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Sprite d'icônes : logos officiels (Simple Icons, CC0) + glyphes maison
+     pour les technos sans logo. Monochromes : ils prennent la couleur du texte. -->
+<svg xmlns="http://www.w3.org/2000/svg" class="icon-sprite" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-java" viewBox="0 0 24 24"><path d="M11.915 0 11.7.215C9.515 2.4 7.47 6.39 6.046 10.483c-1.064 1.024-3.633 2.81-3.711 3.551-.093.87 1.746 2.611 1.55 3.235-.198.625-1.304 1.408-1.014 1.939.1.188.823.011 1.277-.491a13.389 13.389 0 0 0-.017 2.14c.076.906.27 1.668.643 2.232.372.563.956.911 1.667.911.397 0 .727-.114 1.024-.264.298-.149.571-.33.91-.5.68-.34 1.634-.666 3.53-.604 1.903.062 2.872.39 3.559.704.687.314 1.15.664 1.925.664.767 0 1.395-.336 1.807-.9.412-.563.631-1.33.72-2.24.06-.623.055-1.32 0-2.066.454.45 1.117.604 1.213.424.29-.53-.816-1.314-1.013-1.937-.198-.624 1.642-2.366 1.549-3.236-.08-.748-2.707-2.568-3.748-3.586C16.428 6.374 14.308 2.394 12.13.215zm.175 6.038a2.95 2.95 0 0 1 2.943 2.942 2.95 2.95 0 0 1-2.943 2.943A2.95 2.95 0 0 1 9.148 8.98a2.95 2.95 0 0 1 2.942-2.942zM8.685 7.983a3.515 3.515 0 0 0-.145.997c0 1.951 1.6 3.55 3.55 3.55 1.95 0 3.55-1.598 3.55-3.55 0-.329-.046-.648-.132-.951.334.095.64.208.915.336a42.699 42.699 0 0 1 2.042 5.829c.678 2.545 1.01 4.92.846 6.607-.082.844-.29 1.51-.606 1.94-.315.431-.713.651-1.315.651-.593 0-.932-.27-1.673-.61-.741-.338-1.825-.694-3.792-.758-1.974-.064-3.073.293-3.821.669-.375.188-.659.373-.911.5s-.466.2-.752.2c-.53 0-.876-.209-1.16-.64-.285-.43-.474-1.101-.545-1.948-.141-1.693.176-4.069.823-6.614a43.155 43.155 0 0 1 1.934-5.783c.348-.167.749-.31 1.192-.425zm-3.382 4.362a.216.216 0 0 1 .13.031c-.166.56-.323 1.116-.463 1.665a33.849 33.849 0 0 0-.547 2.555 3.9 3.9 0 0 0-.2-.39c-.58-1.012-.914-1.642-1.16-2.08.315-.24 1.679-1.755 2.24-1.781zm13.394.01c.562.027 1.926 1.543 2.24 1.783-.246.438-.58 1.068-1.16 2.08a4.428 4.428 0 0 0-.163.309 32.354 32.354 0 0 0-.562-2.49 40.579 40.579 0 0 0-.482-1.652.216.216 0 0 1 .127-.03z"/></symbol>
+<symbol id="i-php" viewBox="0 0 24 24"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312zm-3.26 7.451c-.261.25-.575.438-.917.551-.336.108-.765.164-1.285.164H5.357l-.327 1.681H3.652l1.23-6.326h2.65c.797 0 1.378.209 1.744.628.366.418.476 1.002.33 1.752a2.836 2.836 0 0 1-.305.847c-.143.255-.33.49-.561.703zm4.024.715l.543-2.799c.063-.318.039-.536-.068-.651-.107-.116-.336-.174-.687-.174H11.46l-.704 3.625H9.388l1.23-6.327h1.367l-.327 1.682h1.218c.767 0 1.295.134 1.586.401s.378.7.263 1.299l-.572 2.944h-1.389zm7.597-2.265a2.782 2.782 0 0 1-.305.847c-.143.255-.33.49-.561.703a2.44 2.44 0 0 1-.917.551c-.336.108-.765.164-1.286.164h-1.18l-.327 1.682h-1.378l1.23-6.326h2.649c.797 0 1.378.209 1.744.628.366.417.477 1.001.331 1.751zM17.766 10.207h-.943l-.516 2.648h.838c.557 0 .971-.105 1.242-.314.272-.21.455-.559.551-1.049.092-.47.049-.802-.125-.995s-.524-.29-1.047-.29z"/></symbol>
+<symbol id="i-laravel" viewBox="0 0 24 24"><path d="M23.642 5.43a.364.364 0 01.014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934a.378.378 0 01-.188.326L9.93 23.949a.316.316 0 01-.066.027c-.008.002-.016.008-.024.01a.348.348 0 01-.192 0c-.011-.002-.02-.008-.03-.012-.02-.008-.042-.014-.062-.025L.533 18.755a.376.376 0 01-.189-.326V2.974c0-.033.005-.066.014-.098.003-.012.01-.02.014-.032a.369.369 0 01.023-.058c.004-.013.015-.022.023-.033l.033-.045c.012-.01.025-.018.037-.027.014-.012.027-.024.041-.034H.53L5.043.05a.375.375 0 01.375 0L9.93 2.647h.002c.015.01.027.021.04.033l.038.027c.013.014.02.03.033.045.008.011.02.021.025.033.01.02.017.038.024.058.003.011.01.021.013.032.01.031.014.064.014.098v9.652l3.76-2.164V5.527c0-.033.004-.066.013-.098.003-.01.01-.02.013-.032a.487.487 0 01.024-.059c.007-.012.018-.02.025-.033.012-.015.021-.03.033-.043.012-.012.025-.02.037-.028.014-.01.026-.023.041-.032h.001l4.513-2.598a.375.375 0 01.375 0l4.513 2.598c.016.01.027.021.042.031.012.01.025.018.036.028.013.014.022.03.034.044.008.012.019.021.024.033.011.02.018.04.024.06.006.01.012.021.015.032zm-.74 5.032V6.179l-1.578.908-2.182 1.256v4.283zm-4.51 7.75v-4.287l-2.147 1.225-6.126 3.498v4.325zM1.093 3.624v14.588l8.273 4.761v-4.325l-4.322-2.445-.002-.003H5.04c-.014-.01-.025-.021-.04-.031-.011-.01-.024-.018-.035-.027l-.001-.002c-.013-.012-.021-.025-.031-.04-.01-.011-.021-.022-.028-.036h-.002c-.008-.014-.013-.031-.02-.047-.006-.016-.014-.027-.018-.043a.49.49 0 01-.008-.057c-.002-.014-.006-.027-.006-.041V5.789l-2.18-1.257zM5.23.81L1.47 2.974l3.76 2.164 3.758-2.164zm1.956 13.505l2.182-1.256V3.624l-1.58.91-2.182 1.255v9.435zm11.581-10.95l-3.76 2.163 3.76 2.163 3.759-2.164zm-.376 4.978L16.21 7.087 14.63 6.18v4.283l2.182 1.256 1.58.908zm-8.65 9.654l5.514-3.148 2.756-1.572-3.757-2.163-4.323 2.489-3.941 2.27z"/></symbol>
+<symbol id="i-js" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/></symbol>
+<symbol id="i-c" viewBox="0 0 24 24"><path d="M16.5921 9.1962s-.354-3.298-3.627-3.39c-3.2741-.09-4.9552 2.474-4.9552 6.14 0 3.6651 1.858 6.5972 5.0451 6.5972 3.184 0 3.5381-3.665 3.5381-3.665l6.1041.365s.36 3.31-2.196 5.836c-2.552 2.5241-5.6901 2.9371-7.8762 2.9201-2.19-.017-5.2261.034-8.1602-2.97-2.938-3.0101-3.436-5.9302-3.436-8.8002 0-2.8701.556-6.6702 4.047-9.5502C7.444.72 9.849 0 12.254 0c10.0422 0 10.7172 9.2602 10.7172 9.2602z"/></symbol>
+<symbol id="i-html" viewBox="0 0 24 24"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></symbol>
+<symbol id="i-css" viewBox="0 0 24 24"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.414z"/></symbol>
+<symbol id="i-mysql" viewBox="0 0 24 24"><path d="M16.405 5.501c-.115 0-.193.014-.274.033v.013h.014c.054.104.146.18.214.273.054.107.1.214.154.32l.014-.015c.094-.066.14-.172.14-.333-.04-.047-.046-.094-.08-.14-.04-.067-.126-.1-.18-.153zM5.77 18.695h-.927a50.854 50.854 0 00-.27-4.41h-.008l-1.41 4.41H2.45l-1.4-4.41h-.01a72.892 72.892 0 00-.195 4.41H0c.055-1.966.192-3.81.41-5.53h1.15l1.335 4.064h.008l1.347-4.064h1.095c.242 2.015.384 3.86.428 5.53zm4.017-4.08c-.378 2.045-.876 3.533-1.492 4.46-.482.716-1.01 1.073-1.583 1.073-.153 0-.34-.046-.566-.138v-.494c.11.017.24.026.386.026.268 0 .483-.075.647-.222.197-.18.295-.382.295-.605 0-.155-.077-.47-.23-.944L6.23 14.615h.91l.727 2.36c.164.536.233.91.205 1.123.4-1.064.678-2.227.835-3.483zm12.325 4.08h-2.63v-5.53h.885v4.85h1.745zm-3.32.135l-1.016-.5c.09-.076.177-.158.255-.25.433-.506.648-1.258.648-2.253 0-1.83-.718-2.746-2.155-2.746-.704 0-1.254.232-1.65.697-.43.508-.646 1.256-.646 2.245 0 .972.19 1.686.574 2.14.35.41.877.615 1.583.615.264 0 .506-.033.725-.098l1.325.772.36-.622zM15.5 17.588c-.225-.36-.337-.94-.337-1.736 0-1.393.424-2.09 1.27-2.09.443 0 .77.167.977.5.224.362.336.936.336 1.723 0 1.404-.424 2.108-1.27 2.108-.445 0-.77-.167-.978-.5zm-1.658-.425c0 .47-.172.856-.516 1.156-.344.3-.803.45-1.384.45-.543 0-1.064-.172-1.573-.515l.237-.476c.438.22.833.328 1.19.328.332 0 .593-.073.783-.22a.754.754 0 00.3-.615c0-.33-.23-.61-.648-.845-.388-.213-1.163-.657-1.163-.657-.422-.307-.632-.636-.632-1.177 0-.45.157-.81.47-1.085.315-.278.72-.415 1.22-.415.512 0 .98.136 1.4.41l-.213.476a2.726 2.726 0 00-1.064-.23c-.283 0-.502.068-.654.206a.685.685 0 00-.248.524c0 .328.234.61.666.85.393.215 1.187.67 1.187.67.433.305.648.63.648 1.168zm9.382-5.852c-.535-.014-.95.04-1.297.188-.1.04-.26.04-.274.167.055.053.063.14.11.214.08.134.218.313.346.407.14.11.28.216.427.31.26.16.555.255.81.416.145.094.293.213.44.313.073.05.12.14.214.172v-.02c-.046-.06-.06-.147-.105-.214-.067-.067-.134-.127-.2-.193a3.223 3.223 0 00-.695-.675c-.214-.146-.682-.35-.77-.595l-.013-.014c.146-.013.32-.066.46-.106.227-.06.435-.047.67-.106.106-.027.213-.06.32-.094v-.06c-.12-.12-.21-.283-.334-.395a8.867 8.867 0 00-1.104-.823c-.21-.134-.476-.22-.697-.334-.08-.04-.214-.06-.26-.127-.12-.146-.19-.34-.275-.514a17.69 17.69 0 01-.547-1.163c-.12-.262-.193-.523-.34-.763-.69-1.137-1.437-1.826-2.586-2.5-.247-.14-.543-.2-.856-.274-.167-.008-.334-.02-.5-.027-.11-.047-.216-.174-.31-.235-.38-.24-1.364-.76-1.644-.072-.18.434.267.862.422 1.082.115.153.26.328.34.5.047.116.06.235.107.356.106.294.207.622.347.897.073.14.153.287.247.413.054.073.146.107.167.227-.094.136-.1.334-.154.5-.24.757-.146 1.693.194 2.25.107.166.362.534.703.393.3-.12.234-.5.32-.835.02-.08.007-.133.048-.187v.015c.094.188.188.367.274.555.206.328.566.668.867.895.16.12.287.328.487.402v-.02h-.015c-.043-.058-.1-.086-.154-.133a3.445 3.445 0 01-.35-.4 8.76 8.76 0 01-.747-1.218c-.11-.21-.202-.436-.29-.643-.04-.08-.04-.2-.107-.24-.1.146-.247.273-.32.453-.127.288-.14.642-.188 1.01-.027.007-.014 0-.027.014-.214-.052-.287-.274-.367-.46-.2-.475-.233-1.238-.06-1.785.047-.14.247-.582.167-.716-.042-.127-.174-.2-.247-.303a2.478 2.478 0 01-.24-.427c-.16-.374-.24-.788-.414-1.162-.08-.173-.22-.354-.334-.513-.127-.18-.267-.307-.368-.52-.033-.073-.08-.194-.027-.274.014-.054.042-.075.094-.09.088-.072.335.022.422.062.247.1.455.194.662.334.094.066.195.193.315.226h.14c.214.047.455.014.655.073.355.114.675.28.962.46a5.953 5.953 0 012.085 2.286c.08.154.115.295.188.455.14.33.313.663.455.982.14.315.275.636.476.897.1.14.502.213.682.286.133.06.34.115.46.188.23.14.454.3.67.454.11.076.443.243.463.378z"/></symbol>
+<symbol id="i-oracle" viewBox="0 0 24 24"><path d="M16.412 4.412h-8.82a7.588 7.588 0 0 0-.008 15.176h8.828a7.588 7.588 0 0 0 0-15.176zm-.193 12.502H7.786a4.915 4.915 0 0 1 0-9.828h8.433a4.914 4.914 0 1 1 0 9.828z"/></symbol>
+<symbol id="i-linux" viewBox="0 0 24 24"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"/></symbol>
+<symbol id="i-git" viewBox="0 0 24 24"><path d="M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187"/></symbol>
+<symbol id="i-github" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+<symbol id="i-docker" viewBox="0 0 24 24"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z"/></symbol>
+<symbol id="i-k8s" viewBox="0 0 24 24"><path d="M10.204 14.35l.007.01-.999 2.413a5.171 5.171 0 0 1-2.075-2.597l2.578-.437.004.005a.44.44 0 0 1 .484.606zm-.833-2.129a.44.44 0 0 0 .173-.756l.002-.011L7.585 9.7a5.143 5.143 0 0 0-.73 3.255l2.514-.725.002-.009zm1.145-1.98a.44.44 0 0 0 .699-.337l.01-.005.15-2.62a5.144 5.144 0 0 0-3.01 1.442l2.147 1.523.004-.002zm.76 2.75l.723.349.722-.347.18-.78-.5-.623h-.804l-.5.623.179.779zm1.5-3.095a.44.44 0 0 0 .7.336l.008.003 2.134-1.513a5.188 5.188 0 0 0-2.992-1.442l.148 2.615.002.001zm10.876 5.97l-5.773 7.181a1.6 1.6 0 0 1-1.248.594l-9.261.003a1.6 1.6 0 0 1-1.247-.596l-5.776-7.18a1.583 1.583 0 0 1-.307-1.34L2.1 5.573c.108-.47.425-.864.863-1.073L11.305.513a1.606 1.606 0 0 1 1.385 0l8.345 3.985c.438.209.755.604.863 1.073l2.062 8.955c.108.47-.005.963-.308 1.34zm-3.289-2.057c-.042-.01-.103-.026-.145-.034-.174-.033-.315-.025-.479-.038-.35-.037-.638-.067-.895-.148-.105-.04-.18-.165-.216-.216l-.201-.059a6.45 6.45 0 0 0-.105-2.332 6.465 6.465 0 0 0-.936-2.163c.052-.047.15-.133.177-.159.008-.09.001-.183.094-.282.197-.185.444-.338.743-.522.142-.084.273-.137.415-.242.032-.024.076-.062.11-.089.24-.191.295-.52.123-.736-.172-.216-.506-.236-.745-.045-.034.027-.08.062-.111.088-.134.116-.217.23-.33.35-.246.25-.45.458-.673.609-.097.056-.239.037-.303.033l-.19.135a6.545 6.545 0 0 0-4.146-2.003l-.012-.223c-.065-.062-.143-.115-.163-.25-.022-.268.015-.557.057-.905.023-.163.061-.298.068-.475.001-.04-.001-.099-.001-.142 0-.306-.224-.555-.5-.555-.275 0-.499.249-.499.555l.001.014c0 .041-.002.092 0 .128.006.177.044.312.067.475.042.348.078.637.056.906a.545.545 0 0 1-.162.258l-.012.211a6.424 6.424 0 0 0-4.166 2.003 8.373 8.373 0 0 1-.18-.128c-.09.012-.18.04-.297-.029-.223-.15-.427-.358-.673-.608-.113-.12-.195-.234-.329-.349-.03-.026-.077-.062-.111-.088a.594.594 0 0 0-.348-.132.481.481 0 0 0-.398.176c-.172.216-.117.546.123.737l.007.005.104.083c.142.105.272.159.414.242.299.185.546.338.743.522.076.082.09.226.1.288l.16.143a6.462 6.462 0 0 0-1.02 4.506l-.208.06c-.055.072-.133.184-.215.217-.257.081-.546.11-.895.147-.164.014-.305.006-.48.039-.037.007-.09.02-.133.03l-.004.002-.007.002c-.295.071-.484.342-.423.608.061.267.349.429.645.365l.007-.001.01-.003.129-.029c.17-.046.294-.113.448-.172.33-.118.604-.217.87-.256.112-.009.23.069.288.101l.217-.037a6.5 6.5 0 0 0 2.88 3.596l-.09.218c.033.084.069.199.044.282-.097.252-.263.517-.452.813-.091.136-.185.242-.268.399-.02.037-.045.095-.064.134-.128.275-.034.591.213.71.248.12.556-.007.69-.282v-.002c.02-.039.046-.09.062-.127.07-.162.094-.301.144-.458.132-.332.205-.68.387-.897.05-.06.13-.082.215-.105l.113-.205a6.453 6.453 0 0 0 4.609.012l.106.192c.086.028.18.042.256.155.136.232.229.507.342.84.05.156.074.295.145.457.016.037.043.09.062.129.133.276.442.402.69.282.247-.118.341-.435.213-.71-.02-.039-.045-.096-.065-.134-.083-.156-.177-.261-.268-.398-.19-.296-.346-.541-.443-.793-.04-.13.007-.21.038-.294-.018-.022-.059-.144-.083-.202a6.499 6.499 0 0 0 2.88-3.622c.064.01.176.03.213.038.075-.05.144-.114.28-.104.266.039.54.138.87.256.154.06.277.128.448.173.036.01.088.019.13.028l.009.003.007.001c.297.064.584-.098.645-.365.06-.266-.128-.537-.423-.608zM16.4 9.701l-1.95 1.746v.005a.44.44 0 0 0 .173.757l.003.01 2.526.728a5.199 5.199 0 0 0-.108-1.674A5.208 5.208 0 0 0 16.4 9.7zm-4.013 5.325a.437.437 0 0 0-.404-.232.44.44 0 0 0-.372.233h-.002l-1.268 2.292a5.164 5.164 0 0 0 3.326.003l-1.27-2.296h-.01zm1.888-1.293a.44.44 0 0 0-.27.036.44.44 0 0 0-.214.572l-.003.004 1.01 2.438a5.15 5.15 0 0 0 2.081-2.615l-2.6-.44-.004.005z"/></symbol>
+<symbol id="i-ansible" viewBox="0 0 24 24"><path d="M10.617 11.473l4.686 3.695-3.102-7.662zM12 0C5.371 0 0 5.371 0 12s5.371 12 12 12 12-5.371 12-12S18.629 0 12 0zm5.797 17.305c-.011.471-.403.842-.875.83-.236 0-.416-.09-.664-.293l-6.19-5-2.079 5.203H6.191L11.438 5.44c.124-.314.427-.52.764-.506.326-.014.63.189.742.506l4.774 11.494c.045.111.08.234.08.348-.001.009-.001.009-.001.023z"/></symbol>
+<symbol id="i-javafx" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="4.2" width="18.8" height="15.6" rx="2"/><path d="M2.6 8.6h18.8"/><path d="M10.2 12.4l3.6 2.2-3.6 2.2z"/></symbol>
+<symbol id="i-servlet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="4" width="18.4" height="6.6" rx="1.6"/><rect x="2.8" y="13.4" width="18.4" height="6.6" rx="1.6"/><path d="M6.4 7.3h.01M6.4 16.7h.01"/></symbol>
+<symbol id="i-mvc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l8.4 4.3-8.4 4.3-8.4-4.3z"/><path d="M3.6 12.1l8.4 4.3 8.4-4.3"/><path d="M3.6 16.6l8.4 4.3 8.4-4.3"/></symbol>
+<symbol id="i-sql" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.8" rx="7.4" ry="2.9"/><path d="M4.6 5.8v12.4c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9V5.8"/><path d="M4.6 12c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9"/></symbol>
+<symbol id="i-merise" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="3.8" width="8.2" height="6" rx="1.2"/><rect x="13.2" y="14.2" width="8.2" height="6" rx="1.2"/><path d="M10.8 6.8h3.6a2.8 2.8 0 012.8 2.8v4.6"/></symbol>
+<symbol id="i-poweramc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.6" width="6" height="5" rx="1.2"/><rect x="2.6" y="16.4" width="6" height="5" rx="1.2"/><rect x="15.4" y="16.4" width="6" height="5" rx="1.2"/><path d="M12 7.6v3.2M5.6 16.4v-2.6h12.8v2.6"/></symbol>
+<symbol id="i-network" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.4"/><circle cx="4.6" cy="5.2" r="1.9"/><circle cx="19.4" cy="5.2" r="1.9"/><circle cx="12" cy="20.4" r="1.9"/><path d="M10.3 10.4L6 6.6M13.7 10.4L18 6.6M12 14.4v4.1"/></symbol>
+<symbol id="i-cicd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.2h8.8a4 4 0 014 4"/><path d="M20 15.8h-8.8a4 4 0 01-4-4"/><path d="M16.4 4.6L20 8.2l-3.6 3.6"/><path d="M7.6 19.4L4 15.8l3.6-3.6"/></symbol>
+<symbol id="i-windows" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M3.4 5.9l7.1-1v6.6H3.4zm8.4-1.2l8.8-1.2v7.8h-8.8zM3.4 12.6h7.1v6.6l-7.1-1zm8.4 0h8.8v7.8l-8.8-1.2z"/></symbol>
+</defs></svg>
+
+<!-- ══════════════════ BARRE DE STATUT ══════════════════ -->
+<header class="statusbar">
+  <div class="statusbar-inner">
+    <span class="sys"><span class="dot" aria-hidden="true"></span>statut: disponible</span>
+    <nav aria-label="Navigation principale">
+      <a href="#apropos">à-propos</a>
+      <a href="#competences">compétences</a>
+      <a href="#projets">projets</a>
+      <a href="#parcours">parcours</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ══════════════════ HERO ══════════════════ -->
+  <section class="stage hero" id="accueil">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="stage-label hero-seq" style="--hero-order:0">pipeline · init <span class="ok">✓</span></p>
+
+        <h1 class="hero-seq" style="--hero-order:1">Elhadji Diatta développe des applications,<br>les déploie, et les <em>administre.</em></h1>
+
+        <p class="lede hero-seq" style="--hero-order:2">
+          Développeur <strong>full stack</strong> — Java, PHP/Laravel, de la modélisation Merise
+          au déploiement — et <strong>administrateur systèmes</strong> Linux et Windows Server.
+          En route vers l'<strong>ingénierie DevOps</strong> : automatiser, orchestrer, observer.
+        </p>
+
+        <div class="hero-actions hero-seq" style="--hero-order:3">
+          <a class="btn btn-primary" href="#projets">Voir les projets →</a>
+          <!-- contact direct : ouvre le client mail, sujet pré-rempli -->
+          <a class="btn btn-ghost"
+             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio">
+            M'écrire un mail ✉
+          </a>
+        </div>
+
+        <div class="hero-manifest hero-seq" style="--hero-order:4" aria-label="Profil résumé au format manifeste">
+          <div><span class="k">profil:</span></div>
+          <div>&nbsp;&nbsp;<span class="k">rôle:</span> <span class="v">développeur full stack · admin systèmes</span></div>
+          <div>&nbsp;&nbsp;<span class="k">objectif:</span> <span class="a">ingénieur devops</span></div>
+          <div>&nbsp;&nbsp;<span class="k">localisation:</span> <span class="v">Bambey, Sénégal</span></div>
+          <div>&nbsp;&nbsp;<span class="k">email:</span> <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a></div>
+          <div>&nbsp;&nbsp;<span class="k">disponibilité:</span> <span class="t">true</span></div>
+        </div>
+      </div>
+
+      <aside class="hero-media hero-seq" style="--hero-order:2" aria-label="Photo de profil">
+        <img
+          class="profile-photo"
+          src="assets/elhadji.jpeg"
+          alt="Photo de profil d'Elhadji Ba Diaby Diatta, portrait utilisé dans le hero du portfolio"
+          width="640" height="640"
+          data-fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Crect width='640' height='640' rx='24' fill='%23FFFFFF'/%3E%3Cg stroke='%23CBE3E0' stroke-width='10'%3E%3Cpath d='M120 500c36-92 108-138 200-138s164 46 200 138' fill='none'/%3E%3Ccircle cx='320' cy='232' r='92' fill='none'/%3E%3C/g%3E%3Cpath d='M116 516h408' stroke='%235EA3A3' stroke-width='10' stroke-linecap='round'/%3E%3Ctext x='320' y='572' text-anchor='middle' font-family='IBM Plex Mono, monospace' font-size='28' fill='%234B626B'%3Ephoto pending%3C/text%3E%3C/svg%3E">
+        <div class="profile-meta" aria-label="Statut du fichier avatar">
+          <span class="status" aria-hidden="true"></span>
+          <span class="file">avatar: elhadji.jpeg</span>
+          <span class="ok">✓</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ══════════════════ À PROPOS ══════════════════ -->
+  <section class="stage" id="apropos">
+    <p class="stage-label">stage: build — à-propos <span class="ok">✓</span></p>
+    <h2>Du code qui tourne, pas seulement du code qui compile.</h2>
+    <div class="about-grid">
+      <div>
+        <p>
+          Étudiant en Licence Professionnelle Développement et Administration
+          d'Applications à l'Université Alioune Diop de Bambey, je couvre
+          <strong>le cycle de vie logiciel complet</strong> : modélisation des données
+          (Merise, SQL), développement (Java, PHP/Laravel), et déploiement sur
+          serveur (Linux, Windows Server).
+        </p>
+        <p>
+          Ce qui me distingue : je ne fais pas que développer. J'installe,
+          je configure et je sécurise les environnements sur lesquels mes
+          applications tournent. Cette <strong>double casquette dev + ops</strong>
+          est ma rampe de lancement naturelle vers le DevOps : CI/CD,
+          conteneurisation, infrastructure as code.
+        </p>
+        <p>
+          Disponible pour un stage ou un premier emploi au sein d'une équipe
+          technique ambitieuse.
+        </p>
+      </div>
+      <aside class="trajectory">
+        <h3>trajectoire</h3>
+        <ol>
+          <li>
+            <span class="when">acquis</span>
+            Développement full stack — Java, PHP/Laravel, MySQL, Oracle
+          </li>
+          <li>
+            <span class="when">acquis</span>
+            Administration systèmes &amp; conteneurs — Linux, Windows Server, Docker
+          </li>
+          <li class="next">
+            <span class="when">en cours</span>
+            CI/CD, orchestration et observabilité
+          </li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ══════════════════ COMPÉTENCES ══════════════════ -->
+  <section class="stage" id="competences">
+    <p class="stage-label">stage: test — compétences <span class="ok">✓</span></p>
+    <h2>Compétences</h2>
+    <div class="skills-grid">
+
+      <article class="skill-card">
+        <h3>Développement</h3>
+        <span class="scope">langages &amp; frameworks</span>
+        <div class="tags">
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-java"/></svg>Java</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-javafx"/></svg>JavaFX</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-php"/></svg>PHP 8</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-laravel"/></svg>Laravel</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-servlet"/></svg>JSP / Servlet</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-js"/></svg>JavaScript</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-c"/></svg>C</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-html"/></svg>HTML5</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-css"/></svg>CSS3</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-mvc"/></svg>Architecture MVC</span>
+        </div>
+      </article>
+
+      <article class="skill-card">
+        <h3>Données</h3>
+        <span class="scope">modélisation &amp; bases de données</span>
+        <div class="tags">
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-sql"/></svg>SQL</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-mysql"/></svg>MySQL</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-oracle"/></svg>Oracle DBA</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-merise"/></svg>Modélisation Merise</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-poweramc"/></svg>PowerAMC</span>
+        </div>
+      </article>
+
+      <article class="skill-card">
+        <h3>Systèmes &amp; DevOps</h3>
+        <span class="scope">administration &amp; automatisation</span>
+        <div class="tags">
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-linux"/></svg>Linux (Debian, Ubuntu)</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-windows"/></svg>Windows Server</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-network"/></svg>Services réseaux</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-git"/></svg>Git</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-github"/></svg>GitHub</span>
+          <span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-docker"/></svg>Docker</span>
+          <span class="tag learning"><svg class="ico" aria-hidden="true"><use href="#i-cicd"/></svg>CI/CD</span>
+          <span class="tag learning"><svg class="ico" aria-hidden="true"><use href="#i-k8s"/></svg>Kubernetes</span>
+          <span class="tag learning"><svg class="ico" aria-hidden="true"><use href="#i-ansible"/></svg>Ansible</span>
+        </div>
+      </article>
+
+    </div>
+    <p class="legend">
+      <span><span class="sw b"></span>maîtrisé</span>
+      <span><span class="sw a"></span>en cours d'apprentissage</span>
+    </p>
+  </section>
+
+  <!-- ══════════════════ PROJETS ══════════════════ -->
+  <section class="stage" id="projets">
+    <p class="stage-label">stage: deploy — projets <span class="ok">✓</span></p>
+    <h2>Projets réalisés</h2>
+    <p class="projects-intro">
+      Travaux académiques et personnels — le code source est sur mon GitHub.
+      Chaque carte donne le contexte, la stack et ce que le projet m'a appris.
+    </p>
+
+    <div class="projects-grid">
+
+      <article class="project">
+        <div class="project-head">
+          <span>thies-ville.yml</span>
+          <span class="badge repo">● code sur github</span>
+        </div>
+        <div class="project-body">
+          <h3>Refonte du site de la Ville de Thiès</h3>
+          <p>
+            Migration complète du site municipal vers Joomla : analyse de
+            l'architecture existante, refonte UI/UX pour faciliter l'accès
+            des citoyens aux services, intégration de modules dynamiques.
+          </p>
+          <p class="impact">→ Refonte complète : architecture, UI/UX et modules d'administration</p>
+          <div class="tags">
+            <span class="tag">Joomla</span>
+            <span class="tag">PHP</span>
+            <span class="tag">UI/UX</span>
+            <span class="tag">Sécurité</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/diatta-dev" target="_blank" rel="noopener">code source ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>tontine-app.yml</span>
+          <span class="badge repo">● code sur github</span>
+        </div>
+        <div class="project-body">
+          <h3>Gestion de Tontine &amp; Bibliothèque</h3>
+          <p>
+            Application web full stack : conception des interfaces,
+            modélisation et gestion des bases MySQL, sécurisation des accès
+            et génération automatisée de rapports.
+          </p>
+          <p class="impact">→ Rapports de données générés automatiquement, zéro saisie manuelle</p>
+          <div class="tags">
+            <span class="tag">PHP 8</span>
+            <span class="tag">Laravel</span>
+            <span class="tag">MySQL</span>
+            <span class="tag">MVC</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/diatta-dev" target="_blank" rel="noopener">code source ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>insertion-pro.yml</span>
+          <span class="badge repo">● code sur github</span>
+        </div>
+        <div class="project-body">
+          <h3>Application d'Insertion Professionnelle</h3>
+          <p>
+            Application desktop mettant en relation jeunes diplômés et
+            recruteurs, avec une interface ergonomique pensée pour un
+            public non technique.
+          </p>
+          <p class="impact">→ Interface JavaFX complète, conçue de zéro</p>
+          <div class="tags">
+            <span class="tag">Java</span>
+            <span class="tag">JavaFX</span>
+            <span class="tag">MySQL</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/diatta-dev" target="_blank" rel="noopener">code source ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>infra-server.yml</span>
+          <span class="badge repo">● code sur github</span>
+        </div>
+        <div class="project-body">
+          <h3>Infrastructure Windows Server</h3>
+          <p>
+            Déploiement complet d'un environnement Windows Server 2012 :
+            installation, configuration des rôles et fonctionnalités,
+            sécurisation de l'ensemble.
+          </p>
+          <p class="impact">→ Mon premier vrai projet ops : le socle de ma transition DevOps</p>
+          <div class="tags">
+            <span class="tag">Windows Server</span>
+            <span class="tag">Réseaux</span>
+            <span class="tag">Sécurité</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/diatta-dev" target="_blank" rel="noopener">code source ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>stock-model.yml</span>
+          <span class="badge repo">● code sur github</span>
+        </div>
+        <div class="project-body">
+          <h3>Modélisation d'un Système de Stock</h3>
+          <p>
+            Recueil et analyse des besoins, puis réalisation du Modèle
+            Conceptuel de Données complet sur PowerAMC.
+          </p>
+          <p class="impact">→ Un MCD propre avant une ligne de code : la donnée d'abord</p>
+          <div class="tags">
+            <span class="tag">Merise</span>
+            <span class="tag">PowerAMC</span>
+            <span class="tag">Analyse</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/diatta-dev" target="_blank" rel="noopener">code source ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Carte vide : supprimez-la quand toutes vos cartes sont remplies,
+           ou gardez-la comme clin d'œil « prochain déploiement » -->
+      <article class="project placeholder" aria-label="Emplacement pour un futur projet">
+        <div>
+          <div class="plus">+</div>
+          <p>prochain-projet.yml<br>— en file d'attente du pipeline —</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ PARCOURS ══════════════════ -->
+  <section class="stage" id="parcours">
+    <p class="stage-label">stage: monitor — parcours <span class="ok">✓</span></p>
+    <h2>Parcours</h2>
+    <div class="xp">
+
+      <div class="xp-item">
+        <div class="when">2021 — 2024</div>
+        <div>
+          <h3>Licence Pro Développement et Administration d'Applications</h3>
+          <span class="org">Université Alioune Diop de Bambey (UADB), Sénégal</span>
+          <p>Développement d'applications d'entreprise, sécurité informatique, administration de bases de données.</p>
+        </div>
+      </div>
+
+      <div class="xp-item">
+        <div class="when">2026</div>
+        <div>
+          <h3>Attestation de Pilotage de Drone</h3>
+          <span class="org">Formation certifiante</span>
+          <p>Techniques de vol, réglementation, systèmes embarqués et collecte de données aériennes.</p>
+        </div>
+      </div>
+
+      <div class="xp-item">
+        <div class="when">2021</div>
+        <div>
+          <h3>Baccalauréat Scientifique (Série S2)</h3>
+          <span class="org">Sénégal</span>
+        </div>
+      </div>
+
+      <div class="xp-item">
+        <div class="when">Bénévolat</div>
+        <div>
+          <h3>Secouriste Volontaire</h3>
+          <span class="org">Croix-Rouge Sénégalaise (Cellule UADB)</span>
+          <p>Travail en équipe, gestion de crise, sens de l'organisation.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ CONTACT ══════════════════ -->
+  <section class="stage" id="contact">
+    <p class="stage-label">pipeline · release <span class="ok">✓</span></p>
+    <div class="contact-card">
+      <div>
+        <h2>Un projet à développer, déployer ou administrer&nbsp;?</h2>
+        <p>
+          Disponible pour un stage ou un premier emploi. Basé à Bambey,
+          Sénégal — mobile et opérationnel à distance.
+        </p>
+        <div class="contact-cta">
+          <a class="btn btn-mail"
+             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0A">
+            M'écrire à elhadjidiatta25@gmail.com ✉
+          </a>
+          <p class="hint">réponse sous 24 h — ou copiez l'adresse ci-contre</p>
+        </div>
+      </div>
+      <ul class="contact-list">
+        <li><span class="lbl">email:</span><a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a></li>
+        <li><span class="lbl">téléphone:</span><a href="tel:+221773994182">+221 77 399 41 82</a></li>
+        <li><span class="lbl">github:</span><a href="https://github.com/diatta-dev" target="_blank" rel="noopener">github.com/diatta-dev</a></li>
+        <li><span class="lbl">linkedin:</span><a href="https://linkedin.com/in/el-hadji-diatta-10777028b" target="_blank" rel="noopener">in/el-hadji-diatta-10777028b</a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="up">● uptime 100%</span> &nbsp;·&nbsp; © 2026 Elhadji Ba Diaby Diatta &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; conçu et déployé à la main
+</footer>
+
+<script>
+(() => {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const profilePhoto = document.querySelector(".profile-photo");
+  const stages = Array.from(document.querySelectorAll(".stage"));
+
+  if (profilePhoto) {
+    const fallbackSrc = profilePhoto.dataset.fallbackSrc;
+    const applyPhotoFallback = () => {
+      if (fallbackSrc && profilePhoto.src !== fallbackSrc) {
+        profilePhoto.src = fallbackSrc;
+      }
+    };
+
+    profilePhoto.addEventListener("error", applyPhotoFallback, { once: true });
+
+    if (!profilePhoto.complete) {
+      profilePhoto.addEventListener("load", () => {
+        if (!profilePhoto.naturalWidth) {
+          applyPhotoFallback();
+        }
+      }, { once: true });
+    } else if (!profilePhoto.naturalWidth) {
+      applyPhotoFallback();
+    }
+  }
+
+  /* ---- defilement continu des technos (pause au survol via CSS) ---- */
+  if (!reduceMotion) {
+    const GAP = 8;      // doit rester egal au gap CSS de .tags-track
+    const SPEED = 34;   // pixels par seconde
+    const tracks = [];
+
+    document.querySelectorAll(".skill-card .tags").forEach((strip) => {
+      const group = document.createElement("div");
+      group.className = "tags-group";
+      group.append(...strip.childNodes);
+
+      const track = document.createElement("div");
+      track.className = "tags-track";
+      track.append(group);
+
+      strip.append(track);
+      strip.classList.add("is-marquee");
+      tracks.push({ strip, track, group });
+    });
+
+    const layoutMarquees = () => {
+      tracks.forEach(({ strip, track, group }) => {
+        const width = group.getBoundingClientRect().width;
+        if (!width) return;
+
+        const shift = width + GAP;
+        const needed = Math.max(2, Math.ceil((strip.clientWidth + shift) / shift));
+        while (track.children.length > needed) track.lastElementChild.remove();
+        while (track.children.length < needed) {
+          const copy = group.cloneNode(true);
+          copy.setAttribute("aria-hidden", "true");
+          track.append(copy);
+        }
+
+        track.style.setProperty("--marquee-shift", `-${shift}px`);
+        track.style.setProperty("--marquee-duration", `${(shift / SPEED).toFixed(1)}s`);
+      });
+    };
+
+    layoutMarquees();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutMarquees);
+
+    let marqueeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(marqueeTimer);
+      marqueeTimer = setTimeout(layoutMarquees, 150);
+    });
+  }
+
+  if (reduceMotion) {
+    stages.forEach((stage) => {
+      stage.classList.add("is-revealed", "is-active");
+      stage.style.setProperty("--pipeline-progress", "1");
+    });
+    return;
+  }
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-revealed", "is-active");
+      }
+    });
+  }, {
+    threshold: 0.2,
+    rootMargin: "0px 0px -10% 0px"
+  });
+
+  stages.forEach((stage) => revealObserver.observe(stage));
+
+  const revealVisibleStages = () => {
+    stages.forEach((stage) => {
+      const rect = stage.getBoundingClientRect();
+      const visibleThreshold = window.innerHeight * 0.82;
+      if (rect.top < visibleThreshold && rect.bottom > 0) {
+        stage.classList.add("is-revealed", "is-active");
+      }
+    });
+  };
+
+  const updatePipelineProgress = () => {
+    const doc = document.documentElement;
+    const maxScroll = doc.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? window.scrollY / maxScroll : 1;
+
+    stages.forEach((stage, index) => {
+      const stageProgress = Math.min(1, Math.max(0, progress * stages.length - index));
+      stage.style.setProperty("--pipeline-progress", stageProgress.toFixed(3));
+    });
+  };
+
+  revealVisibleStages();
+  requestAnimationFrame(revealVisibleStages);
+  updatePipelineProgress();
+  window.addEventListener("scroll", updatePipelineProgress, { passive: true });
+  window.addEventListener("resize", () => {
+    revealVisibleStages();
+    updatePipelineProgress();
+  });
+})();
+</script>
+
+</body>
+</html>

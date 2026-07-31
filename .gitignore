@@ -1,0 +1,32 @@
+# Git ne reconnaît les commentaires qu'en début de ligne :
+# un « # » placé après un motif en fait partie et casse la règle.
+
+# ── outils locaux ──────────────────────────────────────────
+# configuration de l'assistant, propre à ce poste
+.claude/
+# créé par la CLI Vercel, contient des identifiants
+.vercel/
+.idea/
+.vscode/
+
+# ── fichiers temporaires ───────────────────────────────────
+# aperçus générés pendant le développement
+_preview.html
+*.log
+*.tmp
+*~
+
+# ── systèmes d'exploitation ────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── dépendances (si un outil de build est ajouté un jour) ──
+node_modules/
+
+# ── vidéos ─────────────────────────────────────────────────
+# GitHub refuse tout fichier de plus de 100 Mo. Si une démo dépasse,
+# hébergez-la ailleurs (YouTube non répertorié) plutôt que d'ignorer
+# le dossier : sans les fichiers, les cartes projet afficheront
+# « démo vidéo à venir » sur le site en ligne.
+# assets/videos/

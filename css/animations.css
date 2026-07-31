@@ -1,0 +1,27 @@
+/* ============================================================
+   ANIMATIONS — keyframes CSS et structures qui rendent les
+   animations JS possibles.
+
+   Règle importante : ce fichier ne masque JAMAIS de contenu par
+   défaut. Les états initiaux (opacity/translate avant l'entrée
+   en scène) sont posés par js/animations.js via gsap.set(),
+   uniquement si GSAP a bien chargé. Si le JS échoue, tout reste
+   visible — pas de page blanche. Voir js/animations.js.
+   ============================================================ */
+
+/* pulse permanent du point "disponible" de la statusbar
+   (décoratif, toujours actif, coupé automatiquement par la
+   règle prefers-reduced-motion globale de base.css) */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.statusbar .dot{animation:pulse 2.4s ease-in-out infinite}
+
+/* masque de révélation du titre du hero : le conteneur doit
+   rester overflow:hidden dans tous les cas pour que la mise en
+   page ne saute pas, que le JS tourne ou non — le texte est
+   visible dès le HTML, seul son décalage interne est animé */
+.hero h1 .line-mask{display:block;overflow:hidden}
+.hero h1 .line-inner{display:block}
+
+/* indice de performance pour les cartes projets (tilt/lift
+   piloté par GSAP au survol) */
+.project{will-change:transform}

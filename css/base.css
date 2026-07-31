@@ -1,0 +1,50 @@
+/* ============================================================
+   BASE — reset, typographie globale, focus, sélection.
+   Règles qui s'appliquent au document entier, indépendamment
+   des composants ou de la mise en page.
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+img{max-width:100%;display:block}
+html{scroll-behavior:smooth}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:clamp(15.5px,1.1vw,16.5px);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* ---- halos d'arrière-plan (calque de matière pour le verre dépoli) ----
+   Fixés derrière tout le contenu ; c'est le fond que les cartes
+   translucides floutent. pointer-events:none pour ne rien gêner. */
+body::before{
+  content:"";
+  position:fixed;
+  inset:-10vmax;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(38vmax 38vmax at 12% 8%,  var(--halo-accent), transparent 60%),
+    radial-gradient(42vmax 42vmax at 88% 22%, var(--halo-mist),   transparent 62%),
+    radial-gradient(46vmax 46vmax at 78% 92%, var(--halo-deep),   transparent 60%),
+    radial-gradient(34vmax 34vmax at 20% 88%, var(--halo-accent), transparent 64%);
+  filter:saturate(115%);
+  animation:halo-drift 26s ease-in-out infinite alternate;
+}
+@keyframes halo-drift{
+  from{transform:translate3d(0,0,0) scale(1)}
+  to{transform:translate3d(2.5%,-2%,0) scale(1.08)}
+}
+
+::selection{background:var(--accent);color:var(--bg)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}

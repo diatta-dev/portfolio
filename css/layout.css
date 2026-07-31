@@ -1,0 +1,210 @@
+/* ============================================================
+   LAYOUT — structure de page : barre de statut, conteneur,
+   grille du hero, pipeline (colonne de nœuds) et l'intégralité
+   des points de rupture responsive.
+   Les styles visuels des composants réutilisables (boutons,
+   cartes...) vivent dans components.css ; ce fichier ne gère
+   que le positionnement et la structure des sections.
+   ============================================================ */
+
+/* ---------- barre de statut (haut de page) ---------- */
+.statusbar{
+  font-family:var(--mono);font-size:12px;
+  border-bottom:1px solid var(--glass-border);
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  backdrop-filter:blur(14px) saturate(160%);
+  position:sticky;top:0;z-index:50;
+}
+.statusbar-inner{
+  max-width:var(--maxw);margin:0 auto;padding:10px 24px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.statusbar .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--ok);display:inline-block;
+}
+.statusbar .sys{color:var(--ok);font-weight:500;display:flex;align-items:center;gap:8px}
+.statusbar nav{
+  margin-left:auto;display:flex;gap:20px;
+  min-width:0;overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:thin;
+}
+.statusbar nav a{
+  flex:0 0 auto;
+  text-decoration:none;color:var(--ink-soft);
+  transition:color .15s;
+}
+.statusbar nav a:hover{color:var(--accent)}
+
+/* ---------- conteneur & pipeline (signature du site) ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.stage{
+  position:relative;
+  padding:88px 0 88px 64px;
+}
+.stage::before{ /* ligne du pipeline, remplie au scroll via --pipeline-fill (JS) */
+  content:"";position:absolute;left:15px;top:0;bottom:0;
+  width:2px;
+  /* hauteur remplie en pixels : le trait ne couvre pas toute la
+     section sur la première ni la dernière étape (voir js/animations.js) */
+  background:
+    linear-gradient(to bottom, var(--accent), var(--accent)) top/100% var(--pipeline-fill, 0px) no-repeat,
+    var(--line);
+}
+.stage::after{ /* nœud */
+  content:"";position:absolute;left:8px;top:104px;
+  width:16px;height:16px;border-radius:50%;
+  background:
+    radial-gradient(circle at center, var(--accent) 0 45%, transparent 46%) center/0 0 no-repeat,
+    var(--bg);
+  border:3px solid var(--accent);
+  box-shadow:0 0 0 0 rgba(94,163,163,.30);
+  transition:background-size .35s ease, box-shadow .35s ease, transform .35s ease;
+}
+.stage:first-of-type::before{top:104px}
+.stage:last-of-type::before{bottom:auto;height:104px}
+.stage.is-active::after{ /* le nœud "s'allume" quand sa section entre dans le viewport (piloté par ScrollTrigger) */
+  background:
+    radial-gradient(circle at center, var(--accent) 0 45%, transparent 46%) center/190% 190% no-repeat,
+    var(--bg);
+  box-shadow:0 0 0 6px rgba(94,163,163,.22);
+  transform:scale(1.05);
+}
+.stage-label{
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;
+  color:var(--accent);font-weight:500;
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.stage-label .ok{color:var(--ok)}
+.stage h2{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(26px,4vw,38px);
+  letter-spacing:-.015em;margin-bottom:24px;
+}
+
+/* ---------- hero : grille & typographie de titre ---------- */
+.hero{padding-top:72px}
+.hero-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(220px,320px);
+  gap:40px;
+  align-items:start;
+}
+.hero-copy{min-width:0}
+.hero .stage-label{margin-bottom:22px}
+.hero h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(38px,7vw,72px);
+  line-height:1.02;letter-spacing:-.025em;
+  max-width:16ch;
+}
+.hero h1 em{
+  font-style:normal;color:var(--accent);
+  position:relative;white-space:nowrap;
+}
+/* masque de révélation ligne par ligne du titre : structure dans
+   animations.css (nécessaire au fonctionnement du mask, pas
+   qu'à sa mise en page) */
+.hero .lede{
+  margin-top:26px;max-width:56ch;
+  font-size:clamp(17px,2vw,19px);color:var(--ink-soft);
+}
+.hero .lede strong{color:var(--ink);font-weight:600}
+.hero-actions{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
+.hero-media{
+  justify-self:end;
+  width:min(100%,320px);
+}
+
+/* ---------- à propos : grille deux colonnes ---------- */
+.about-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:start}
+
+/* ============================================================
+   RESPONSIVE — tous les points de rupture du site.
+   Regroupés ici pour n'avoir qu'un seul endroit à auditer ;
+   certaines règles ciblent des classes de components.css,
+   ce qui est volontaire (voir mission "responsive").
+   ============================================================ */
+@media (max-width:900px){
+  /* la carte projet mise en avant repasse sur une seule colonne :
+     son relevé d'apport n'a plus la place de tenir sur le côté */
+  .project.is-featured .project-body{grid-template-columns:1fr;gap:15px}
+  .project.is-featured .impact{grid-column:1;grid-row:auto}
+  .project.is-featured .project-media{grid-column:1;grid-row:auto}
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .about-grid{grid-template-columns:1fr}
+  .contact-card{grid-template-columns:1fr;padding:40px 30px}
+  .hero-grid{grid-template-columns:minmax(0,1fr) 260px}
+}
+@media (max-width:680px){
+  .wrap{padding:0 16px}
+  .statusbar-inner{padding:10px 16px;gap:12px}
+  .stage{padding-left:40px;padding-top:64px;padding-bottom:64px}
+  .stage::before{left:9px}
+  .stage::after{left:2px;top:80px}
+  .stage:first-of-type::before{top:80px}
+  .stage:last-of-type::before{height:80px}
+  .projects-grid,.skills-grid{grid-template-columns:1fr}
+  .xp-item{grid-template-columns:1fr;gap:6px}
+  .statusbar nav{width:100%;margin-left:0;padding-bottom:2px}
+  .hero{padding-top:56px}
+  .hero-grid{grid-template-columns:1fr;gap:28px}
+  .hero-media{justify-self:start;order:-1;width:min(100%,240px)}
+  .hero h1{max-width:none}
+  .hero-actions{gap:10px}
+  .hero-manifest{padding:20px 18px;max-width:none}
+  .contact-card{padding:32px 20px;gap:28px}
+  .contact-list li{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:4px;
+  }
+  .contact-list .lbl{margin-right:0}
+  /* réseaux : pastilles pleine largeur, empilées — cible tactile
+     confortable et sous-titres jamais tronqués */
+  .social{gap:8px}
+  .social-link{width:100%}
+  .social-sub{max-width:none}
+  .contact-form{padding:22px 18px}
+  .project-links{flex-wrap:wrap}
+}
+@media (max-width:420px){
+  .wrap{padding:0 12px}
+  .statusbar-inner{padding:10px 12px}
+  .stage{
+    padding-left:32px;
+    padding-top:52px;
+    padding-bottom:52px;
+  }
+  .stage::before{left:7px}
+  .stage::after{left:0;top:66px}
+  .stage:first-of-type::before{top:66px}
+  .stage:last-of-type::before{height:66px}
+  .hero h1{font-size:clamp(28px,10vw,38px)}
+  .hero .lede{font-size:16px}
+  .btn{
+    width:100%;
+    justify-content:center;
+    padding:12px 16px;
+  }
+  .hero-media{width:min(100%,200px)}
+  .profile-meta{
+    width:100%;
+    white-space:normal;
+    align-items:flex-start;
+    gap:8px;
+  }
+  /* logos un peu plus compacts sur très petit écran, zone un peu
+     moins haute : le flottement reste lisible sans manger l'écran */
+  .skill-float.is-floating{height:210px}
+  .logo-inner{width:56px;height:56px}
+  .logo-img{width:38px;height:38px}
+  .skill-card,.trajectory,.project-body{padding:20px 16px}
+  .project-head{padding:12px 16px}
+  .contact-card{padding:28px 16px}
+  .contact-form{padding:20px 14px}
+  .badge.diploma{display:block;margin-left:0;margin-top:8px;width:max-content}
+  footer{padding-left:12px;padding-right:12px}
+}

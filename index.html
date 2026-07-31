@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps</title>
+<meta name="description" content="Portfolio d'Elhadji Ba Diaby Diatta, développeur full stack et administrateur systèmes en transition vers l'ingénierie DevOps.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+<!-- ══════════════════ BARRE DE STATUT ══════════════════ -->
+<header class="statusbar">
+  <div class="statusbar-inner">
+    <span class="sys"><span class="dot" aria-hidden="true"></span>statut: disponible</span>
+    <nav aria-label="Navigation principale">
+      <a href="#apropos">à-propos</a>
+      <a href="#competences">compétences</a>
+      <a href="#projets">projets</a>
+      <a href="#parcours">parcours</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ══════════════════ HERO ══════════════════ -->
+  <section class="stage hero" id="accueil">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="stage-label" data-anim="hero-item" data-hero-order="0">pipeline · init <span class="ok">✓</span></p>
+
+        <h1 data-anim="hero-title">
+          <span class="line-mask"><span class="line-inner">Elhadji Diatta développe des applications,</span></span>
+          <span class="line-mask"><span class="line-inner">les déploie, et les <em>administre.</em></span></span>
+        </h1>
+
+        <p class="lede" data-anim="hero-item" data-hero-order="2">
+          Développeur <strong>full stack</strong> — Java/Spring&nbsp;Boot, PHP/Laravel, de la
+          modélisation Merise au déploiement — et <strong>administrateur systèmes</strong>
+          Linux et Windows Server.
+          En route vers l'<strong>ingénierie DevOps</strong> : automatiser, orchestrer, observer.
+        </p>
+
+        <div class="hero-actions" data-anim="hero-item" data-hero-order="3">
+          <a class="btn btn-primary" href="#projets">Voir les projets →</a>
+          <!-- CV : déposer le PDF sous assets/cv-elhadji-diatta.pdf.
+               S'il est absent, js/media.js neutralise le bouton plutôt
+               que de laisser le visiteur tomber sur une erreur 404. -->
+          <a class="btn btn-ghost" data-cv
+             href="assets/cv-elhadji-diatta.pdf" download="CV-Elhadji-Diatta.pdf">
+            Télécharger mon CV ↓
+          </a>
+          <!-- contact direct : ouvre le client mail, sujet pré-rempli -->
+          <a class="btn btn-ghost"
+             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio">
+            M'écrire un mail ✉
+          </a>
+        </div>
+
+        <div class="hero-manifest" data-anim="hero-item" data-hero-order="4" aria-label="Profil résumé au format manifeste">
+          <div><span class="k">profil:</span></div>
+          <div>&nbsp;&nbsp;<span class="k">rôle:</span> <span class="v">développeur full stack · admin systèmes</span></div>
+          <div>&nbsp;&nbsp;<span class="k">diplôme:</span> <span class="v">licence pro DAA — <span class="t">validée</span></span></div>
+          <div>&nbsp;&nbsp;<span class="k">objectif:</span> <span class="a">ingénieur devops</span></div>
+          <div>&nbsp;&nbsp;<span class="k">localisation:</span> <span class="v">Bambey, Sénégal</span></div>
+          <div>&nbsp;&nbsp;<span class="k">email:</span> <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a></div>
+          <div>&nbsp;&nbsp;<span class="k">disponibilité:</span> <span class="t">true</span></div>
+        </div>
+      </div>
+
+      <aside class="hero-media" data-anim="hero-item" data-hero-order="2" aria-label="Photo de profil">
+        <img
+          class="profile-photo"
+          src="assets/elhadji.jpeg"
+          alt="Photo de profil d'Elhadji Ba Diaby Diatta, portrait utilisé dans le hero du portfolio"
+          width="640" height="640"
+          data-fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Crect width='640' height='640' rx='24' fill='%23FFFFFF'/%3E%3Cg stroke='%23CBE3E0' stroke-width='10'%3E%3Cpath d='M120 500c36-92 108-138 200-138s164 46 200 138' fill='none'/%3E%3Ccircle cx='320' cy='232' r='92' fill='none'/%3E%3C/g%3E%3Cpath d='M116 516h408' stroke='%235EA3A3' stroke-width='10' stroke-linecap='round'/%3E%3Ctext x='320' y='572' text-anchor='middle' font-family='IBM Plex Mono, monospace' font-size='28' fill='%234B626B'%3Ephoto pending%3C/text%3E%3C/svg%3E">
+        <div class="profile-meta" aria-label="Statut du fichier avatar">
+          <span class="status" aria-hidden="true"></span>
+          <span class="file">avatar: elhadji.jpeg</span>
+          <span class="ok">✓</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ══════════════════ À PROPOS ══════════════════ -->
+  <section class="stage" id="apropos">
+    <p class="stage-label">stage: build — à-propos <span class="ok">✓</span></p>
+    <h2>Du code qui tourne, pas seulement du code qui compile.</h2>
+    <div class="about-grid">
+      <div>
+        <p>
+          <strong>Diplômé d'une Licence Professionnelle</strong> Développement et
+          Administration d'Applications à l'Université Alioune Diop de Bambey
+          — formation validée en 2026 —, je couvre
+          <strong>le cycle de vie logiciel complet</strong> : modélisation des données
+          (Merise, SQL), développement (Java/Spring&nbsp;Boot, PHP/Laravel), et déploiement
+          sur serveur (Linux, Windows Server).
+        </p>
+        <p>
+          <strong>Spring Boot et React, je les ai appris seul</strong>, hors programme :
+          c'est avec cette stack que j'ai conçu et livré mon projet de mémoire,
+          une plateforme de suivi de dossiers judiciaires. Apprendre une
+          technologie parce qu'un projet l'exige, c'est ma façon de travailler.
+        </p>
+        <p>
+          Ce qui me distingue : je ne fais pas que développer. J'installe,
+          je configure et je sécurise les environnements sur lesquels mes
+          applications tournent. Cette <strong>double casquette dev + ops</strong>
+          est ma rampe de lancement naturelle vers le DevOps : CI/CD,
+          conteneurisation, infrastructure as code.
+        </p>
+        <p>
+          Disponible pour un stage ou un premier emploi au sein d'une équipe
+          technique ambitieuse.
+        </p>
+      </div>
+      <aside class="trajectory">
+        <h3>trajectoire</h3>
+        <ol>
+          <li>
+            <span class="when">acquis</span>
+            Développement full stack — Java/Spring Boot, React/TypeScript, PHP/Laravel, PostgreSQL
+          </li>
+          <li>
+            <span class="when">acquis</span>
+            Administration systèmes &amp; conteneurs — Linux, Windows Server, Docker
+          </li>
+          <li class="next">
+            <span class="when">en cours</span>
+            CI/CD, orchestration et observabilité
+          </li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ══════════════════ COMPÉTENCES ══════════════════ -->
+  <section class="stage" id="competences">
+    <p class="stage-label">stage: test — compétences <span class="ok">✓</span></p>
+    <h2>Compétences</h2>
+    <div class="skills-grid">
+
+      <article class="skill-card">
+        <h3>Développement</h3>
+        <span class="scope">langages &amp; frameworks</span>
+        <div class="skill-float" role="list" aria-label="Technologies : développement">
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
+                   alt="Java" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Java</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg"
+                   alt="Spring Boot" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Spring Boot</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg"
+                   alt="PHP" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">PHP</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg"
+                   alt="Laravel" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Laravel</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
+                   alt="React" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">React 18</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+                   alt="TypeScript" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">TypeScript</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
+                   alt="JavaScript" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">JavaScript</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg"
+                   alt="C" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">C</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg"
+                   alt="HTML5" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">HTML5</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg"
+                   alt="CSS3" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">CSS3</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="skill-card">
+        <h3>Données</h3>
+        <span class="scope">modélisation &amp; bases de données</span>
+        <div class="skill-float" role="list" aria-label="Technologies : données">
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg"
+                   alt="MySQL" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">MySQL</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg"
+                   alt="PostgreSQL" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">PostgreSQL</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg"
+                   alt="Oracle" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Oracle</span>
+          </span>
+          <!-- MinIO n'existe pas chez devicon : pictogramme « seau de
+               stockage objet » dessiné à la main, comme pour Merise -->
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <svg class="logo-img" viewBox="0 0 24 24" role="img"
+                   aria-label="MinIO — stockage objet compatible S3"
+                   fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.4 3.4 7.2v9.6L12 21.6l8.6-4.8V7.2Z"/>
+                <path d="m3.4 7.2 8.6 4.8 8.6-4.8"/>
+                <path d="M12 12v9.6"/>
+              </svg>
+            </span>
+            <span class="logo-label" aria-hidden="true">MinIO</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <svg class="logo-img" viewBox="0 0 24 24" role="img"
+                   aria-label="Merise et PowerAMC — modélisation de données"
+                   fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5.8" rx="7.4" ry="2.9"/>
+                <path d="M4.6 5.8v12.4c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9V5.8"/>
+                <path d="M4.6 12c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9"/>
+              </svg>
+            </span>
+            <span class="logo-label" aria-hidden="true">Merise / PowerAMC</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="skill-card">
+        <h3>Systèmes &amp; DevOps</h3>
+        <span class="scope">administration &amp; automatisation</span>
+        <div class="skill-float" role="list" aria-label="Technologies : systèmes et devops">
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg"
+                   alt="Linux" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Linux</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/debian/debian-original.svg"
+                   alt="Debian" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Debian</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ubuntu/ubuntu-original.svg"
+                   alt="Ubuntu" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Ubuntu</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows11/windows11-original.svg"
+                   alt="Windows" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Windows</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"
+                   alt="Git" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Git</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                   alt="GitHub" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">GitHub</span>
+          </span>
+          <span class="logo" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg"
+                   alt="Docker" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Docker</span>
+          </span>
+          <span class="logo is-learning" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-original.svg"
+                   alt="Kubernetes (en apprentissage)" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Kubernetes</span>
+          </span>
+          <span class="logo is-learning" role="listitem">
+            <span class="logo-inner">
+              <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg"
+                   alt="Ansible (en apprentissage)" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+            </span>
+            <span class="logo-label" aria-hidden="true">Ansible</span>
+          </span>
+        </div>
+      </article>
+
+    </div>
+    <p class="legend">
+      <span><span class="sw b"></span>maîtrisé</span>
+      <span><span class="sw a"></span>en apprentissage</span>
+    </p>
+  </section>
+
+  <!-- ══════════════════ PROJETS ══════════════════ -->
+  <section class="stage" id="projets">
+    <p class="stage-label">stage: deploy — projets <span class="ok">✓</span></p>
+    <h2>Projets réalisés</h2>
+    <p class="projects-intro">
+      Travaux académiques et personnels. Les dépôts sont privés — chaque projet
+      est donc présenté en vidéo, et le code reste consultable sur demande.
+    </p>
+
+    <div class="projects-grid">
+
+      <article class="project is-featured">
+        <div class="project-head">
+          <span>dossiers-judiciaires.yml</span>
+          <span class="badge memoire">● projet de mémoire</span>
+        </div>
+        <div class="project-body">
+          <h3>Plateforme de suivi des dossiers judiciaires</h3>
+          <p>
+            Projet de mémoire de Licence Pro : une application de suivi et de
+            traitement des dossiers judiciaires des personnes détenues.
+            API métier en Spring Boot, interface React 18 en TypeScript,
+            pièces numérisées stockées en objet sur MinIO, et mises à jour
+            diffusées en direct aux agents via WebSocket STOMP.
+          </p>
+          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
+               le bouton s'active tout seul (voir js/media.js) -->
+          <figure class="project-media"
+                  data-video="assets/videos/dossiers-judiciaires.mp4"
+                  data-poster="assets/videos/dossiers-judiciaires.jpg">
+            <button class="media-play" type="button"
+                    aria-label="Lire la vidéo de démonstration : Plateforme de suivi des dossiers judiciaires">
+              <span class="media-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
+              </span>
+              <span class="media-txt">Voir la démo</span>
+            </button>
+          </figure>
+          <p class="impact">→ Stack entièrement apprise en autodidacte, du modèle PostgreSQL au temps réel</p>
+          <div class="tags">
+            <span class="tag">Java</span>
+            <span class="tag">Spring Boot</span>
+            <span class="tag">React 18</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">MinIO</span>
+            <span class="tag">WebSocket STOMP</span>
+          </div>
+          <div class="project-links">
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project is-featured">
+        <div class="project-head">
+          <span>thies-ville.yml</span>
+          <span class="badge private">● dépôt privé</span>
+        </div>
+        <div class="project-body">
+          <h3>Refonte du site de la Ville de Thiès</h3>
+          <p>
+            Migration complète du site municipal vers Joomla : analyse de
+            l'architecture existante, refonte UI/UX pour faciliter l'accès
+            des citoyens aux services, intégration de modules dynamiques.
+          </p>
+          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
+               le bouton s'active tout seul (voir js/media.js) -->
+          <figure class="project-media"
+                  data-video="assets/videos/thies-ville.mp4"
+                  data-poster="assets/videos/thies-ville.jpg">
+            <button class="media-play" type="button"
+                    aria-label="Lire la vidéo de démonstration : Refonte du site de la Ville de Thiès">
+              <span class="media-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
+              </span>
+              <span class="media-txt">Voir la démo</span>
+            </button>
+          </figure>
+          <p class="impact">→ Refonte complète : architecture, UI/UX et modules d'administration</p>
+          <div class="tags">
+            <span class="tag">Joomla</span>
+            <span class="tag">PHP</span>
+            <span class="tag">UI/UX</span>
+            <span class="tag">Sécurité</span>
+          </div>
+          <div class="project-links">
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>tontine-app.yml</span>
+          <span class="badge private">● dépôt privé</span>
+        </div>
+        <div class="project-body">
+          <h3>Gestion de Tontine &amp; Bibliothèque</h3>
+          <p>
+            Application web full stack : conception des interfaces,
+            modélisation et gestion des bases MySQL, sécurisation des accès
+            et génération automatisée de rapports.
+          </p>
+          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
+               le bouton s'active tout seul (voir js/media.js) -->
+          <figure class="project-media"
+                  data-video="assets/videos/tontine-app.mp4"
+                  data-poster="assets/videos/tontine-app.jpg">
+            <button class="media-play" type="button"
+                    aria-label="Lire la vidéo de démonstration : Gestion de Tontine &amp; Bibliothèque">
+              <span class="media-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
+              </span>
+              <span class="media-txt">Voir la démo</span>
+            </button>
+          </figure>
+          <p class="impact">→ Rapports de données générés automatiquement, zéro saisie manuelle</p>
+          <div class="tags">
+            <span class="tag">PHP 8</span>
+            <span class="tag">Laravel</span>
+            <span class="tag">MySQL</span>
+            <span class="tag">MVC</span>
+          </div>
+          <div class="project-links">
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>insertion-pro.yml</span>
+          <span class="badge private">● dépôt privé</span>
+        </div>
+        <div class="project-body">
+          <h3>Application d'Insertion Professionnelle</h3>
+          <p>
+            Application desktop mettant en relation jeunes diplômés et
+            recruteurs, avec une interface ergonomique pensée pour un
+            public non technique.
+          </p>
+          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
+               le bouton s'active tout seul (voir js/media.js) -->
+          <figure class="project-media"
+                  data-video="assets/videos/insertion-pro.mp4"
+                  data-poster="assets/videos/insertion-pro.jpg">
+            <button class="media-play" type="button"
+                    aria-label="Lire la vidéo de démonstration : Application d'Insertion Professionnelle">
+              <span class="media-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
+              </span>
+              <span class="media-txt">Voir la démo</span>
+            </button>
+          </figure>
+          <p class="impact">→ Interface JavaFX complète, conçue de zéro</p>
+          <div class="tags">
+            <span class="tag">Java</span>
+            <span class="tag">JavaFX</span>
+            <span class="tag">MySQL</span>
+          </div>
+          <div class="project-links">
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>infra-server.yml</span>
+          <span class="badge private">● dépôt privé</span>
+        </div>
+        <div class="project-body">
+          <h3>Infrastructure Windows Server</h3>
+          <p>
+            Déploiement complet d'un environnement Windows Server 2012 :
+            installation, configuration des rôles et fonctionnalités,
+            sécurisation de l'ensemble.
+          </p>
+          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
+               le bouton s'active tout seul (voir js/media.js) -->
+          <figure class="project-media"
+                  data-video="assets/videos/infra-server.mp4"
+                  data-poster="assets/videos/infra-server.jpg">
+            <button class="media-play" type="button"
+                    aria-label="Lire la vidéo de démonstration : Infrastructure Windows Server">
+              <span class="media-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
+              </span>
+              <span class="media-txt">Voir la démo</span>
+            </button>
+          </figure>
+          <p class="impact">→ Mon premier vrai projet ops : le socle de ma transition DevOps</p>
+          <div class="tags">
+            <span class="tag">Windows Server</span>
+            <span class="tag">Réseaux</span>
+            <span class="tag">Sécurité</span>
+          </div>
+          <div class="project-links">
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-head">
+          <span>stock-model.yml</span>
+          <span class="badge private">● dépôt privé</span>
+        </div>
+        <div class="project-body">
+          <h3>Modélisation d'un Système de Stock</h3>
+          <p>
+            Recueil et analyse des besoins, puis réalisation du Modèle
+            Conceptuel de Données complet sur PowerAMC.
+          </p>
+          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
+               le bouton s'active tout seul (voir js/media.js) -->
+          <figure class="project-media"
+                  data-video="assets/videos/stock-model.mp4"
+                  data-poster="assets/videos/stock-model.jpg">
+            <button class="media-play" type="button"
+                    aria-label="Lire la vidéo de démonstration : Modélisation d'un Système de Stock">
+              <span class="media-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
+              </span>
+              <span class="media-txt">Voir la démo</span>
+            </button>
+          </figure>
+          <p class="impact">→ Un MCD propre avant une ligne de code : la donnée d'abord</p>
+          <div class="tags">
+            <span class="tag">Merise</span>
+            <span class="tag">PowerAMC</span>
+            <span class="tag">Analyse</span>
+          </div>
+          <div class="project-links">
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+          </div>
+        </div>
+      </article>
+
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ PARCOURS ══════════════════ -->
+  <section class="stage" id="parcours">
+    <p class="stage-label">stage: monitor — parcours <span class="ok">✓</span></p>
+    <h2>Parcours</h2>
+    <div class="xp">
+
+      <div class="xp-item">
+        <div class="when">2021 — 2026</div>
+        <div>
+          <h3>
+            Licence Pro Développement et Administration d'Applications
+            <span class="badge diploma">● diplôme obtenu</span>
+          </h3>
+          <span class="org">Université Alioune Diop de Bambey (UADB), Sénégal</span>
+          <p>
+            Développement d'applications d'entreprise, sécurité informatique,
+            administration de bases de données. Mémoire de fin de cycle :
+            plateforme de suivi des dossiers judiciaires des personnes détenues,
+            bâtie sur une stack Spring Boot + React apprise en autodidacte.
+          </p>
+        </div>
+      </div>
+
+      <div class="xp-item">
+        <div class="when">2026</div>
+        <div>
+          <h3>Attestation de Pilotage de Drone</h3>
+          <span class="org">Formation certifiante</span>
+          <p>Techniques de vol, réglementation, systèmes embarqués et collecte de données aériennes.</p>
+        </div>
+      </div>
+
+      <div class="xp-item">
+        <div class="when">2021</div>
+        <div>
+          <h3>Baccalauréat Scientifique (Série S2)</h3>
+          <span class="org">Sénégal</span>
+        </div>
+      </div>
+
+      <div class="xp-item">
+        <div class="when">Bénévolat</div>
+        <div>
+          <h3>Secouriste Volontaire</h3>
+          <span class="org">Croix-Rouge Sénégalaise (Cellule UADB)</span>
+          <p>Travail en équipe, gestion de crise, sens de l'organisation.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ CONTACT ══════════════════ -->
+  <section class="stage" id="contact">
+    <p class="stage-label">pipeline · release <span class="ok">✓</span></p>
+    <div class="contact-card">
+      <div class="contact-intro">
+        <h2>Un projet à développer, déployer ou administrer&nbsp;?</h2>
+        <p>
+          Disponible pour un stage ou un premier emploi. Basé à Bambey,
+          Sénégal — mobile et opérationnel à distance.
+        </p>
+
+        <!-- réseaux & messageries : un clic = une conversation ouverte -->
+        <div class="social" aria-label="Me contacter sur les réseaux">
+          <a class="social-link is-whatsapp"
+             href="https://wa.me/221773994182?text=Bonjour%20Elhadji%2C%20je%20vous%20contacte%20depuis%20votre%20portfolio."
+             target="_blank" rel="noopener">
+            <span class="social-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            </span>
+            <span class="social-txt">
+              <span class="social-name">WhatsApp</span>
+              <span class="social-sub">+221 77 399 41 82</span>
+            </span>
+          </a>
+
+          <a class="social-link is-linkedin"
+             href="https://linkedin.com/in/el-hadji-diatta-10777028b"
+             target="_blank" rel="noopener">
+            <span class="social-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </span>
+            <span class="social-txt">
+              <span class="social-name">LinkedIn</span>
+              <span class="social-sub">El Hadji Diatta</span>
+            </span>
+          </a>
+
+          <a class="social-link is-github"
+             href="https://github.com/diatta-dev"
+             target="_blank" rel="noopener">
+            <span class="social-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            </span>
+            <span class="social-txt">
+              <span class="social-name">GitHub</span>
+              <span class="social-sub">diatta-dev</span>
+            </span>
+          </a>
+
+          <a class="social-link is-cv" data-cv
+             href="assets/cv-elhadji-diatta.pdf" download="CV-Elhadji-Diatta.pdf">
+            <span class="social-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                <path d="M12 3.2v11.4"/>
+                <path d="m7.6 10.4 4.4 4.4 4.4-4.4"/>
+                <path d="M4.4 18.4v1.2a1.2 1.2 0 0 0 1.2 1.2h12.8a1.2 1.2 0 0 0 1.2-1.2v-1.2"/>
+              </svg>
+            </span>
+            <span class="social-txt">
+              <span class="social-name">Mon CV</span>
+              <span class="social-sub">PDF à télécharger</span>
+            </span>
+          </a>
+
+          <a class="social-link is-mail"
+             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0A">
+            <span class="social-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
+                <path d="m3.2 6.4 8.1 5.9a1.2 1.2 0 0 0 1.4 0l8.1-5.9"/>
+              </svg>
+            </span>
+            <span class="social-txt">
+              <span class="social-name">Email</span>
+              <span class="social-sub">elhadjidiatta25@gmail.com</span>
+            </span>
+          </a>
+        </div>
+
+        <ul class="contact-list">
+          <li><span class="lbl">téléphone:</span><a href="tel:+221773994182">+221 77 399 41 82</a></li>
+          <li><span class="lbl">localisation:</span><span class="val">Bambey, Sénégal — ouvert au distanciel</span></li>
+          <li><span class="lbl">réponse:</span><span class="val">sous 24 h</span></li>
+        </ul>
+      </div>
+
+      <!-- ── formulaire : envoi via Web3Forms, repli sur le client mail ── -->
+      <form class="contact-form" id="contact-form" novalidate
+            data-endpoint="https://api.web3forms.com/submit"
+            data-access-key="f9d62409-51c3-4060-a833-1e3106d000bd"
+            data-mailto="elhadjidiatta25@gmail.com">
+        <p class="form-title">écrivez-moi directement <span class="ok">✓</span></p>
+
+        <div class="field">
+          <label for="cf-name">Nom<span class="req" aria-hidden="true">*</span></label>
+          <input id="cf-name" name="name" type="text" autocomplete="name"
+                 placeholder="Votre nom" required aria-describedby="cf-name-err">
+          <p class="field-error" id="cf-name-err" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="cf-email">Email<span class="req" aria-hidden="true">*</span></label>
+          <input id="cf-email" name="email" type="email" autocomplete="email"
+                 placeholder="vous@exemple.com" required aria-describedby="cf-email-err">
+          <p class="field-error" id="cf-email-err" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="cf-subject">Sujet</label>
+          <input id="cf-subject" name="subject" type="text"
+                 placeholder="Proposition de stage, mission, question…">
+        </div>
+
+        <div class="field">
+          <label for="cf-message">Message<span class="req" aria-hidden="true">*</span></label>
+          <textarea id="cf-message" name="message" rows="5"
+                    placeholder="Décrivez votre besoin en quelques lignes."
+                    required aria-describedby="cf-message-err"></textarea>
+          <p class="field-error" id="cf-message-err" hidden></p>
+        </div>
+
+        <!-- piège à robots : invisible pour un humain, coché par les scripts -->
+        <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <button class="btn btn-mail form-submit" type="submit">
+          Envoyer le message <span aria-hidden="true">→</span>
+        </button>
+
+        <p class="form-status" role="status" aria-live="polite"></p>
+        <p class="form-note">
+          Vos coordonnées ne servent qu'à vous répondre — aucun stockage, aucun partage.
+        </p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="up">● uptime <span data-counter data-counter-to="100">100</span>%</span> &nbsp;·&nbsp; © 2026 Elhadji Ba Diaby Diatta &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; conçu et déployé à la main
+</footer>
+
+<!-- GSAP + ScrollTrigger (hébergés en local, v3.15 — offline-proof, plus de dépendance CDN) -->
+<script src="js/vendor/gsap.min.js" defer></script>
+<script src="js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="js/animations.js" defer></script>
+<script src="js/contact-form.js" defer></script>
+<script src="js/media.js" defer></script>
+<script src="js/main.js" defer></script>
+
+</body>
+</html>
