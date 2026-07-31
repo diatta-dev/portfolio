@@ -19,7 +19,7 @@
      n'existe pas : c'est pire que pas de canonical du tout.
      ══════════════════════════════════════════════════════════════ -->
 
-<title>Elhadji Diatta  Développeur Full Stack · Admin Systèmes · DevOps</title>
+<title>Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps</title>
 <meta name="description" content="Portfolio d'Elhadji Ba Diaby Diatta, développeur full stack et administrateur systèmes en transition vers l'ingénierie DevOps.">
 <meta name="author" content="Elhadji Ba Diaby Diatta">
 <link rel="canonical" href="https://elhadji-diatta.vercel.app/">
@@ -32,12 +32,12 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="Elhadji Diatta">
 <meta property="og:url" content="https://elhadji-diatta.vercel.app/">
-<meta property="og:title" content="Elhadji Diatta  Développeur Full Stack · Admin Systèmes · DevOps">
+<meta property="og:title" content="Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps">
 <meta property="og:description" content="Développeur full stack (Java/Spring Boot, PHP/Laravel, React) et administrateur systèmes Linux et Windows Server, en route vers l'ingénierie DevOps.">
 <meta property="og:image" content="https://elhadji-diatta.vercel.app/assets/elhadji.jpeg">
 <meta property="og:image:alt" content="Portrait d'Elhadji Ba Diaby Diatta">
 <!-- dimensions réelles du fichier : 1254 × 1254 (carré). À corriger si
-     la photo est remplacée  un og:image:width faux fait réserver au
+     la photo est remplacée — un og:image:width faux fait réserver au
      réseau social une zone d'aperçu de la mauvaise forme. -->
 <meta property="og:image:width" content="1254">
 <meta property="og:image:height" content="1254">
@@ -52,12 +52,12 @@
      couperait la tête. À repasser en large_image le jour où une
      carte 1200×630 remplace la photo. -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Elhadji Diatta  Développeur Full Stack · Admin Systèmes · DevOps">
+<meta name="twitter:title" content="Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps">
 <meta name="twitter:description" content="Développeur full stack et administrateur systèmes, en route vers l'ingénierie DevOps.">
 <meta name="twitter:image" content="https://elhadji-diatta.vercel.app/assets/elhadji.jpeg">
 
 <!-- ══════════════════════════════════════════════════════════════
-     ÉTAT INITIAL  thème et langue, posés AVANT tout rendu.
+     ÉTAT INITIAL — thème et langue, posés AVANT tout rendu.
 
      Ce script est volontairement inline et non différé : différé, il
      s'exécuterait après le premier rendu et le visiteur verrait le
@@ -107,9 +107,46 @@
 })();
 </script>
 
+<!-- ── Icônes ──
+     Le SVG est le format principal : une seule ressource, nette à
+     toutes les tailles, et sa couleur suit le thème du navigateur.
+     Le PNG n'est là que pour iOS, qui n'accepte pas le SVG en icône
+     d'écran d'accueil. -->
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<!-- ══════════════════════════════════════════════════════════════
+     POLICES — chargement non bloquant.
+
+     La feuille Google Fonts était un <link rel="stylesheet"> normal :
+     le navigateur ne peignait donc rien tant qu'elle n'était pas
+     arrivée, ce qui met le premier rendu à la merci d'une latence
+     qu'on ne maîtrise pas.
+
+     rel="preload" as="style" la télécharge sans bloquer, puis onload
+     la promeut en feuille appliquée. La page s'affiche entre-temps
+     avec les polices système, et `display=swap` fait la bascule sans
+     texte invisible.
+
+     Le <noscript> couvre le cas — rare mais réel — d'un navigateur
+     sans JavaScript : `onload` n'y est pas exécuté et la feuille ne
+     serait jamais appliquée.
+
+     Graisses demandées : Archivo 500 a été retirée, aucune règle CSS
+     ne l'utilise (les six usages de var(--display) sont en 700 ou
+     800). Ne rien retirer d'autre sans vérifier de la même façon —
+     une graisse absente n'échoue pas, elle est silencieusement
+     remplacée par la plus proche, et le défaut ne se voit qu'à l'œil.
+     ══════════════════════════════════════════════════════════════ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      onload="this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+</noscript>
 
 <link rel="stylesheet" href="css/variables.css">
 <link rel="stylesheet" href="css/base.css">
@@ -168,8 +205,8 @@
         </h1>
 
         <p class="lede" data-anim="hero-item" data-hero-order="2" data-i18n-html="hero.lede">
-          Développeur <strong>full stack</strong>  Java/Spring&nbsp;Boot, PHP/Laravel, de la
-          modélisation Merise au déploiement  et <strong>administrateur systèmes</strong>
+          Développeur <strong>full stack</strong> — Java/Spring&nbsp;Boot, PHP/Laravel, de la
+          modélisation Merise au déploiement — et <strong>administrateur systèmes</strong>
           Linux et Windows Server.
           En route vers l'<strong>ingénierie DevOps</strong> : automatiser, orchestrer, observer.
         </p>
@@ -203,7 +240,7 @@
              data-i18n-attr="aria-label:hero.manifest.aria">
           <div><span class="k" data-i18n="hero.manifest.profile">profil:</span></div>
           <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.role">rôle:</span> <span class="v" data-i18n="hero.manifest.role.value">développeur full stack · admin systèmes</span></div>
-          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.diploma">diplôme:</span> <span class="v"><span data-i18n="hero.manifest.diploma.value">licence pro DAA </span> <span class="t" data-i18n="hero.manifest.diploma.state">validée</span></span></div>
+          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.diploma">diplôme:</span> <span class="v"><span data-i18n="hero.manifest.diploma.value">licence pro DAA —</span> <span class="t" data-i18n="hero.manifest.diploma.state">obtenu</span></span></div>
           <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.goal">objectif:</span> <span class="a" data-i18n="hero.manifest.goal.value">ingénieur devops</span></div>
           <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.location">localisation:</span> <span class="v" data-i18n="hero.manifest.location.value">Bambey, Sénégal</span></div>
           <!-- Ni email: ni disponibilité: ici. L'adresse apparaissait six
@@ -228,21 +265,21 @@
              métaphore du pipeline ne tient que si le marqueur encode
              une étape réellement franchie. Un fichier image ne « passe »
              rien. Les marqueurs « stage: … » des sections, eux, sont
-             conservés  ils structurent la lecture. -->
+             conservés — ils structurent la lecture. -->
       </aside>
     </div>
   </section>
 
   <!-- ══════════════════ À PROPOS ══════════════════ -->
   <section class="stage" id="apropos">
-    <p class="stage-label"><span data-i18n="about.stage">stage: build  à-propos</span> <span class="ok">✓</span></p>
+    <p class="stage-label"><span data-i18n="about.stage">stage: build — à-propos</span> <span class="ok">✓</span></p>
     <h2 data-i18n="about.title">Du code qui tourne, pas seulement du code qui compile.</h2>
     <div class="about-grid">
       <div>
         <p data-i18n-html="about.p1">
           <strong>Diplômé d'une Licence Professionnelle</strong> Développement et
           Administration d'Applications à l'Université Alioune Diop de Bambey
-           formation validée en 2026 , je couvre
+          — diplôme obtenu en 2026 —, je couvre
           <strong>le cycle de vie logiciel complet</strong> : modélisation des données
           (Merise, SQL), développement (Java/Spring&nbsp;Boot, PHP/Laravel), et déploiement
           sur serveur (Linux, Windows Server).
@@ -270,11 +307,11 @@
         <ol>
           <li>
             <span class="when" data-i18n="about.trajectory.1.when">acquis</span>
-            <span data-i18n="about.trajectory.1.text">Développement full stack  Java/Spring Boot, React/TypeScript, PHP/Laravel, PostgreSQL</span>
+            <span data-i18n="about.trajectory.1.text">Développement full stack — Java/Spring Boot, React/TypeScript, PHP/Laravel, PostgreSQL</span>
           </li>
           <li>
             <span class="when" data-i18n="about.trajectory.2.when">acquis</span>
-            <span data-i18n="about.trajectory.2.text">Administration systèmes &amp; conteneurs  Linux, Windows Server, Docker</span>
+            <span data-i18n="about.trajectory.2.text">Administration systèmes &amp; conteneurs — Linux, Windows Server, Docker</span>
           </li>
           <li class="next">
             <span class="when" data-i18n="about.trajectory.3.when">en cours</span>
@@ -287,7 +324,7 @@
 
   <!-- ══════════════════ COMPÉTENCES ══════════════════ -->
   <section class="stage" id="competences">
-    <p class="stage-label"><span data-i18n="skills.stage">stage: test  compétences</span> <span class="ok">✓</span></p>
+    <p class="stage-label"><span data-i18n="skills.stage">stage: test — compétences</span> <span class="ok">✓</span></p>
     <h2 data-i18n="skills.title">Compétences</h2>
     <div class="skills-grid">
 
@@ -503,10 +540,10 @@
 
   <!-- ══════════════════ PROJETS ══════════════════ -->
   <section class="stage" id="projets">
-    <p class="stage-label"><span data-i18n="projects.stage">stage: deploy  projets</span> <span class="ok">✓</span></p>
+    <p class="stage-label"><span data-i18n="projects.stage">stage: deploy — projets</span> <span class="ok">✓</span></p>
     <h2 data-i18n="projects.title">Projets réalisés</h2>
     <p class="projects-intro" data-i18n="projects.intro">
-      Travaux académiques et personnels. Les dépôts sont privés  chaque projet
+      Travaux académiques et personnels. Les dépôts sont privés — chaque projet
       est donc présenté en captures d'écran, et le code reste consultable sur demande.
     </p>
 
@@ -539,7 +576,7 @@
                   data-i18n-alts="shots.judicial"
                   role="group"
                   aria-roledescription="galerie"
-                  aria-label="Captures d'écran  Plateforme de suivi des dossiers judiciaires"
+                  aria-label="Captures d'écran — Plateforme de suivi des dossiers judiciaires"
                   data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.judicial.gallery">
             <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
@@ -590,7 +627,7 @@
                   data-i18n-alts="shots.thies"
                   role="group"
                   aria-roledescription="galerie"
-                  aria-label="Captures d'écran  Refonte du site de la Ville de Thiès"
+                  aria-label="Captures d'écran — Refonte du site de la Ville de Thiès"
                   data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.thies.gallery">
             <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
@@ -634,7 +671,7 @@
                   data-i18n-alts="shots.tontine"
                   role="group"
                   aria-roledescription="galerie"
-                  aria-label="Captures d'écran  Gestion de Tontine &amp; Bibliothèque"
+                  aria-label="Captures d'écran — Gestion de Tontine &amp; Bibliothèque"
                   data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.tontine.gallery">
             <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
@@ -678,7 +715,7 @@
                   data-i18n-alts="shots.insertion"
                   role="group"
                   aria-roledescription="galerie"
-                  aria-label="Captures d'écran  Application d'Insertion Professionnelle"
+                  aria-label="Captures d'écran — Application d'Insertion Professionnelle"
                   data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.insertion.gallery">
             <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
@@ -704,9 +741,9 @@
         <div class="project-body">
           <h3 data-i18n="projects.infra.title">Infrastructure Windows Server</h3>
           <p data-i18n="projects.infra.text">
-            Déploiement complet d'un environnement Windows Server 2012 :
-            installation, configuration des rôles et fonctionnalités,
-            sécurisation de l'ensemble.
+            Déploiement et sécurisation d'un environnement Windows Server :
+            installation, configuration des rôles (AD DS, DNS, DHCP),
+            durcissement système.
           </p>
           <!-- Galerie de captures : déposer les .webp dans
                assets/shots/infra-server/. js/gallery.js sonde chaque
@@ -721,7 +758,7 @@
                   data-i18n-alts="shots.infra"
                   role="group"
                   aria-roledescription="galerie"
-                  aria-label="Captures d'écran  Infrastructure Windows Server"
+                  aria-label="Captures d'écran — Infrastructure Windows Server"
                   data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.infra.gallery">
             <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
@@ -763,7 +800,7 @@
                   data-i18n-alts="shots.stock"
                   role="group"
                   aria-roledescription="galerie"
-                  aria-label="Captures d'écran  Modélisation d'un Système de Stock"
+                  aria-label="Captures d'écran — Modélisation d'un Système de Stock"
                   data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.stock.gallery">
             <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
@@ -787,12 +824,12 @@
 
   <!-- ══════════════════ PARCOURS ══════════════════ -->
   <section class="stage" id="parcours">
-    <p class="stage-label"><span data-i18n="path.stage">stage: monitor  parcours</span> <span class="ok">✓</span></p>
+    <p class="stage-label"><span data-i18n="path.stage">stage: monitor — parcours</span> <span class="ok">✓</span></p>
     <h2 data-i18n="path.title">Parcours</h2>
     <div class="xp">
 
       <div class="xp-item">
-        <div class="when" data-i18n="path.1.when">2021  2026</div>
+        <div class="when" data-i18n="path.1.when">2021 — 2026</div>
         <div>
           <h3>
             <span data-i18n="path.1.title">Licence Pro Développement et Administration d'Applications</span>
@@ -808,20 +845,27 @@
         </div>
       </div>
 
+      <!-- Diplômes d'abord, puis certifications et engagements.
+           L'attestation de drone était en deuxième position, juste après
+           la licence : c'est la place la plus lue du parcours, et elle
+           est sans rapport avec le poste visé. Les clés i18n gardent
+           leur numérotation d'origine (path.2 = drone) — la renuméroter
+           pour coller à l'ordre d'affichage ferait diverger deux
+           fichiers de traduction pour un gain nul. -->
+      <div class="xp-item">
+        <div class="when" data-i18n="path.3.when">2021</div>
+        <div>
+          <h3 data-i18n="path.3.title">Baccalauréat Scientifique (Série S2)</h3>
+          <span class="org" data-i18n="path.3.org">Sénégal</span>
+        </div>
+      </div>
+
       <div class="xp-item">
         <div class="when" data-i18n="path.2.when">2026</div>
         <div>
           <h3 data-i18n="path.2.title">Attestation de Pilotage de Drone</h3>
           <span class="org" data-i18n="path.2.org">Formation certifiante</span>
           <p data-i18n="path.2.text">Techniques de vol, réglementation, systèmes embarqués et collecte de données aériennes.</p>
-        </div>
-      </div>
-
-      <div class="xp-item">
-        <div class="when" data-i18n="path.3.when">2021</div>
-        <div>
-          <h3 data-i18n="path.3.title">Baccalauréat Scientifique (Série S2)</h3>
-          <span class="org" data-i18n="path.3.org">Sénégal</span>
         </div>
       </div>
 
@@ -845,7 +889,7 @@
         <h2 data-i18n="contact.title">Un projet à développer, déployer ou administrer&nbsp;?</h2>
         <p data-i18n="contact.lede">
           Disponible pour un stage ou un premier emploi. Basé à Bambey,
-          Sénégal  mobile et opérationnel à distance.
+          Sénégal — mobile et opérationnel à distance.
         </p>
 
         <!-- réseaux & messageries : un clic = une conversation ouverte -->
@@ -871,7 +915,7 @@
             </span>
             <span class="social-txt">
               <span class="social-name">LinkedIn</span>
-              <span class="social-sub">El Hadji Diatta</span>
+              <span class="social-sub">Elhadji Diatta</span>
             </span>
           </a>
 
@@ -925,7 +969,7 @@
 
         <ul class="contact-list">
           <li><span class="lbl" data-i18n="contact.list.phone">téléphone:</span><a href="tel:+221773994182">+221 77 399 41 82</a></li>
-          <li><span class="lbl" data-i18n="contact.list.location">localisation:</span><span class="val" data-i18n="contact.list.location.value">Bambey, Sénégal  ouvert au distanciel</span></li>
+          <li><span class="lbl" data-i18n="contact.list.location">localisation:</span><span class="val" data-i18n="contact.list.location.value">Bambey, Sénégal — ouvert au distanciel</span></li>
           <li><span class="lbl" data-i18n="contact.list.response">réponse:</span><span class="val" data-i18n="contact.list.response.value">sous 24 h</span></li>
         </ul>
       </div>
@@ -982,7 +1026,7 @@
 
         <p class="form-status" role="status" aria-live="polite"></p>
         <p class="form-note" data-i18n="form.note">
-          Vos coordonnées ne servent qu'à vous répondre  aucun stockage, aucun partage.
+          Vos coordonnées ne servent qu'à vous répondre — aucun stockage, aucun partage.
         </p>
       </form>
     </div>
@@ -994,7 +1038,7 @@
   <span data-i18n="footer.credit">© 2026 Elhadji Ba Diaby Diatta</span> &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; <span data-i18n="footer.handmade">conçu et déployé à la main</span>
 </footer>
 
-<!-- GSAP + ScrollTrigger (hébergés en local, v3.15  offline-proof, plus de dépendance CDN) -->
+<!-- GSAP + ScrollTrigger (hébergés en local, v3.15 — offline-proof, plus de dépendance CDN) -->
 <script src="js/vendor/gsap.min.js" defer></script>
 <script src="js/vendor/ScrollTrigger.min.js" defer></script>
 

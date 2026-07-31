@@ -17,6 +17,7 @@
   "nav.projects": "projets",
   "nav.path": "parcours",
   "nav.contact": "contact",
+  "nav.skip": "Aller au contenu",
 
   "lang.toggle.text": "EN",
   "lang.toggle.label": "Switch to English",
@@ -43,21 +44,18 @@
   "hero.manifest.role.value": "développeur full stack · admin systèmes",
   "hero.manifest.diploma": "diplôme:",
   "hero.manifest.diploma.value": "licence pro DAA —",
-  "hero.manifest.diploma.state": "validée",
+  "hero.manifest.diploma.state": "obtenu",
   "hero.manifest.goal": "objectif:",
   "hero.manifest.goal.value": "ingénieur devops",
   "hero.manifest.location": "localisation:",
   "hero.manifest.location.value": "Bambey, Sénégal",
-  "hero.manifest.email": "email:",
-  "hero.manifest.availability": "disponibilité:",
 
   "hero.photo.aria": "Photo de profil",
   "hero.photo.alt": "Photo de profil d'Elhadji Ba Diaby Diatta, portrait utilisé dans le hero du portfolio",
-  "hero.avatar.aria": "Statut du fichier avatar",
 
   "about.stage": "stage: build — à-propos",
   "about.title": "Du code qui tourne, pas seulement du code qui compile.",
-  "about.p1": "<strong>Diplômé d'une Licence Professionnelle</strong> Développement et Administration d'Applications à l'Université Alioune Diop de Bambey — formation validée en 2026 —, je couvre <strong>le cycle de vie logiciel complet</strong> : modélisation des données (Merise, SQL), développement (Java/Spring Boot, PHP/Laravel), et déploiement sur serveur (Linux, Windows Server).",
+  "about.p1": "<strong>Diplômé d'une Licence Professionnelle</strong> Développement et Administration d'Applications à l'Université Alioune Diop de Bambey — diplôme obtenu en 2026 —, je couvre <strong>le cycle de vie logiciel complet</strong> : modélisation des données (Merise, SQL), développement (Java/Spring Boot, PHP/Laravel), et déploiement sur serveur (Linux, Windows Server).",
   "about.p2": "<strong>Spring Boot et React, je les ai appris seul</strong>, hors programme : c'est avec cette stack que j'ai conçu et livré mon projet de mémoire, une plateforme de suivi de dossiers judiciaires. Apprendre une technologie parce qu'un projet l'exige, c'est ma façon de travailler.",
   "about.p3": "Ce qui me distingue : je ne fais pas que développer. J'installe, je configure et je sécurise les environnements sur lesquels mes applications tournent. Cette <strong>double casquette dev + ops</strong> est ma rampe de lancement naturelle vers le DevOps : CI/CD, conteneurisation, infrastructure as code.",
   "about.p4": "Disponible pour un stage ou un premier emploi au sein d'une équipe technique ambitieuse.",
@@ -80,12 +78,9 @@
   "skills.ops.title": "Systèmes & DevOps",
   "skills.ops.scope": "administration & automatisation",
   "skills.ops.aria": "Technologies : systèmes et devops",
-  "skills.alt.minio": "MinIO — stockage objet compatible S3",
-  "skills.alt.merise": "Merise et PowerAMC — modélisation de données",
-  "skills.alt.kubernetes": "Kubernetes (en apprentissage)",
-  "skills.alt.ansible": "Ansible (en apprentissage)",
   "skills.legend.mastered": "maîtrisé",
   "skills.legend.learning": "en apprentissage",
+  "skills.learning.sr": " (en apprentissage)",
 
   "projects.stage": "stage: deploy — projets",
   "projects.title": "Projets réalisés",
@@ -115,7 +110,7 @@
   "projects.insertion.gallery": "Captures d'écran — Application d'Insertion Professionnelle",
 
   "projects.infra.title": "Infrastructure Windows Server",
-  "projects.infra.text": "Déploiement complet d'un environnement Windows Server 2012 : installation, configuration des rôles et fonctionnalités, sécurisation de l'ensemble.",
+  "projects.infra.text": "Déploiement et sécurisation d'un environnement Windows Server : installation, configuration des rôles (AD DS, DNS, DHCP), durcissement système.",
   "projects.infra.impact": "→ Mon premier vrai projet ops : le socle de ma transition DevOps",
   "projects.infra.gallery": "Captures d'écran — Infrastructure Windows Server",
 
@@ -207,7 +202,6 @@
   "mailto.contact.named": "Contact depuis votre portfolio — {name}",
   "whatsapp.text": "Bonjour Elhadji, je vous contacte depuis votre portfolio.",
 
-  "footer.uptime": "● uptime",
   "footer.credit": "© 2026 Elhadji Ba Diaby Diatta",
   "footer.handmade": "conçu et déployé à la main"
 }
