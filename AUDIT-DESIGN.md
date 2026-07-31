@@ -1,8 +1,8 @@
-# AUDIT-DESIGN — portfolio Elhadji Diatta
+# AUDIT-DESIGN : portfolio Elhadji Diatta
 
 État du chantier de design et d'architecture front. Ce document tient le
 registre de ce qui a été fait, de ce qui reste, et **pourquoi** chaque
-arbitrage a été tranché dans ce sens — c'est la partie qui se perd le plus
+arbitrage a été tranché dans ce sens : c'est la partie qui se perd le plus
 vite et qui coûte le plus cher à retrouver.
 
 Dernière mise à jour : 31 juillet 2026.
@@ -19,14 +19,14 @@ Dernière mise à jour : 31 juillet 2026.
 
 ## Traité
 
-### Point 2 — Adresse canonique ✅
+### Point 2 : Adresse canonique ✅
 
 Le site ne déclarait aucune URL canonique. Ajout de `<link rel="canonical">`
 dans le `<head>`.
 
 **En attente d'une confirmation.** L'adresse retenue,
 `https://elhadji-diatta.vercel.app`, est celle que suggère `DEPLOIEMENT.md`
-§5 — elle n'a **pas** pu être vérifiée. Elle apparaît en quatre endroits
+§5 : elle n'a **pas** pu être vérifiée. Elle apparaît en quatre endroits
 (`canonical`, `og:url`, `og:image`, `twitter:image`), signalés par un bloc
 de commentaire en tête de `index.html` et par une case en tête de la
 checklist de `DEPLOIEMENT.md`.
@@ -35,7 +35,7 @@ checklist de `DEPLOIEMENT.md`.
 > explicitement à Google d'indexer une page qui n'existe pas. C'est le seul
 > point de tout ce chantier qui a une conséquence négative s'il est oublié.
 
-### Point 3 — Open Graph ✅
+### Point 3 : Open Graph ✅
 
 Le site ne portait aucune balise de partage : collé dans WhatsApp ou
 LinkedIn, il n'affichait qu'une URL nue. Ajout de la série complète
@@ -54,13 +54,13 @@ Deux choix à signaler :
   ferait bien meilleure impression sur LinkedIn.
 
 ⚠️ **`assets/elhadji.jpeg` est en réalité un PNG** (1254 × 1254, 2,2 Mo)
-portant une extension `.jpeg`. Les navigateurs s'en accommodent — le site
-s'affiche correctement — mais certains robots d'aperçu se fient au
+portant une extension `.jpeg`. Les navigateurs s'en accommodent (le site
+s'affiche correctement), mais certains robots d'aperçu se fient au
 `Content-Type`, que Vercel déduit de l'extension. Voir `DEPLOIEMENT.md`
 §3.4. Réenregistrer la photo en vrai JPEG la ferait au passage tomber de
 2,2 Mo à ~200 Ko, ce qui est le gain de performance le plus facile du site.
 
-### Point 1 — Les cartes projet promettaient des vidéos absentes ✅
+### Point 1 : Les cartes projet promettaient des vidéos absentes ✅
 
 Chaque carte affichait un bouton « Voir la démo » désactivé et un cadre
 « démo vidéo à venir ». Six emplacements vides, sur la section qui doit
@@ -70,25 +70,25 @@ Remplacé par des **galeries de captures** (fonctionnalité A) : cent fois
 plus légères qu'une vidéo, lisibles d'un coup d'œil, sans clic ni son.
 Détail d'implémentation plus bas.
 
-### Point 6 — `--line` trop faible pour porter une information ✅
+### Point 6 : `--line` trop faible pour porter une information ✅
 
 `--line` (`#cbe3e0`) ne fait que **1,28:1** sur `--bg`. C'est un bon filet
 de séparation, mais insuffisant dès qu'un trait ou une pastille *est* la
 seule porteuse d'une information.
 
-Deux tokens ajoutés plutôt qu'une modification de `--line` — le changer
+Deux tokens ajoutés plutôt qu'une modification de `--line` : le changer
 globalement aurait assombri tous les filets décoratifs du site, ce qui
 n'est pas le problème signalé :
 
 | Token | Valeur | Contraste | Usage |
 |---|---|---|---|
-| `--line` | `#cbe3e0` | 1,28:1 | filets décoratifs — inchangé |
+| `--line` | `#cbe3e0` | 1,28:1 | filets décoratifs, inchangé |
 | `--line-strong` | `#a9cfca` | 1,66:1 | contours de commandes (flèches de galerie) |
 | `--dot-idle` | `#6d9694` | **3,22:1** | pastille de galerie inactive |
 
 > **Écart avec le cahier des charges, assumé.** Celui-ci demandait
 > `#a9cfca` pour la pastille inactive. Mesuré sur le verre de
-> `.gallery-dots`, `#a9cfca` ne monte qu'à **1,66:1** — mieux que 1,28,
+> `.gallery-dots`, `#a9cfca` ne monte qu'à **1,66:1**, mieux que 1,28,
 > mais toujours sous les **3:1** qu'exige WCAG 1.4.11 pour un composant
 > d'interface, et donc sous la barre que fixe la justification même du
 > point 6. `#a9cfca` a été conservé pour les contours de flèches (où le
@@ -97,7 +97,7 @@ n'est pas le problème signalé :
 > cas où rien ne double l'information. Valeurs sombres correspondantes :
 > `--d-line-strong: #4f7481`, `--d-dot-idle: #5e8794` (3,41:1).
 
-### Point 12 — `portfolio.html` divergeait de `index.html` ✅
+### Point 12 : `portfolio.html` divergeait de `index.html` ✅
 
 L'ancienne version tout-en-un a été supprimée au commit `e011dd3`. Le
 paragraphe de `DEPLOIEMENT.md` qui expliquait comment s'en débarrasser est
@@ -163,7 +163,7 @@ composants : on s'arrête sur une capture, elle s'échappe.
 
 ### Reste à faire
 
-**Les fichiers `.webp` n'ont pas été produits** — ce sont des captures des
+**Les fichiers `.webp` n'ont pas été produits** : ce sont des captures des
 applications réelles d'Elhadji, que seul lui peut réaliser. L'arborescence
 `assets/shots/<projet>/` est en place avec un `README.md` détaillant format
 et marche à suivre. En attendant, les six cartes affichent proprement
@@ -188,7 +188,7 @@ ne suivant plus jamais son système.
 
 Le bloc sombre vivait dans un `@media (prefers-color-scheme: dark)`, donc
 impossible à surcharger par un attribut. Le thème sombre doit être
-atteignable par deux voies — choix manuel et préférence système — ce que
+atteignable par deux voies (choix manuel et préférence système), ce que
 CSS ne sait pas exprimer sans dupliquer.
 
 **Ce qui est dupliqué : la liste des branchements. Pas les valeurs.** Les
@@ -207,7 +207,7 @@ Un contrôle `diff` figure en `DEPLOIEMENT.md` §3.5.
   Remplacé par deux tokens `--head-line` / `--head-veil`. Toute la
   connaissance du thème est redescendue dans `variables.css`.
 - **`.btn-mail`** (point de vigilance du cahier des charges) utilisait
-  `var(--accent-bright)`, qui change de valeur entre clair et sombre — le
+  `var(--accent-bright)`, qui change de valeur entre clair et sombre : le
   bouton changeait donc de teinte sur un panneau qui, lui, ne s'inverse
   jamais. Trois tokens `--on-dark-*` ont été introduits, définis une seule
   fois et **jamais** redéfinis dans un bloc sombre. Vérifié : fond
@@ -259,7 +259,7 @@ correct dès le premier rendu.
 
 Le paramètre d'URL prime volontairement : c'est ce qui permet d'envoyer un
 lien pré-traduit dans une candidature. À chaque bascule, l'URL est
-réécrite en `history.replaceState` — `replaceState` et non `pushState`, la
+réécrite en `history.replaceState` : `replaceState` et non `pushState`, la
 bascule n'étant pas une navigation.
 
 ### Le HTML reste la source française
@@ -267,7 +267,7 @@ bascule n'étant pas une navigation.
 Les textes français sont écrits en dur dans `index.html`. Les JSON ne sont
 qu'un dictionnaire et un repli : si le réseau tombe, le site reste
 intégralement lisible en français. En français, **aucune requête n'est
-faite** — on ne paie le dictionnaire que si le visiteur arrive en anglais
+faite** : on ne paie le dictionnaire que si le visiteur arrive en anglais
 ou bascule.
 
 ### Attributs reconnus
@@ -275,7 +275,7 @@ ou bascule.
 | Attribut | Effet |
 |---|---|
 | `data-i18n` | `textContent` |
-| `data-i18n-html` | `innerHTML` — réservé aux chaînes contenant du balisage |
+| `data-i18n-html` | `innerHTML`, réservé aux chaînes contenant du balisage |
 | `data-i18n-attr="placeholder:clé,…"` | un ou plusieurs attributs |
 | `data-i18n-query="subject:clé,…"` | query string d'un `href` (`mailto:`, `wa.me`) |
 | `data-i18n-alts="shots.projet"` | légendes des captures d'une galerie |
@@ -318,7 +318,7 @@ adaptations retenues :
 
 ⚠️ **Le faux ami « stage ».** Le site emploie le mot dans deux sens : étape
 de pipeline (`stage: build`), qui reste `stage`, et période en entreprise,
-qui devient `internship`. Les clés JSON ne les mélangent pas — vérifié.
+qui devient `internship`. Les clés JSON ne les mélangent pas, vérifié.
 
 ---
 
@@ -326,7 +326,7 @@ qui devient `internship`. Les clés JSON ne les mélangent pas — vérifié.
 
 Testé sous Firefox headless piloté en WebDriver, sur serveur local.
 
-**Galeries** — 6 figures montées · défilement automatique à 4,5 s confirmé
+**Galeries** : 6 figures montées · défilement automatique à 4,5 s confirmé
 sur deux cycles · pause effective onglet en arrière-plan · **l'automatique
 ne reprend pas** après clic sur une flèche · ← → fonctionnels · pastille
 cliquable · galerie à une seule capture sans flèche ni pastille · galerie
@@ -334,13 +334,13 @@ sans capture conservant son repli · en `prefers-reduced-motion` aucun
 défilement automatique mais navigation manuelle intacte (`transition-duration`
 mesurée à `0s`).
 
-**Thème** — cycle `auto → clair → sombre → auto` confirmé ·
+**Thème** : cycle `auto → clair → sombre → auto` confirmé ·
 `localStorage` écrit puis effacé au retour en `auto` · sur un OS en sombre,
 « auto » rend bien un fond `#0f1f2b` et le choix « clair » l'emporte ·
 `theme-color` suit les trois états · les deux blocs sombres sont identiques
 (21 branchements, `diff` vide) · `.btn-mail` stable dans les trois états.
 
-**Langues** — `?lang=en` et `?lang=fr` corrects dès le premier rendu ·
+**Langues** : `?lang=en` et `?lang=fr` corrects dès le premier rendu ·
 `<html lang>` suit · bascule au clic dans les deux sens · URL réécrite ·
 `og:locale` suit · les quatre `mailto:`/`wa.me` encodés une seule fois
 (aucun `%25`) · formulaire soumis vide en anglais : les trois erreurs et la
@@ -353,9 +353,9 @@ clés : 187 / 187.
 
 | Sujet | Qui | Détail |
 |---|---|---|
-| Confirmer l'adresse publique | Elhadji | 4 occurrences dans `index.html` — voir point 2 |
+| Confirmer l'adresse publique | Elhadji | 4 occurrences dans `index.html`, voir point 2 |
 | Produire les captures `.webp` | Elhadji | `assets/shots/README.md` |
 | Produire le CV anglais | Elhadji | `assets/cv-elhadji-diatta-en.pdf` |
 | Réenregistrer la photo en vrai JPEG | Elhadji | 2,2 Mo → ~200 Ko, voir point 3 |
-| Carte d'aperçu 1200 × 630 | — | `DEPLOIEMENT.md` §3.4, facultatif |
-| Voie 3 (page `/en/` générée) | — | seulement si le référencement EN devient un besoin |
+| Carte d'aperçu 1200 × 630 | - | `DEPLOIEMENT.md` §3.4, facultatif |
+| Voie 3 (page `/en/` générée) | - | seulement si le référencement EN devient un besoin |

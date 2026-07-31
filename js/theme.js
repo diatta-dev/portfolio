@@ -1,5 +1,5 @@
 /* ============================================================
-   THEME.JS — sélecteur de thème de la barre de statut.
+   THEME.JS : sélecteur de thème de la barre de statut.
 
    Trois états cycliques : auto → clair → sombre → auto.
 
@@ -11,7 +11,7 @@
 
    Ce fichier ne gère QUE l'interaction. L'état initial est déjà
    posé par le script inline du <head> de index.html, avant le
-   premier rendu — sans lui, un visiteur en thème sombre verrait
+   premier rendu : sans lui, un visiteur en thème sombre verrait
    le thème clair clignoter quelques dizaines de millisecondes.
    C'est aussi pour ça que ce fichier peut être chargé en defer
    comme les autres.
@@ -113,7 +113,7 @@
   });
 
   /* En « auto », un changement de thème système se répercute en
-     direct — sans rechargement. Le CSS bascule tout seul (la règle
+     direct, sans rechargement. Le CSS bascule tout seul (la règle
      @media), il ne reste que la barre d'adresse et le libellé. */
   const onSystemChange = () => { if (current() === "auto") paint("auto"); };
   if (typeof media.addEventListener === "function") {

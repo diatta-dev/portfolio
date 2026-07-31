@@ -1,5 +1,5 @@
 /* ============================================================
-   MEDIA.JS — téléchargement du CV.
+   MEDIA.JS : téléchargement du CV.
 
    Ce fichier gérait aussi les vidéos de démonstration des projets.
    Elles ont été remplacées par des galeries de captures : voir
@@ -20,7 +20,7 @@
    française plutôt que de neutraliser le bouton : un CV en
    français vaut infiniment mieux que pas de CV du tout. En
    revanche, servir un CV français derrière une interface anglaise
-   sans l'avoir cherché serait pire que ne pas traduire — d'où la
+   sans l'avoir cherché serait pire que ne pas traduire, d'où la
    tentative dans l'ordre.
    ============================================================ */
 

@@ -1,18 +1,18 @@
 /* ============================================================
-   CONTACT-FORM.JS — validation et envoi du formulaire de contact.
+   CONTACT-FORM.JS : validation et envoi du formulaire de contact.
 
    Le site est statique : il n'y a pas de serveur pour recevoir le
    message. L'envoi passe donc par Web3Forms (une requête POST vers
    leur API, qui relaie le message vers la boîte mail). Formspree
    fonctionne pareil : il suffit de changer data-endpoint dans
-   index.html (https://formspree.io/f/VOTRE_ID) — la clé d'accès
+   index.html (https://formspree.io/f/VOTRE_ID) : la clé d'accès
    devient alors inutile et le reste du code ne bouge pas.
 
    Configuration : voir les attributs data-* sur <form id="contact-form">
    dans index.html. Tant que data-access-key vaut la valeur d'exemple,
    le formulaire n'est pas mort pour autant : il bascule sur le client
    mail du visiteur avec le message déjà rempli. Même chose si le
-   réseau ou l'API tombe — un formulaire de contact ne doit jamais
+   réseau ou l'API tombe : un formulaire de contact ne doit jamais
    être un cul-de-sac.
 
    ── Textes ──────────────────────────────────────────────────
@@ -122,7 +122,7 @@
   });
 
   /* ---------- état visuel de l'envoi ---------- */
-  let lastStatus = null; // { type, key, fr } — pour retraduire au vol
+  let lastStatus = null; // { type, key, fr } : pour retraduire au vol
 
   function setStatus(type, key, fr) {
     lastStatus = key ? { type, key, fr } : null;

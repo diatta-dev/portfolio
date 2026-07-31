@@ -1,12 +1,12 @@
 /* ============================================================
-   ANIMATIONS — keyframes CSS et structures qui rendent les
+   ANIMATIONS : keyframes CSS et structures qui rendent les
    animations JS possibles.
 
    Règle importante : ce fichier ne masque JAMAIS de contenu par
    défaut. Les états initiaux (opacity/translate avant l'entrée
    en scène) sont posés par js/animations.js via gsap.set(),
    uniquement si GSAP a bien chargé. Si le JS échoue, tout reste
-   visible — pas de page blanche. Voir js/animations.js.
+   visible, pas de page blanche. Voir js/animations.js.
    ============================================================ */
 
 /* pulse permanent du point "disponible" de la statusbar
@@ -17,7 +17,7 @@
 
 /* masque de révélation du titre du hero : le conteneur doit
    rester overflow:hidden dans tous les cas pour que la mise en
-   page ne saute pas, que le JS tourne ou non — le texte est
+   page ne saute pas, que le JS tourne ou non : le texte est
    visible dès le HTML, seul son décalage interne est animé */
 .hero h1 .line-mask{display:block;overflow:hidden}
 .hero h1 .line-inner{display:block}

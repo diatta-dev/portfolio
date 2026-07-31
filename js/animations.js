@@ -1,5 +1,5 @@
 /* ============================================================
-   ANIMATIONS.JS — toutes les animations GSAP / ScrollTrigger
+   ANIMATIONS.JS : toutes les animations GSAP / ScrollTrigger
    du portfolio.
 
    Exposé comme `window.PortfolioAnimations` (script classique,
@@ -8,7 +8,7 @@
 
    Politique de résilience : si GSAP ne charge pas (CDN bloqué,
    hors-ligne), `init()` s'arrête immédiatement et ne touche à
-   aucun style — tout le contenu reste visible tel que défini
+   aucun style : tout le contenu reste visible tel que défini
    par le CSS. Les états "avant animation" (opacity/translate)
    ne sont donc jamais posés en dur dans le CSS, uniquement ici,
    juste avant de lancer chaque timeline.
@@ -84,7 +84,7 @@ window.PortfolioAnimations = (() => {
      Tout est calé sur une seule ligne de lecture dans le viewport :
      le trait est rempli jusqu'à elle, et un nœud s'allume quand
      c'est lui qui la franchit. La barre arrive donc exactement sur
-     le point au moment où il s'allume, puis repart — au lieu de
+     le point au moment où il s'allume, puis repart, au lieu de
      commencer à progresser dès que la section pointait en bas de
      l'écran, bien avant d'atteindre le nœud.
 
@@ -123,7 +123,7 @@ window.PortfolioAnimations = (() => {
         onUpdate: paint
       });
 
-      // le nœud s'allume quand le trait l'atteint — ni avant, ni après
+      // le nœud s'allume quand le trait l'atteint, ni avant, ni après
       ScrollTrigger.create({
         trigger: stage,
         start: () => `top+=${nodeTop} ${READING_LINE}`,
@@ -167,13 +167,13 @@ window.PortfolioAnimations = (() => {
   }
 
   /* ============================================================
-     5. SKILLS — apparition en cascade des logos de technos
+     5. SKILLS : apparition en cascade des logos de technos
 
      Remplace le flottement permanent : chaque logo était animé par
      un tween GSAP récursif et infini, soit 28 tweens qui ne
      s'arrêtaient jamais tant que la section restait à l'écran.
      Coût CPU permanent (ventilateur, batterie) pour une décoration
-     qui, en prime, interdisait d'afficher les étiquettes — les
+     qui, en prime, interdisait d'afficher les étiquettes : les
      logos étant en position absolue dans une zone de hauteur fixe.
 
      La cascade est la même mécanique que revealStage(), mais posée
@@ -183,7 +183,7 @@ window.PortfolioAnimations = (() => {
      dernière carte avant qu'elle ne soit à l'écran.
 
      `toggleActions: play none none none` : la cascade se joue une
-     fois, puis les tweens sont terminés — plus rien ne tourne.
+     fois, puis les tweens sont terminés : plus rien ne tourne.
      ============================================================ */
   function initSkillsReveal() {
     gsap.utils.toArray(".skill-float").forEach((zone) => {

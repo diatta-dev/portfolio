@@ -1,5 +1,5 @@
 {
-  "_comment": "English. Must carry EXACTLY the same key set as fr.json — js/i18n.js reports any mismatch in the console. Note on 'stage': the site uses it in the pipeline sense (stage: build), which stays 'stage' in English, and in the work-placement sense, which becomes 'internship'. Never translate the second one as 'stage'.",
+  "_comment": "English. Must carry EXACTLY the same key set as fr.json: js/i18n.js reports any mismatch in the console. Note on 'stage': the site uses it in the pipeline sense (stage: build), which stays 'stage' in English, and in the work-placement sense, which becomes 'internship'. Never translate the second one as 'stage'.",
 
   "meta.title": "Elhadji Diatta | Full Stack Developer · Systems Admin · DevOps",
   "meta.description": "Portfolio of Elhadji Ba Diaby Diatta, full stack developer and systems administrator moving into DevOps engineering.",

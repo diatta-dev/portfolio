@@ -1,5 +1,5 @@
 /* ============================================================
-   UTILS.JS — les quelques fonctions partagées par les autres
+   UTILS.JS : les quelques fonctions partagées par les autres
    scripts. Pas de logique métier ici, pas d'effet de bord au
    chargement : ce fichier ne fait qu'exposer window.PortfolioUtils.
 
@@ -15,14 +15,14 @@
 
 (function initUtils() {
   /* La sonde HEAD n'est possible qu'en http(s). Ouvert en file://,
-     le navigateur refuse ces requêtes — on le sait à l'avance
+     le navigateur refuse ces requêtes : on le sait à l'avance
      plutôt que de collectionner des exceptions. */
   const canProbe = location.protocol === "http:" || location.protocol === "https:";
 
   /* Renvoie true si le fichier existe, false s'il manque, null si
      on n'a pas pu savoir (file://, réseau coupé, serveur qui refuse
      les HEAD). Le null est important : dans le doute, on n'enlève
-     rien au visiteur — c'est l'affichage qui se rattrapera (onerror
+     rien au visiteur : c'est l'affichage qui se rattrapera (onerror
      sur l'image, erreur de téléchargement sur le CV). */
   async function exists(url) {
     if (!canProbe) return null;

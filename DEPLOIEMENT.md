@@ -1,4 +1,4 @@
-# Mettre le portfolio en ligne — GitHub puis Vercel
+# Mettre le portfolio en ligne : GitHub puis Vercel
 
 Guide pas à pas, du dossier local jusqu'à l'adresse publique.
 Aucune étape ne demande de carte bancaire : GitHub et Vercel sont gratuits
@@ -10,7 +10,7 @@ pour ce type de site.
 
 ## 0. Avant de commencer
 
-Le site est **statique** (HTML, CSS, JS — pas de serveur, pas de base de
+Le site est **statique** (HTML, CSS, JS : pas de serveur, pas de base de
 données). C'est le cas le plus simple à déployer : Vercel se contente de
 servir les fichiers tels quels, sans rien compiler.
 
@@ -20,26 +20,26 @@ servir les fichiers tels quels, sans rien compiler.
 |---|---|---|
 | Un compte GitHub | à créer si besoin | <https://github.com/signup> |
 | Un compte Vercel | à créer avec « Continue with GitHub » | <https://vercel.com/signup> |
-| Git installé | ✅ déjà présent (version 2.43) | — |
+| Git installé | ✅ déjà présent (version 2.43) | - |
 
 ### Checklist des fichiers à finaliser
 
 Faites-la **avant** le premier envoi, ça évite de tout recommencer :
 
-- [ ] **Adresse publique** — remplacer les 4 occurrences de
+- [ ] **Adresse publique** : remplacer les 4 occurrences de
       `https://elhadji-diatta.vercel.app` dans `index.html` (balises
       `canonical`, `og:url`, `og:image`, `twitter:image`) par l'adresse
       réelle donnée par Vercel à l'étape §3.2. **C'est le seul point de
       cette liste qui a une conséquence négative s'il est oublié** : un
       `canonical` faux demande à Google d'indexer une page qui n'existe pas.
-- [ ] **Clé Web3Forms** — remplacer `VOTRE_CLE_WEB3FORMS` par votre vraie clé
+- [ ] **Clé Web3Forms** : remplacer `VOTRE_CLE_WEB3FORMS` par votre vraie clé
       dans `index.html` (attribut `data-access-key` du formulaire). Sans ça,
       le formulaire bascule sur le client mail du visiteur au lieu de vous
       envoyer le message.
-- [ ] **CV** — déposer le PDF en `assets/cv-elhadji-diatta.pdf`, et sa
+- [ ] **CV** : déposer le PDF en `assets/cv-elhadji-diatta.pdf`, et sa
       version anglaise en `assets/cv-elhadji-diatta-en.pdf`. Si l'anglaise
       manque, le site sert la française plutôt que de couper le bouton.
-- [ ] **Captures des projets** — déposer les `.webp` dans
+- [ ] **Captures des projets** : déposer les `.webp` dans
       `assets/shots/<projet>/`. Voir `assets/shots/README.md` pour le
       format et la marche à suivre.
 
@@ -102,7 +102,7 @@ git status
 git ls-files | head -30
 ```
 
-Vous devez y voir `index.html`, les dossiers `css/`, `js/`, `assets/` —
+Vous devez y voir `index.html`, les dossiers `css/`, `js/`, `assets/`,
 et **pas** `.claude/`.
 
 > `git ls-files` ne montrera pas `assets/videos/` s'il est vide : Git ne
@@ -120,7 +120,7 @@ site web.
 
 1. Allez sur <https://github.com/new>.
 2. **Repository name** : `portfolio`
-3. **Description** : `Portfolio — développeur full stack & administrateur systèmes`
+3. **Description** : `Portfolio, développeur full stack & administrateur systèmes`
 4. Cochez **Public** (nécessaire pour que Vercel y accède gratuitement, et
    c'est le but d'un portfolio).
 5. **Ne cochez rien d'autre** : pas de README, pas de .gitignore, pas de
@@ -226,7 +226,7 @@ Le jour où vous en créez une :
 > l'extension, donc `image/jpeg`) et refusent une image dont les octets ne
 > correspondent pas. Si l'aperçu ne s'affiche pas sur un réseau, c'est la
 > première chose à corriger : réenregistrez la photo en vrai JPEG, à
-> 1254 px de large et qualité 82 — vous passerez de 2,2 Mo à ~200 Ko, ce
+> 1254 px de large et qualité 82 : vous passerez de 2,2 Mo à ~200 Ko, ce
 > qui accélérera aussi nettement le premier affichage du site.
 
 ### 3.5 Contrôles réservés au développement
@@ -280,7 +280,7 @@ Les deux gestes d'entretien courants du site.
 1. Exportez vos captures en WebP, 1280 px de large, qualité 80
    (`cwebp -q 80 -resize 1280 0 capture.png -o 01.webp`).
 2. Déposez-les dans `assets/shots/<projet>/`, numérotées `01`, `02`, `03`…
-   — c'est cet ordre qui fait l'ordre de défilement.
+   C'est cet ordre qui fait l'ordre de défilement.
 3. Dans `index.html`, sur la `<figure class="project-gallery">` du projet,
    complétez `data-shots` (les chemins, séparés par des virgules) **et**
    `data-alts` (les descriptions françaises, séparées par des barres `|`,
@@ -294,7 +294,7 @@ une image vide pour un lecteur d'écran. Décrivez ce que la capture
 **montre**, pas ce qu'elle est.
 
 > Le nombre de captures est libre. Avec une seule, la galerie n'affiche ni
-> flèches ni pastilles — c'est voulu, des commandes qui ne commandent rien
+> flèches ni pastilles : c'est voulu, des commandes qui ne commandent rien
 > sont du bruit. Avec zéro, la carte garde le cadre « captures à venir ».
 
 ### Corriger ou ajouter une traduction

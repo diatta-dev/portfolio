@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://elhadji-diatta.vercel.app/assets/elhadji.jpeg">
 <meta property="og:image:alt" content="Portrait d'Elhadji Ba Diaby Diatta">
 <!-- dimensions réelles du fichier : 1254 × 1254 (carré). À corriger si
-     la photo est remplacée — un og:image:width faux fait réserver au
+     la photo est remplacée : un og:image:width faux fait réserver au
      réseau social une zone d'aperçu de la mauvaise forme. -->
 <meta property="og:image:width" content="1254">
 <meta property="og:image:height" content="1254">
@@ -57,7 +57,7 @@
 <meta name="twitter:image" content="https://elhadji-diatta.vercel.app/assets/elhadji.jpeg">
 
 <!-- ══════════════════════════════════════════════════════════════
-     ÉTAT INITIAL — thème et langue, posés AVANT tout rendu.
+     ÉTAT INITIAL : thème et langue, posés AVANT tout rendu.
 
      Ce script est volontairement inline et non différé : différé, il
      s'exécuterait après le premier rendu et le visiteur verrait le
@@ -116,7 +116,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
 <!-- ══════════════════════════════════════════════════════════════
-     POLICES — chargement non bloquant.
+     POLICES : chargement non bloquant.
 
      La feuille Google Fonts était un <link rel="stylesheet"> normal :
      le navigateur ne peignait donc rien tant qu'elle n'était pas
@@ -128,13 +128,13 @@
      avec les polices système, et `display=swap` fait la bascule sans
      texte invisible.
 
-     Le <noscript> couvre le cas — rare mais réel — d'un navigateur
+     Le <noscript> couvre le cas (rare mais réel) d'un navigateur
      sans JavaScript : `onload` n'y est pas exécuté et la feuille ne
      serait jamais appliquée.
 
      Graisses demandées : Archivo 500 a été retirée, aucune règle CSS
      ne l'utilise (les six usages de var(--display) sont en 700 ou
-     800). Ne rien retirer d'autre sans vérifier de la même façon —
+     800). Ne rien retirer d'autre sans vérifier de la même façon :
      une graisse absente n'échoue pas, elle est silencieusement
      remplacée par la plus proche, et le défaut ne se voit qu'à l'œil.
      ══════════════════════════════════════════════════════════════ -->
@@ -265,7 +265,7 @@
              métaphore du pipeline ne tient que si le marqueur encode
              une étape réellement franchie. Un fichier image ne « passe »
              rien. Les marqueurs « stage: … » des sections, eux, sont
-             conservés — ils structurent la lecture. -->
+             conservés : ils structurent la lecture. -->
       </aside>
     </div>
   </section>
@@ -849,7 +849,7 @@
            L'attestation de drone était en deuxième position, juste après
            la licence : c'est la place la plus lue du parcours, et elle
            est sans rapport avec le poste visé. Les clés i18n gardent
-           leur numérotation d'origine (path.2 = drone) — la renuméroter
+           leur numérotation d'origine (path.2 = drone) : la renuméroter
            pour coller à l'ordre d'affichage ferait diverger deux
            fichiers de traduction pour un gain nul. -->
       <div class="xp-item">
@@ -1038,7 +1038,7 @@
   <span data-i18n="footer.credit">© 2026 Elhadji Ba Diaby Diatta</span> &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; <span data-i18n="footer.handmade">conçu et déployé à la main</span>
 </footer>
 
-<!-- GSAP + ScrollTrigger (hébergés en local, v3.15 — offline-proof, plus de dépendance CDN) -->
+<!-- GSAP + ScrollTrigger (hébergés en local, v3.15, offline-proof, plus de dépendance CDN) -->
 <script src="js/vendor/gsap.min.js" defer></script>
 <script src="js/vendor/ScrollTrigger.min.js" defer></script>
 

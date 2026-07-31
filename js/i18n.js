@@ -1,5 +1,5 @@
 /* ============================================================
-   I18N.JS — bascule français / anglais.
+   I18N.JS : bascule français / anglais.
 
    ── L'arbitrage retenu ──────────────────────────────────────
    Bascule en JavaScript, une seule URL (« voie 1 » du cahier des
@@ -9,7 +9,7 @@
    C'est le bon compromis pour un portfolio de candidature : la
    quasi-totalité des visiteurs arrivent par un lien direct
    (candidature, LinkedIn, CV), pas par une recherche. Deux pages
-   statiques auraient reproduit le problème de portfolio.html —
+   statiques auraient reproduit le problème de portfolio.html :
    deux fichiers censés dire la même chose qui divergent en trois
    jours. Le jour où le référencement anglais compte vraiment, les
    traductions sont déjà dans i18n/*.json : générer une page /en/
@@ -27,7 +27,7 @@
      data-i18n-html="clé"                → innerHTML (rare : balisage)
      data-i18n-attr="placeholder:clé,…"  → un ou plusieurs attributs
      data-i18n-query="subject:clé,…"     → query string d'un href
-                                           (mailto:, wa.me — encodage
+                                           (mailto:, wa.me : encodage
                                            fait ici, une seule fois)
 
    data-i18n-html est réservé aux quelques chaînes contenant du
@@ -111,7 +111,7 @@
      ça une seconde fois, le visiteur recevrait « %2520 » dans son
      client mail. On repart donc toujours de la base (avant le « ? »)
      mémorisée au premier passage, et les valeurs viennent du JSON
-     en clair — un seul encodeURIComponent, jamais deux. */
+     en clair : un seul encodeURIComponent, jamais deux. */
   function applyQuery(el) {
     const spec = el.dataset.i18nQuery;
     const href = el.getAttribute("href");
@@ -135,7 +135,7 @@
 
   /* Les balises du <head> ne portent pas d'attribut data-* : elles
      sont listées ici. og:url et le canonical sont volontairement
-     absents — il n'existe qu'une URL (voir l'en-tête de ce fichier),
+     absents : il n'existe qu'une URL (voir l'en-tête de ce fichier),
      la réécrire en ?lang=en demanderait à Google d'indexer une page
      qui n'a pas d'existence propre. */
   const HEAD = [
@@ -181,7 +181,7 @@
 
         /* L'URL suit la langue : le lien devient partageable tel
            quel dans une candidature, ce qui est tout l'intérêt du
-           paramètre. replaceState et non pushState — la bascule
+           paramètre. replaceState et non pushState : la bascule
            n'est pas une navigation, elle n'a rien à faire dans
            l'historique du bouton « retour ». */
         if (opts.url !== false) {
@@ -213,7 +213,7 @@
   }
 
   /* Le bouton affiche la langue vers laquelle on VA, pas la langue
-     courante — c'est la convention la moins ambiguë. Il porte aussi
+     courante : c'est la convention la moins ambiguë. Il porte aussi
      l'attribut lang correspondant, pour qu'un lecteur d'écran
      prononce « EN » en anglais et non à la française. */
   document.addEventListener("i18n:changed", () => {

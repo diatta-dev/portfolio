@@ -25,7 +25,7 @@ assets/shots/
 
 Le cadre de la galerie est en 16/10 et les images sont en `object-fit:cover`.
 Une capture d'un autre ratio ne cassera rien, elle sera simplement recadrée
-au centre — mais viser 1280 × 800 évite les mauvaises surprises.
+au centre, mais viser 1280 × 800 évite les mauvaises surprises.
 
 Convertir depuis un PNG :
 
@@ -44,9 +44,9 @@ Vous pouvez donc déposer les captures au fil de l'eau, une par une.
 
 Deux endroits à mettre à jour, **dans le même ordre** :
 
-1. `index.html` — les attributs `data-shots` (chemins) et `data-alts`
+1. `index.html` : les attributs `data-shots` (chemins) et `data-alts`
    (descriptions françaises) de la `<figure class="project-gallery">` du projet.
-2. `i18n/fr.json` et `i18n/en.json` — les clés `shots.<projet>.<n>`.
+2. `i18n/fr.json` et `i18n/en.json` : les clés `shots.<projet>.<n>`.
 
 La description alternative n'est pas facultative : une capture sans `alt` est
 une image vide pour un lecteur d'écran. Décrivez ce que la capture **montre**

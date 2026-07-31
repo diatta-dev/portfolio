@@ -1,5 +1,5 @@
 /* ============================================================
-   COMPONENTS — éléments réutilisables : boutons, avatar,
+   COMPONENTS · éléments réutilisables : boutons, avatar,
    manifeste du hero, trajectoire, cartes de compétences,
    cartes projets, expériences, carte de contact, footer.
    ============================================================ */
@@ -40,7 +40,7 @@
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glass-inset),0 8px 22px -10px var(--halo-accent)}
 
 /* Troisième action du hero : un lien, pas un bouton. Trois boutons de
-   même taille se neutralisent — le poids visuel doit rester sur les
+   même taille se neutralisent : le poids visuel doit rester sur les
    deux premiers. align-self:center le cale sur la ligne de base des
    boutons, qui sont plus hauts que lui. */
 .hero-actions .link-inline{
@@ -55,7 +55,7 @@
 /* Bouton d'appel à l'action posé sur le panneau sombre du contact.
    Le panneau ne s'inverse jamais (voir .contact-card) : ce bouton ne
    doit donc PAS suivre le thème. Il utilisait var(--accent-bright),
-   qui change de valeur entre clair et sombre — le bouton changeait
+   qui change de valeur entre clair et sombre : le bouton changeait
    donc de teinte sur un fond, lui, resté identique. Les trois
    couleurs viennent maintenant de tokens dédiés « on-dark », définis
    une seule fois et jamais redéfinis par un thème. */
@@ -74,7 +74,7 @@
    Même matière que le reste de la barre : mono, verre, pastille.
    Le thème affiche un mot en clair (auto / clair / sombre) en plus de
    son pictogramme : trois icônes soleil/lune/auto ne lèvent pas
-   l'ambiguïté sur l'état courant, un mot de cinq lettres si — et la
+   l'ambiguïté sur l'état courant, un mot de cinq lettres si, et la
    barre est déjà en IBM Plex Mono, il y est chez lui. */
 .lang-toggle,
 .theme-toggle{
@@ -221,7 +221,7 @@
 .tag.learning{background:var(--accent-soft);border-color:var(--accent-bright);color:var(--accent)}
 
 /* ============================================================
-   SKILLS — grille des logos de technos.
+   SKILLS : grille des logos de technos.
 
    Grille statique, sans mouvement permanent. Les logos flottaient
    auparavant en continu (un tween GSAP récursif infini par logo,
@@ -258,7 +258,7 @@
      La pastille délimite un élément d'interface, elle prend donc le
      ton soutenu. Elle reste sous les 3:1 de WCAG 1.4.11, ce qui est
      admis ici : le contour ne porte aucune information seul, c'est
-     l'icône qu'il entoure — et désormais son étiquette — qui la
+     l'icône qu'il entoure (et désormais son étiquette) qui la
      portent. */
   border:1px solid var(--line-strong);
   box-shadow:var(--glass-inset),0 6px 18px -10px rgba(15,31,43,.4);
@@ -267,7 +267,7 @@
 .logo-img{width:44px;height:44px;display:block;color:var(--accent)}
 
 /* « en apprentissage » : halo teal de la palette. L'ambre demandé
-   n'existe plus dans la charte — voir css/variables.css. */
+   n'existe plus dans la charte : voir css/variables.css. */
 .logo.is-learning .logo-inner{
   border-color:var(--accent-bright);
   box-shadow:var(--glass-inset),
@@ -278,7 +278,7 @@
 /* étiquette monospace sous le logo : TOUJOURS visible.
 
    Elle n'apparaissait auparavant qu'au survol. Conséquence : au
-   repos la section n'était qu'un nuage de 28 icônes anonymes —
+   repos la section n'était qu'un nuage de 28 icônes anonymes :
    illisible pour un recruteur non technique, inaccessible au doigt
    (pas de survol sur mobile), et invisible au Ctrl+F de la page.
    Le survol ne sert donc plus qu'à agrandir la pastille. */
@@ -307,10 +307,10 @@
 .legend .sw.a{background:var(--glass-bg-strong);border-color:var(--accent-bright);box-shadow:0 0 0 2px var(--accent-soft)}
 .legend .sw.b{background:var(--glass-bg-strong)}
 
-/* ---------- projets — cartes « manifeste de déploiement » ----------
+/* ---------- projets : cartes « manifeste de déploiement » ----------
    Les deux premières cartes (mémoire, Thiès) sont mises en avant sur
-   toute la largeur. C'est d'abord une hiérarchie — ce sont les projets
-   les plus lourds — et accessoirement ce qui garde la grille pleine :
+   toute la largeur. C'est d'abord une hiérarchie (ce sont les projets
+   les plus lourds) et accessoirement ce qui garde la grille pleine :
    6 projets dont 2 en pleine largeur = 4 cartes, soit deux rangées
    complètes, sans orpheline en bas. Toute carte ajoutée ou retirée
    ici doit préserver un nombre PAIR de cartes non mises en avant. */
@@ -330,7 +330,7 @@
   display:flex;flex-direction:column;
   box-shadow:var(--glass-shadow),var(--glass-inset);
   transition:border-color .25s ease, box-shadow .25s ease;
-  /* transform piloté par GSAP au survol (tilt/lift) — voir animations.css
+  /* transform piloté par GSAP au survol (tilt/lift) : voir animations.css
      pour le will-change et js/animations.js pour la logique */
 }
 /* voile d'accent qui s'allume au survol : en ::before sous le contenu,
@@ -364,7 +364,7 @@
 /* Le filet et le voile blanc de l'en-tête sont pensés pour du verre
    clair : --glass-border et le dégradé sont blancs, donc discrets sur
    fond clair. Sur fond sombre ils ressortaient et coupaient la carte
-   en deux — d'où deux tokens qui s'annulent dans le thème sombre.
+   en deux, d'où deux tokens qui s'annulent dans le thème sombre.
    C'était auparavant un @media (prefers-color-scheme: dark) posé ici ;
    il ne pouvait pas suivre un choix manuel de thème. Toute la
    connaissance du thème vit désormais dans variables.css. */
@@ -386,7 +386,7 @@
 .project:hover h3{color:var(--accent)}
 .project p{font-size:15px;color:var(--ink-soft);flex:1}
 /* l'apport du projet : encart teinté uniforme. Pas de bordure
-   colorée sur la tranche gauche — le motif « callout à filet »
+   colorée sur la tranche gauche : le motif « callout à filet »
    n'est pas voulu ici. */
 .project .impact{
   font-family:var(--mono);font-size:12.5px;line-height:1.6;
@@ -411,7 +411,7 @@
 
    Le ratio 16/10 est porté par .gallery-viewport ET par l'état
    d'attente : la carte occupe la même hauteur dans les deux cas,
-   la grille ne saute donc jamais — ni au chargement, ni au
+   la grille ne saute donc jamais, ni au chargement, ni au
    changement d'image.
    ============================================================ */
 .project-gallery{
@@ -489,7 +489,7 @@
 .gallery-nav svg{width:18px;height:18px;display:block}
 .gallery-nav:hover{color:var(--accent);border-color:var(--accent-bright)}
 /* Sur souris uniquement : flèches atténuées, pleines au survol de la
-   carte. Sur tactile il n'y a pas de survol — elles y restent donc
+   carte. Sur tactile il n'y a pas de survol : elles y restent donc
    visibles en permanence, ce qui est le comportement voulu. */
 @media (hover:hover){
   .gallery-nav{opacity:.6}
@@ -730,7 +730,7 @@
   outline:2px solid var(--accent-bright);outline-offset:1px;
 }
 /* erreur : le rouge est la seule couleur hors charte du site, et
-   c'est délibéré — un message d'erreur en teal ne se lit pas comme
+   c'est délibéré : un message d'erreur en teal ne se lit pas comme
    une erreur. Il est toujours doublé d'un texte, jamais seul. */
 .contact-form input.is-invalid,
 .contact-form textarea.is-invalid{

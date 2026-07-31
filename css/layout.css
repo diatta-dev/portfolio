@@ -1,5 +1,5 @@
 /* ============================================================
-   LAYOUT — structure de page : barre de statut, conteneur,
+   LAYOUT · structure de page : barre de statut, conteneur,
    grille du hero, pipeline (colonne de nœuds) et l'intégralité
    des points de rupture responsive.
    Les styles visuels des composants réutilisables (boutons,
@@ -138,7 +138,7 @@
 .about-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:start}
 
 /* ============================================================
-   RESPONSIVE — tous les points de rupture du site.
+   RESPONSIVE : tous les points de rupture du site.
    Regroupés ici pour n'avoir qu'un seul endroit à auditer ;
    certaines règles ciblent des classes de components.css,
    ce qui est volontaire (voir mission "responsive").
@@ -189,7 +189,7 @@
     gap:4px;
   }
   .contact-list .lbl{margin-right:0}
-  /* réseaux : pastilles pleine largeur, empilées — cible tactile
+  /* réseaux : pastilles pleine largeur, empilées, cible tactile
      confortable et sous-titres jamais tronqués */
   .social{gap:8px}
   .social-link{width:100%}
@@ -228,7 +228,7 @@
   }
   .hero-media{width:min(100%,200px)}
   /* logos plus compacts sur très petit écran. L'item se resserre
-     avec la pastille pour garder 4 colonnes plutôt que 3 — sinon la
+     avec la pastille pour garder 4 colonnes plutôt que 3 : sinon la
      section des compétences s'étire sur deux écrans de haut. */
   .skill-float{gap:14px 10px}
   .logo{width:74px}

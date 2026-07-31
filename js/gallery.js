@@ -1,5 +1,5 @@
 /* ============================================================
-   GALLERY.JS — galeries de captures d'écran des cartes projet.
+   GALLERY.JS : galeries de captures d'écran des cartes projet.
 
    Remplace les anciennes vidéos de démonstration : des captures
    pèsent cent fois moins lourd, se lisent d'un coup d'œil, et ne
@@ -28,7 +28,7 @@
    touche ou l'écran, l'automatique s'arrête DÉFINITIVEMENT pour
    cette galerie. Il a pris la main, on la lui laisse : reprendre
    le défilement contre lui est le défaut classique de ces
-   composants — on regarde une capture, elle s'échappe.
+   composants : on regarde une capture, elle s'échappe.
 
    ── Pourquoi pas GSAP ───────────────────────────────────────
    La transition est en CSS (opacity + translateX, 400 ms). Le
@@ -47,8 +47,8 @@
   if (!utils) return; // utils.js absent : le repli HTML reste en place
 
   const DELAY = 4500;      // durée d'affichage d'une capture
-  const SWIPE_MIN = 40;    // px — en deçà, c'est un tap, pas un balayage
-  const SHIFT = 14;        // px — amplitude du glissement à l'entrée
+  const SWIPE_MIN = 40;    // px : en deçà, c'est un tap, pas un balayage
+  const SHIFT = 14;        // px : amplitude du glissement à l'entrée
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -263,8 +263,8 @@
       /* Balayage tactile. Les écouteurs sont passifs et on ne fait
          JAMAIS de preventDefault : bloquer le geste bloquerait aussi
          le défilement vertical de la page. On se contente de lire le
-         mouvement, et on l'ignore s'il est plus vertical qu'horizontal
-         — c'est que le visiteur voulait faire défiler la page. */
+         mouvement, et on l'ignore s'il est plus vertical qu'horizontal :
+         c'est que le visiteur voulait faire défiler la page. */
       let startX = 0;
       let startY = 0;
       figure.addEventListener("touchstart", (event) => {
@@ -345,7 +345,7 @@
 
     /* Chaque capture garde la trace de sa position D'ORIGINE : c'est
        elle qui la relie à sa description. data-alts et les clés i18n
-       sont numérotés sur la liste complète, pas sur les survivantes —
+       sont numérotés sur la liste complète, pas sur les survivantes :
        sans ça, une capture manquante décalerait toutes les suivantes
        et chaque image hériterait de la légende de sa voisine. */
     const shots = sources

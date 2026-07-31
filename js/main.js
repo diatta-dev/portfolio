@@ -1,5 +1,5 @@
 /* ============================================================
-   MAIN.JS — point d'entrée du site.
+   MAIN.JS : point d'entrée du site.
    Initialise le fallback de la photo de profil (résilience si
    la photo est absente ou invalide), puis démarre les animations
    définies dans animations.js.

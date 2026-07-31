@@ -1,15 +1,15 @@
 /* ============================================================
-   VARIABLES — tokens de design (source unique de vérité)
+   VARIABLES : tokens de design (source unique de vérité)
    Palette « teal / bleu-nuit », typos et échelles utilisées par
    tous les autres fichiers CSS.
    Ne rien styler ici : uniquement des custom properties.
 
    Palette de référence (5 couleurs) :
      #0f1f2b  encre bleu-nuit / fond sombre
-     #1f4d5a  teal profond — signal sur fond clair
-     #5ea3a3  teal moyen — signal sur fond sombre + décor
-     #d9f1ef  teinte douce — fonds de badges
-     #f4fbfa  blanc teinté — fond de page
+     #1f4d5a  teal profond, signal sur fond clair
+     #5ea3a3  teal moyen, signal sur fond sombre + décor
+     #d9f1ef  teinte douce, fonds de badges
+     #f4fbfa  blanc teinté, fond de page
    Les autres valeurs sont des dérivés (mélanges) de ces cinq
    couleurs, uniquement là où le contraste l'exige.
 
@@ -22,7 +22,7 @@
 
    Le thème sombre doit donc être atteignable par DEUX voies : le
    choix manuel et la préférence système. Une seule règle
-   @media (prefers-color-scheme: dark) ne suffit pas — elle n'est
+   @media (prefers-color-scheme: dark) ne suffit pas : elle n'est
    pas surchargeable par un attribut, ce qui rendait le thème
    sombre impossible à quitter manuellement.
 
@@ -40,7 +40,7 @@
    ============================================================ */
 
 :root{
-  /* ---------- 1. tokens CLAIRS — valeurs par défaut ---------- */
+  /* ---------- 1. tokens CLAIRS : valeurs par défaut ---------- */
 
   /* couleurs */
   --bg:        #f4fbfa;   /* fond de page */
@@ -52,7 +52,7 @@
   /* --line ne fait que 1,28:1 sur --bg. C'est volontaire pour un
      filet de séparation, mais insuffisant dès qu'un trait porte une
      INFORMATION. D'où ce second ton, plus soutenu (1,66:1), pour les
-     contours de commandes — le contour d'un bouton est un renfort, ce
+     contours de commandes : le contour d'un bouton est un renfort, ce
      qui le rend identifiable étant son icône. */
   --line-strong: #a9cfca;
 
@@ -70,7 +70,7 @@
   --accent-bright: #5ea3a3;
   --accent-soft:   #d9f1ef;
 
-  /* statut « ok » — mélange des deux teals, lisible sur --bg */
+  /* statut « ok » : mélange des deux teals, lisible sur --bg */
   --ok:        #3e787e;
 
   /* en-tête des cartes projet : filet et voile blanc pensés pour du
@@ -109,12 +109,12 @@
      s'inversent JAMAIS : ils sont sombres dans les trois états.
      Les couleurs qu'on y pose ne doivent donc pas suivre le thème.
      Ces trois-là sont définis une fois et ne sont redéfinis dans
-     AUCUN bloc sombre — c'est volontaire, ne pas les y ajouter. */
+     AUCUN bloc sombre : c'est volontaire, ne pas les y ajouter. */
   --on-dark-cta:       #5ea3a3;
   --on-dark-cta-hover: #d9f1ef;
   --on-dark-cta-ink:   #0f1f2b;
 
-  /* ---------- 3. palette SOMBRE — définie, pas appliquée ----------
+  /* ---------- 3. palette SOMBRE : définie, pas appliquée ----------
      Ces --d-* ne sont utilisés nulle part tels quels : ils sont
      branchés sur les tokens réels par les deux règles plus bas.
      C'est ici, et seulement ici, qu'on modifie une couleur sombre. */
@@ -145,7 +145,7 @@
 }
 
 /* ============================================================
-   BLOC SOMBRE 1/2 — choix manuel « sombre »
+   BLOC SOMBRE 1/2 : choix manuel « sombre »
    ⚠️ doit rester identique au bloc 2/2 ci-dessous.
    ============================================================ */
 :root[data-theme="dark"]{
@@ -176,12 +176,12 @@
 }
 
 /* ============================================================
-   BLOC SOMBRE 2/2 — état « auto » sur un OS en thème sombre.
+   BLOC SOMBRE 2/2 : état « auto » sur un OS en thème sombre.
 
    Le sélecteur exclut explicitement les deux valeurs manuelles :
    en « auto » l'attribut est absent, donc les deux :not() passent.
    Si le visiteur a choisi « clair », la règle ne s'applique pas et
-   il garde le thème clair même sur un OS sombre — c'est tout
+   il garde le thème clair même sur un OS sombre : c'est tout
    l'intérêt d'avoir gardé trois états plutôt que deux.
 
    ⚠️ doit rester identique au bloc 1/2 ci-dessus.
