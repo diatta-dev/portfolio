@@ -158,7 +158,10 @@
 }
 @media (max-width:680px){
   .wrap{padding:0 16px}
-  .statusbar-inner{padding:10px 16px;gap:12px}
+  /* la barre est sur deux lignes dans cette tranche : ce qu'on gagne
+     en hauteur de cible tactile, on le reprend sur les marges, pour
+     ne pas rendre le bandeau collant plus encombrant qu'avant */
+  .statusbar-inner{padding:6px 16px;gap:8px}
   .stage{padding-left:40px;padding-top:64px;padding-bottom:64px}
   .stage::before{left:9px}
   .stage::after{left:2px;top:80px}
@@ -173,8 +176,28 @@
   .statusbar nav{width:100%;margin-left:0;padding-bottom:2px;order:3}
   .statusbar .sys{order:1}
   .js .statusbar-controls{order:2;margin-left:auto}
-  /* cibles tactiles plus confortables au doigt */
+  /* ---- cibles tactiles ----
+     WCAG 2.5.8 (AA) impose 24 x 24 px, WCAG 2.5.5 (AAA) recommande
+     44 x 44. Les liens de navigation faisaient 19,8 px de haut :
+     sous le seuil AA. Ils passent a 36 px ici et a 44 px sous
+     420 px, ou la barre tient sur une ligne et peut se le permettre.
+     Monter tout de suite a 44 px dans cette tranche ajouterait 28 px
+     a une barre qui est deja sur deux lignes. */
+  .statusbar nav a{
+    min-height:36px;
+    display:inline-flex;align-items:center;
+  }
   .lang-toggle,.theme-toggle{min-height:40px}
+  /* liens de contact : 25 px de haut avant correction */
+  .contact-list a,.social-link{min-height:44px}
+  .contact-list a{display:inline-flex;align-items:center}
+  .social-link{padding-top:0;padding-bottom:0}
+  /* 23,1 px de haut, et pas d'exception « lien dans une phrase » :
+     c'est une action isolee, posee a cote de deux boutons */
+  .hero-actions .link-inline{
+    min-height:44px;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
   .hero{padding-top:56px}
   .hero-grid{grid-template-columns:1fr;gap:28px}
   .hero-media{justify-self:start;order:-1;width:min(100%,240px)}
@@ -240,7 +263,52 @@
   .skill-card{padding:20px 16px}
 }
 @media (max-width:420px){
-  .statusbar-inner{padding:10px 12px}
+  /* ---- barre de statut sur une seule ligne ----
+     A 320 px elle occupait 127 px de haut, soit un cinquieme de
+     l'ecran, en trois lignes : statut, puis selecteurs, puis
+     navigation. Le badge de statut cede sa place ; navigation et
+     selecteurs tiennent alors sur une ligne unique, avec des cibles
+     de 44 px. Mesure a 320 px : 127 px -> 57 px.
+
+     Le badge est retire de l'affichage mais PAS de l'arbre
+     d'accessibilite : « statut: disponible » est une information
+     utile, et un lecteur d'ecran n'a pas de probleme de place.
+     C'est la technique de .sr-only (components.css), recopiee ici
+     plutot que posee en classe dans le HTML, qui doit rester le
+     meme document a toutes les largeurs. */
+  .statusbar .sys{
+    position:absolute;
+    width:1px;height:1px;
+    padding:0;margin:-1px;
+    overflow:hidden;
+    clip:rect(0 0 0 0);
+    clip-path:inset(50%);
+    white-space:nowrap;
+  }
+  .statusbar-inner{
+    padding:6px 12px;gap:8px;
+    flex-wrap:nowrap;
+  }
+  /* la navigation prend la place restante et defile ; les selecteurs
+     gardent leur largeur propre */
+  .statusbar nav{
+    order:1;
+    width:auto;flex:1 1 auto;min-width:0;
+    margin-left:0;padding-bottom:0;
+    gap:6px;
+  }
+  .statusbar nav a{min-height:44px;padding:0 6px}
+  .js .statusbar-controls{order:2;margin-left:0;gap:6px;flex:0 0 auto}
+  /* le mot du theme (auto / clair / sombre) cede la place a cette
+     largeur : le bouton devient une pastille de 44 px. L'etat reste
+     porte par aria-label et title, qui sont deja mis a jour a chaque
+     bascule par theme.js, donc rien n'est perdu pour personne. */
+  .theme-txt{display:none}
+  .lang-toggle,.theme-toggle{
+    min-height:44px;min-width:44px;
+    padding:0 10px;
+    justify-content:center;
+  }
   .hero h1{font-size:clamp(28px,10vw,38px)}
   .hero .lede{font-size:16px}
   .btn{
