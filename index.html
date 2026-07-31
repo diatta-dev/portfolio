@@ -254,6 +254,19 @@
 
       <aside class="hero-media" data-anim="hero-item" data-hero-order="2" aria-label="Photo de profil"
              data-i18n-attr="aria-label:hero.photo.aria">
+        <!-- Cette photo porte le LCP : mesurée à 41,3 Ko et 1190 ms de
+             transfert en 4G bridée, elle termine à 1455 ms pour un LCP
+             de 1456 ms.
+
+             fetchpriority="high" ne montre AUCUN gain mesurable en
+             laboratoire : médiane de 1464 ms avec comme sans, sur cinq
+             chargements chacun. L'image est déjà découverte tôt et rien
+             ne lui dispute la bande passante. L'attribut est conservé
+             parce qu'il est sans risque et qu'il vise la contention
+             réelle, que ce banc d'essai ne reproduit pas.
+
+             Le vrai levier est ailleurs : 640 × 640 servis pour une
+             boîte d'affichage de 200 à 240 px. -->
         <img
           class="profile-photo"
           src="assets/elhadji.jpeg"
