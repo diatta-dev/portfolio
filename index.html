@@ -119,6 +119,12 @@
 </head>
 <body>
 
+<!-- Premier élément focalisable de la page : la barre de statut est
+     sticky et contient cinq liens de navigation plus deux sélecteurs,
+     qu'un utilisateur au clavier retraverse à chaque chargement.
+     Invisible tant qu'il n'a pas le focus. -->
+<a class="skip-link" href="#accueil" data-i18n="nav.skip">Aller au contenu</a>
+
 <!-- ══════════════════ BARRE DE STATUT ══════════════════ -->
 <header class="statusbar">
   <div class="statusbar-inner">
@@ -179,10 +185,12 @@
              data-i18n="hero.cta.cv">
             Télécharger mon CV ↓
           </a>
-          <!-- contact direct : ouvre le client mail, sujet pré-rempli.
+          <!-- Lien texte et non troisième bouton : trois boutons de même
+               taille se neutralisent, et le poids visuel doit aller aux
+               deux actions qui comptent (voir les projets, lire le CV).
                data-i18n-query reconstruit la query depuis i18n/*.json,
                en clair puis encodée une seule fois (pas de %2520). -->
-          <a class="btn btn-ghost"
+          <a class="link-inline"
              href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio"
              data-i18n="hero.cta.mail"
              data-i18n-query="subject:mailto.contact.subject">
@@ -198,8 +206,12 @@
           <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.diploma">diplôme:</span> <span class="v"><span data-i18n="hero.manifest.diploma.value">licence pro DAA —</span> <span class="t" data-i18n="hero.manifest.diploma.state">validée</span></span></div>
           <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.goal">objectif:</span> <span class="a" data-i18n="hero.manifest.goal.value">ingénieur devops</span></div>
           <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.location">localisation:</span> <span class="v" data-i18n="hero.manifest.location.value">Bambey, Sénégal</span></div>
-          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.email">email:</span> <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a></div>
-          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.availability">disponibilité:</span> <span class="t">true</span></div>
+          <!-- Ni email: ni disponibilité: ici. L'adresse apparaissait six
+               fois dans la page ; elle reste dans le CTA juste au-dessus,
+               la carte sociale, la liste de contact, le formulaire et le
+               footer. La disponibilité est déjà annoncée par le badge
+               « statut: disponible » de la barre de statut, qui est
+               sticky et donc visible en permanence. -->
         </div>
       </div>
 
@@ -212,12 +224,11 @@
           data-i18n-attr="alt:hero.photo.alt"
           width="640" height="640"
           data-fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Crect width='640' height='640' rx='24' fill='%23FFFFFF'/%3E%3Cg stroke='%23CBE3E0' stroke-width='10'%3E%3Cpath d='M120 500c36-92 108-138 200-138s164 46 200 138' fill='none'/%3E%3Ccircle cx='320' cy='232' r='92' fill='none'/%3E%3C/g%3E%3Cpath d='M116 516h408' stroke='%235EA3A3' stroke-width='10' stroke-linecap='round'/%3E%3Ctext x='320' y='572' text-anchor='middle' font-family='IBM Plex Mono, monospace' font-size='28' fill='%234B626B'%3Ephoto pending%3C/text%3E%3C/svg%3E">
-        <div class="profile-meta" aria-label="Statut du fichier avatar"
-             data-i18n-attr="aria-label:hero.avatar.aria">
-          <span class="status" aria-hidden="true"></span>
-          <span class="file">avatar: elhadji.jpeg</span>
-          <span class="ok">✓</span>
-        </div>
+        <!-- Le marqueur « avatar: elhadji.jpeg ✓ » a été retiré : la
+             métaphore du pipeline ne tient que si le marqueur encode
+             une étape réellement franchie. Un fichier image ne « passe »
+             rien. Les marqueurs « stage: … » des sections, eux, sont
+             conservés — ils structurent la lecture. -->
       </aside>
     </div>
   </section>
@@ -287,72 +298,72 @@
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
-                   alt="Java" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Java</span>
+            <span class="logo-label">Java</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg"
-                   alt="Spring Boot" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Spring Boot</span>
+            <span class="logo-label">Spring Boot</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg"
-                   alt="PHP" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">PHP</span>
+            <span class="logo-label">PHP</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg"
-                   alt="Laravel" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Laravel</span>
+            <span class="logo-label">Laravel</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
-                   alt="React" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">React 18</span>
+            <span class="logo-label">React 18</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
-                   alt="TypeScript" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">TypeScript</span>
+            <span class="logo-label">TypeScript</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
-                   alt="JavaScript" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">JavaScript</span>
+            <span class="logo-label">JavaScript</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg"
-                   alt="C" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">C</span>
+            <span class="logo-label">C</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg"
-                   alt="HTML5" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">HTML5</span>
+            <span class="logo-label">HTML5</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg"
-                   alt="CSS3" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">CSS3</span>
+            <span class="logo-label">CSS3</span>
           </span>
         </div>
       </article>
@@ -364,30 +375,29 @@
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg"
-                   alt="MySQL" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">MySQL</span>
+            <span class="logo-label">MySQL</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg"
-                   alt="PostgreSQL" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">PostgreSQL</span>
+            <span class="logo-label">PostgreSQL</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg"
-                   alt="Oracle" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Oracle</span>
+            <span class="logo-label">Oracle</span>
           </span>
           <!-- MinIO n'existe pas chez devicon : pictogramme « seau de
                stockage objet » dessiné à la main, comme pour Merise -->
           <span class="logo" role="listitem">
             <span class="logo-inner">
-              <svg class="logo-img" viewBox="0 0 24 24" role="img"
-                   aria-label="MinIO — stockage objet compatible S3" data-i18n-attr="aria-label:skills.alt.minio"
+              <svg class="logo-img" viewBox="0 0 24 24" aria-hidden="true"
                    fill="none" stroke="currentColor" stroke-width="1.6"
                    stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2.4 3.4 7.2v9.6L12 21.6l8.6-4.8V7.2Z"/>
@@ -395,12 +405,11 @@
                 <path d="M12 12v9.6"/>
               </svg>
             </span>
-            <span class="logo-label" aria-hidden="true">MinIO</span>
+            <span class="logo-label">MinIO</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
-              <svg class="logo-img" viewBox="0 0 24 24" role="img"
-                   aria-label="Merise et PowerAMC — modélisation de données" data-i18n-attr="aria-label:skills.alt.merise"
+              <svg class="logo-img" viewBox="0 0 24 24" aria-hidden="true"
                    fill="none" stroke="currentColor" stroke-width="1.6"
                    stroke-linecap="round" stroke-linejoin="round">
                 <ellipse cx="12" cy="5.8" rx="7.4" ry="2.9"/>
@@ -408,7 +417,7 @@
                 <path d="M4.6 12c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9"/>
               </svg>
             </span>
-            <span class="logo-label" aria-hidden="true">Merise / PowerAMC</span>
+            <span class="logo-label">Merise / PowerAMC</span>
           </span>
         </div>
       </article>
@@ -420,67 +429,67 @@
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg"
-                   alt="Linux" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Linux</span>
+            <span class="logo-label">Linux</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/debian/debian-original.svg"
-                   alt="Debian" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Debian</span>
+            <span class="logo-label">Debian</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ubuntu/ubuntu-original.svg"
-                   alt="Ubuntu" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Ubuntu</span>
+            <span class="logo-label">Ubuntu</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows11/windows11-original.svg"
-                   alt="Windows" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Windows</span>
+            <span class="logo-label">Windows</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"
-                   alt="Git" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Git</span>
+            <span class="logo-label">Git</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
-                   alt="GitHub" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">GitHub</span>
+            <span class="logo-label">GitHub</span>
           </span>
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg"
-                   alt="Docker" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="" aria-hidden="true" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Docker</span>
+            <span class="logo-label">Docker</span>
           </span>
           <span class="logo is-learning" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-original.svg"
-                   alt="Kubernetes (en apprentissage)" data-i18n-attr="alt:skills.alt.kubernetes"
+                   alt="" aria-hidden="true"
                    width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Kubernetes</span>
+            <span class="logo-label">Kubernetes<span class="sr-only" data-i18n="skills.learning.sr"> (en apprentissage)</span></span>
           </span>
           <span class="logo is-learning" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg"
-                   alt="Ansible (en apprentissage)" data-i18n-attr="alt:skills.alt.ansible"
+                   alt="" aria-hidden="true"
                    width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
-            <span class="logo-label" aria-hidden="true">Ansible</span>
+            <span class="logo-label">Ansible<span class="sr-only" data-i18n="skills.learning.sr"> (en apprentissage)</span></span>
           </span>
         </div>
       </article>
@@ -552,7 +561,11 @@
         </div>
       </article>
 
-      <article class="project is-featured">
+      <!-- Volontairement PAS is-featured : cette classe passe la carte
+           en pleine largeur, et deux cartes pleine largeur annulent la
+           hiérarchie qu'elles servent à créer. Un seul projet phare,
+           le mémoire. -->
+      <article class="project">
         <div class="project-head">
           <span>thies-ville.yml</span>
           <span class="badge private" data-i18n="projects.badge.private">● dépôt privé</span>
@@ -839,7 +852,7 @@
         <div class="social" aria-label="Me contacter sur les réseaux" data-i18n-attr="aria-label:contact.social.aria">
           <a class="social-link is-whatsapp"
              href="https://wa.me/221773994182?text=Bonjour%20Elhadji%2C%20je%20vous%20contacte%20depuis%20votre%20portfolio."
-             target="_blank" rel="noopener"
+             target="_blank" rel="noopener noreferrer"
              data-i18n-query="text:whatsapp.text">
             <span class="social-ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
@@ -852,7 +865,7 @@
 
           <a class="social-link is-linkedin"
              href="https://linkedin.com/in/el-hadji-diatta-10777028b"
-             target="_blank" rel="noopener">
+             target="_blank" rel="noopener noreferrer">
             <span class="social-ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
             </span>
@@ -864,7 +877,7 @@
 
           <a class="social-link is-github"
              href="https://github.com/diatta-dev"
-             target="_blank" rel="noopener">
+             target="_blank" rel="noopener noreferrer">
             <span class="social-ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
             </span>
@@ -978,7 +991,7 @@
 </main>
 
 <footer>
-  <span class="up"><span data-i18n="footer.uptime">● uptime</span> <span data-counter data-counter-to="100">100</span>%</span> &nbsp;·&nbsp; <span data-i18n="footer.credit">© 2026 Elhadji Ba Diaby Diatta</span> &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; <span data-i18n="footer.handmade">conçu et déployé à la main</span>
+  <span data-i18n="footer.credit">© 2026 Elhadji Ba Diaby Diatta</span> &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; <span data-i18n="footer.handmade">conçu et déployé à la main</span>
 </footer>
 
 <!-- GSAP + ScrollTrigger (hébergés en local, v3.15 — offline-proof, plus de dépendance CDN) -->

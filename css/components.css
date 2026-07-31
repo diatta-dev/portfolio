@@ -4,6 +4,21 @@
    cartes projets, expériences, carte de contact, footer.
    ============================================================ */
 
+/* ---------- lien d'évitement ----------
+   Hors écran tant qu'il n'a pas le focus, puis posé par-dessus tout.
+   Pas de display:none : un élément masqué de cette façon n'est plus
+   focalisable, et le lien ne servirait plus à rien.
+   z-index au-dessus de la barre de statut, qui est sticky. */
+.skip-link{
+  position:absolute;left:-9999px;top:0;
+  padding:10px 16px;border-radius:var(--radius);
+  background:var(--ink);color:var(--bg);
+  font-family:var(--mono);font-size:13px;
+  text-decoration:none;
+  z-index:100;
+}
+.skip-link:focus{left:16px;top:16px}
+
 /* ---------- boutons ---------- */
 .btn{
   font-family:var(--mono);font-size:14px;font-weight:500;
@@ -23,6 +38,19 @@
   box-shadow:var(--glass-inset);
 }
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glass-inset),0 8px 22px -10px var(--halo-accent)}
+
+/* Troisième action du hero : un lien, pas un bouton. Trois boutons de
+   même taille se neutralisent — le poids visuel doit rester sur les
+   deux premiers. align-self:center le cale sur la ligne de base des
+   boutons, qui sont plus hauts que lui. */
+.hero-actions .link-inline{
+  font-family:var(--mono);font-size:14px;
+  color:var(--ink-soft);text-decoration:underline;
+  text-underline-offset:4px;text-decoration-thickness:1px;
+  align-self:center;
+  transition:color .18s ease;
+}
+.hero-actions .link-inline:hover{color:var(--accent)}
 
 /* Bouton d'appel à l'action posé sur le panneau sombre du contact.
    Le panneau ne s'inverse jamais (voir .contact-card) : ce bouton ne
@@ -100,41 +128,6 @@
   background:var(--surface);
   box-shadow:var(--glass-shadow),var(--glass-inset);
 }
-.profile-meta{
-  margin-top:12px;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  max-width:100%;
-  padding:9px 12px;
-  border-radius:99px;
-  border:1px solid var(--glass-border);
-  background:var(--glass-bg);
-  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
-  backdrop-filter:blur(var(--glass-blur)) saturate(160%);
-  box-shadow:var(--glass-inset);
-  font-family:var(--mono);
-  font-size:12.5px;
-  color:var(--ink-soft);
-  white-space:nowrap;
-}
-.profile-meta .status{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:var(--ok);
-  box-shadow:0 0 0 4px rgba(94,163,163,.22);
-  flex:0 0 auto;
-}
-.profile-meta .file{
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.profile-meta .ok{
-  color:var(--ok);
-  font-weight:500;
-}
-
 /* ---------- mini-manifeste décoratif du hero ---------- */
 .hero-manifest{
   margin-top:52px;background:var(--glass-bg-strong);
@@ -228,33 +221,30 @@
 .tag.learning{background:var(--accent-soft);border-color:var(--accent-bright);color:var(--accent)}
 
 /* ============================================================
-   SKILLS FLOAT — logos des technos qui dérivent dans les cartes
-   de compétences.
+   SKILLS — grille des logos de technos.
 
-   État par défaut du CSS : une grille statique centrée. C'est
-   js/animations.js (section « SKILLS FLOAT ») qui ajoute
-   .is-floating, bascule les logos en absolu et prend la main sur
-   leurs positions via GSAP. Conséquence voulue : si GSAP ne charge
-   pas, ou en mouvement réduit, on garde une grille propre et
-   lisible — jamais un tas de logos empilés en haut à gauche.
+   Grille statique, sans mouvement permanent. Les logos flottaient
+   auparavant en continu (un tween GSAP récursif infini par logo,
+   28 au total) : coût CPU permanent tant que la section était à
+   l'écran, et surtout impossibilité d'afficher les étiquettes,
+   puisque les logos étaient en position absolue dans une zone de
+   hauteur fixe. L'apparition en cascade au scroll (voir
+   js/animations.js) donne la même vie à la section pour un coût
+   qui s'arrête net une fois l'animation jouée.
 
-   Le débordement est impossible par construction : les bornes des
-   tweens sont calculées côté JS à partir de la taille réelle de la
-   zone, et une bande est réservée en bas pour l'étiquette.
+   Largeur fixe des items : les étiquettes n'ont pas toutes la même
+   longueur (« C » contre « Merise / PowerAMC »). Sans largeur
+   commune, les pastilles se décaleraient les unes par rapport aux
+   autres et la grille perdrait ses colonnes.
    ============================================================ */
 .skill-float{
-  display:flex;flex-wrap:wrap;gap:18px;
-  align-items:center;justify-content:center;
+  display:flex;flex-wrap:wrap;gap:18px 14px;
+  align-items:flex-start;justify-content:center;
   margin-top:4px;
 }
-.skill-float.is-floating{
-  display:block;position:relative;
-  height:290px;overflow:hidden;
-}
-.skill-float.is-floating .logo{position:absolute;top:0;left:0}
 
 .logo{
-  position:relative;flex:0 0 auto;
+  position:relative;flex:0 0 auto;width:88px;
   display:flex;flex-direction:column;align-items:center;
 }
 /* pastille de verre sous le logo : lisible sur les halos du fond,
@@ -263,9 +253,14 @@
   display:grid;place-items:center;
   width:64px;height:64px;border-radius:50%;
   background:var(--glass-bg-strong);
-  /* --line et non --glass-border : cette dernière est blanche, la
-     pastille disparaissait complètement sur le thème clair */
-  border:1px solid var(--line);
+  /* ni --glass-border (blanche : la pastille disparaissait sur le
+     thème clair) ni --line (1,28:1 : un filet purement décoratif).
+     La pastille délimite un élément d'interface, elle prend donc le
+     ton soutenu. Elle reste sous les 3:1 de WCAG 1.4.11, ce qui est
+     admis ici : le contour ne porte aucune information seul, c'est
+     l'icône qu'il entoure — et désormais son étiquette — qui la
+     portent. */
+  border:1px solid var(--line-strong);
   box-shadow:var(--glass-inset),0 6px 18px -10px rgba(15,31,43,.4);
   transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
@@ -280,35 +275,27 @@
              0 0 18px -3px var(--accent-bright);
 }
 
-/* étiquette monospace sous le logo : révélée au survol (souris) ou
-   pendant 2 s après un tap (tactile, classe posée par le JS) */
+/* étiquette monospace sous le logo : TOUJOURS visible.
+
+   Elle n'apparaissait auparavant qu'au survol. Conséquence : au
+   repos la section n'était qu'un nuage de 28 icônes anonymes —
+   illisible pour un recruteur non technique, inaccessible au doigt
+   (pas de survol sur mobile), et invisible au Ctrl+F de la page.
+   Le survol ne sert donc plus qu'à agrandir la pastille. */
 .logo-label{
-  position:absolute;top:calc(100% + 7px);left:50%;
-  transform:translate(-50%,4px);
-  padding:3px 9px;border-radius:99px;
-  background:var(--ink);color:var(--bg);
-  font-family:var(--mono);font-size:11px;line-height:1.5;
-  white-space:nowrap;pointer-events:none;
-  opacity:0;transition:opacity .2s ease, transform .2s ease;
+  margin-top:9px;
+  color:var(--ink-soft);
+  font-family:var(--mono);font-size:11px;line-height:1.35;
+  text-align:center;text-wrap:balance;
+  /* la pastille fait 64px, l'item 88px : l'étiquette peut déborder
+     un peu sur la gouttière sans jamais toucher sa voisine */
+  max-width:88px;
 }
-/* .is-active est posée par le JS (survol souris, ou 2 s après un tap).
-   La règle :hover qui suit fait la même chose sans JS — mais elle ne
-   suffit pas seule : « (hover: hover) » est faux sur certains postes
-   pourtant équipés d'une souris. */
-.logo.is-active{z-index:2}
-.logo.is-active .logo-inner{transform:scale(1.15);border-color:var(--accent-bright)}
-.logo.is-active .logo-label{opacity:1;transform:translate(-50%,0)}
+
 @media (hover:hover){
   .logo:hover{z-index:2}
   .logo:hover .logo-inner{transform:scale(1.15);border-color:var(--accent-bright)}
-  .logo:hover .logo-label{opacity:1;transform:translate(-50%,0)}
-}
-
-/* mouvement réduit : on force le retour à la grille statique, même
-   si le JS avait déjà posé .is-floating avant le changement d'état */
-@media (prefers-reduced-motion: reduce){
-  .skill-float.is-floating{display:flex;height:auto;overflow:visible}
-  .skill-float.is-floating .logo{position:relative;transform:none !important}
+  .logo:hover .logo-label{color:var(--accent)}
 }
 .legend{
   margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--ink-soft);
@@ -773,6 +760,5 @@ footer{
   font-family:var(--mono);font-size:12px;color:var(--ink-soft);
   padding:40px 24px 48px;text-align:center;
 }
-footer .up{color:var(--ok)}
 footer a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-bright)}
 footer a:hover{color:var(--ink)}

@@ -209,18 +209,25 @@
     justify-content:center;
     padding:12px 16px;
   }
-  .hero-media{width:min(100%,200px)}
-  .profile-meta{
+  /* les boutons passent en pleine largeur, le lien texte se retrouve
+     donc seul sur sa ligne : on le centre pour qu'il reste dans l'axe
+     de la colonne, sans l'étirer (ce n'est pas une cible tactile de
+     bouton, et lui donner l'apparence d'un bouton annulerait toute
+     la hiérarchie qu'on vient d'établir). */
+  .hero-actions .link-inline{
     width:100%;
-    white-space:normal;
-    align-items:flex-start;
-    gap:8px;
+    text-align:center;
+    padding:6px 0;
   }
-  /* logos un peu plus compacts sur très petit écran, zone un peu
-     moins haute : le flottement reste lisible sans manger l'écran */
-  .skill-float.is-floating{height:210px}
+  .hero-media{width:min(100%,200px)}
+  /* logos plus compacts sur très petit écran. L'item se resserre
+     avec la pastille pour garder 4 colonnes plutôt que 3 — sinon la
+     section des compétences s'étire sur deux écrans de haut. */
+  .skill-float{gap:14px 10px}
+  .logo{width:74px}
   .logo-inner{width:56px;height:56px}
   .logo-img{width:38px;height:38px}
+  .logo-label{max-width:74px;font-size:10.5px}
   .skill-card,.trajectory,.project-body{padding:20px 16px}
   .project-head{padding:12px 16px}
   .contact-card{padding:28px 16px}

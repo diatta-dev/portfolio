@@ -42,17 +42,11 @@ window.PortfolioAnimations = (() => {
         if (hasScrollTrigger) {
           initPipeline();
           initSectionReveals();
-          initCounters();
-        } else {
-          // Pas de ScrollTrigger disponible : on ne bloque rien,
-          // le contenu reste dans son état visible par défaut.
-          initCounters(true);
+          initSkillsReveal();
         }
+        // Sans ScrollTrigger on ne bloque rien : le contenu reste
+        // dans son état visible par défaut.
         initProjectTilt();
-
-        // le nettoyage renvoyé est joué par matchMedia si l'on
-        // bascule vers « mouvement réduit »
-        return initSkillsFloat();
       }
     );
     // Le pulse du point "disponible" de la statusbar est un keyframe
@@ -173,205 +167,44 @@ window.PortfolioAnimations = (() => {
   }
 
   /* ============================================================
-     5. SKILLS FLOAT — les logos dérivent dans leur carte
+     5. SKILLS — apparition en cascade des logos de technos
 
-     Chaque logo enchaîne des étapes : un tween vers un point
-     tiré au hasard, qui en relance un autre en finissant. Comme
-     les tirages sont indépendants d'un logo à l'autre, rien ne
-     se synchronise jamais — c'est ce qui donne l'effet organique.
+     Remplace le flottement permanent : chaque logo était animé par
+     un tween GSAP récursif et infini, soit 28 tweens qui ne
+     s'arrêtaient jamais tant que la section restait à l'écran.
+     Coût CPU permanent (ventilateur, batterie) pour une décoration
+     qui, en prime, interdisait d'afficher les étiquettes — les
+     logos étant en position absolue dans une zone de hauteur fixe.
 
-     Deux réglages viennent de mesures faites dans le navigateur,
-     pas d'une intuition :
-     · la durée se déduit de la distance (vitesse constante).
-       À durée fixe, les trajets courts rampaient à 2 px/s et la
-       section paraissait figée.
-     · chaque logo dérive dans SA cellule, élargie de SPREAD.
-       En tirant les cibles dans toute la zone, le hasard les
-       faisait converger et ils finissaient empilés.
+     La cascade est la même mécanique que revealStage(), mais posée
+     sur la carte et non sur la section : les quatre cartes de
+     compétences arrivent déjà en cascade, et faire partir les 28
+     logos d'un seul ScrollTrigger aurait fait démarrer ceux de la
+     dernière carte avant qu'elle ne soit à l'écran.
 
-     Le débordement est impossible : les bornes viennent de la
-     taille réelle de la zone, moins la place réservée à
-     l'étiquette. L'ease `sine.inOut` fait décélérer le logo
-     avant chaque changement de cap — le « rebond doux ».
-
-     Retourne une fonction de nettoyage, appelée par
-     gsap.matchMedia() si l'on bascule en mouvement réduit.
+     `toggleActions: play none none none` : la cascade se joue une
+     fois, puis les tweens sont terminés — plus rien ne tourne.
      ============================================================ */
-  function initSkillsFloat() {
-    const zones = gsap.utils.toArray(".skill-float");
-    if (!zones.length) return null;
-
-    const PAD = 6;          // marge interne de la zone
-    const LABEL_ROOM = 30;  // bande réservée en bas pour l'étiquette
-    const SPEED = 34;       // px/s — la durée se déduit de la distance,
-                            // sinon un trajet court rampe et paraît figé
-    const MIN_TRIP = 6;     // bornes de durée, en secondes
-    const MAX_TRIP = 14;
-    const SPREAD = 1.6;     // débordement d'un logo hors de sa cellule
-
-    /* On distingue souris et doigt via event.pointerType, pas via
-       une media query : « (hover: hover) » est faux sur les portables
-       tactiles et dans certains environnements alors qu'une souris
-       est bien là — le survol y devenait inopérant. */
-    const isMouse = (event) => event.pointerType !== "touch";
-
-    const entries = [];
-    const teardown = [];
-
-    zones.forEach((zone) => {
+  function initSkillsReveal() {
+    gsap.utils.toArray(".skill-float").forEach((zone) => {
       const logos = gsap.utils.toArray(zone.querySelectorAll(".logo"));
       if (!logos.length) return;
 
-      const entry = { zone, logos, timelines: [], paused: false };
-      entries.push(entry);
-      zone.classList.add("is-floating");
-
-      /* survol de la BOX à la souris : arrêt progressif (0,4 s) puis
-         reprise en douceur — on ralentit le temps plutôt que de
-         figer, ce qui évite la cassure d'un pause() brutal.
-         Au doigt, on ne coupe rien : le flottement continue. */
-      const slowDown = (event) => {
-        if (!isMouse(event)) return;
-        entry.paused = true;
-        entry.timelines.forEach((tl) => tl &&
-          gsap.to(tl, { timeScale: 0, duration: 0.4, ease: "power2.out", overwrite: true }));
-      };
-      const speedUp = (event) => {
-        if (!isMouse(event)) return;
-        entry.paused = false;
-        entry.timelines.forEach((tl) => tl &&
-          gsap.to(tl, { timeScale: 1, duration: 0.6, ease: "power2.inOut", overwrite: true }));
-      };
-
-      zone.addEventListener("pointerenter", slowDown);
-      zone.addEventListener("pointerleave", speedUp);
-      teardown.push(() => {
-        zone.removeEventListener("pointerenter", slowDown);
-        zone.removeEventListener("pointerleave", speedUp);
-      });
-
-      /* étiquette d'un logo : au survol tant que la souris reste
-         dessus, ou 2 s après un tap au doigt */
-      logos.forEach((logo) => {
-        let timer;
-        const show = () => { clearTimeout(timer); logo.classList.add("is-active"); };
-        const hide = () => { clearTimeout(timer); logo.classList.remove("is-active"); };
-
-        const onEnter = (event) => { if (isMouse(event)) show(); };
-        const onLeave = (event) => { if (isMouse(event)) hide(); };
-        const onTap = (event) => {
-          if (isMouse(event)) return;
-          show();
-          timer = setTimeout(hide, 2000);
-        };
-
-        logo.addEventListener("pointerenter", onEnter);
-        logo.addEventListener("pointerleave", onLeave);
-        logo.addEventListener("pointerdown", onTap);
-        teardown.push(() => {
-          clearTimeout(timer);
-          logo.removeEventListener("pointerenter", onEnter);
-          logo.removeEventListener("pointerleave", onLeave);
-          logo.removeEventListener("pointerdown", onTap);
-          logo.classList.remove("is-active");
-        });
+      gsap.set(logos, { opacity: 0, y: 14, scale: 0.9 });
+      gsap.to(logos, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.45,
+        ease: "back.out(1.6)",
+        stagger: 0.045,
+        scrollTrigger: {
+          trigger: zone,
+          start: "top 88%",
+          toggleActions: "play none none none"
+        }
       });
     });
-
-    /* (re)calcule les bornes et relance les dérives. Rejoué au
-       redimensionnement : la zone change de largeur en responsive. */
-    const build = () => {
-      entries.forEach((entry) => {
-        entry.timelines.forEach((tl) => tl && tl.kill());
-        entry.timelines.length = 0;
-
-        /* tous les logos d'une zone ont la même taille : bornes
-           calculées une fois, pas une fois par logo */
-        const size = entry.logos[0];
-        const count = entry.logos.length;
-        const maxX = Math.max(0, entry.zone.clientWidth - size.offsetWidth - PAD * 2);
-        const maxY = Math.max(0, entry.zone.clientHeight - size.offsetHeight - PAD * 2 - LABEL_ROOM);
-
-        /* nombre de colonnes déduit du format de la zone : sur une
-           carte large et basse il faut plus de colonnes que de
-           rangées, sinon les départs se chevauchent verticalement */
-        const cols = Math.max(1, Math.min(count,
-          Math.round(Math.sqrt(count * (maxX + 1) / (maxY + 1)))));
-        const cellW = maxX / cols;
-        const cellH = maxY / Math.ceil(count / cols);
-
-        entry.logos.forEach((logo, i) => {
-          /* Chaque logo dérive dans SA cellule, élargie de SPREAD.
-             Tirer les cibles dans toute la zone paraissait plus
-             libre, mais au bout de quelques cycles le hasard les
-             faisait tous converger au même endroit : ils
-             s'empilaient. Des cellules qui se chevauchent gardent
-             les croisements sans jamais laisser un paquet se
-             former. */
-          const cx = (i % cols + 0.5) * cellW;
-          const cy = (Math.floor(i / cols) + 0.5) * cellH;
-          const spanX = (cellW * SPREAD) / 2;
-          const spanY = (cellH * SPREAD) / 2;
-          const fromX = Math.max(0, cx - spanX), toX = Math.min(maxX, cx + spanX);
-          const fromY = Math.max(0, cy - spanY), toY = Math.min(maxY, cy + spanY);
-
-          gsap.set(logo, {
-            x: PAD + gsap.utils.random(fromX, toX),
-            y: PAD + gsap.utils.random(fromY, toY)
-          });
-
-          /* Une étape = un tween, qui en enchaîne un autre en
-             finissant. C'est ce qui permet de caler la durée sur la
-             distance réellement parcourue : un timeline répété
-             fixerait la durée une fois pour toutes et les trajets
-             courts sembleraient immobiles. */
-          const index = entry.timelines.length;
-          const drift = () => {
-            const targetX = PAD + gsap.utils.random(fromX, toX);
-            const targetY = PAD + gsap.utils.random(fromY, toY);
-            const distance = Math.hypot(
-              targetX - gsap.getProperty(logo, "x"),
-              targetY - gsap.getProperty(logo, "y")
-            );
-
-            const tween = gsap.to(logo, {
-              x: targetX,
-              y: targetY,
-              duration: gsap.utils.clamp(MIN_TRIP, MAX_TRIP, distance / SPEED),
-              ease: "sine.inOut",
-              onComplete: drift
-            });
-
-            entry.timelines[index] = tween;
-            // survol en cours au moment où l'étape s'enchaîne :
-            // le nouveau tween doit naître à l'arrêt, pas repartir
-            if (entry.paused) tween.timeScale(0);
-          };
-          entry.timelines[index] = null;
-          drift();
-        });
-      });
-    };
-
-    build();
-
-    let resizeTimer;
-    const onResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(build, 200);
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-      clearTimeout(resizeTimer);
-      teardown.forEach((off) => off());
-      entries.forEach((entry) => {
-        entry.timelines.forEach((tl) => tl && tl.kill());
-        entry.zone.classList.remove("is-floating");
-        gsap.set(entry.logos, { clearProps: "transform" });
-      });
-    };
   }
 
   /* ---------- 6. tilt/lift des cartes projets au survol ---------- */
@@ -407,33 +240,6 @@ window.PortfolioAnimations = (() => {
     });
   }
 
-  /* ---------- 8. compteur animé (optionnel, ex. uptime) ---------- */
-  function initCounters(instant) {
-    document.querySelectorAll("[data-counter]").forEach((el) => {
-      const target = parseFloat(el.dataset.counterTo || el.textContent || "0");
-
-      if (instant || typeof ScrollTrigger === "undefined") {
-        el.textContent = target;
-        return;
-      }
-
-      const counter = { value: 0 };
-      el.textContent = "0";
-      gsap.to(counter, {
-        value: target,
-        duration: 1.4,
-        ease: "power2.out",
-        snap: { value: 1 },
-        onUpdate: () => { el.textContent = Math.round(counter.value); },
-        scrollTrigger: {
-          trigger: el,
-          start: "top 90%",
-          toggleActions: "play none none none"
-        }
-      });
-    });
-  }
-
   /* ---------- prefers-reduced-motion : simple fade, pas de scrub/tilt ---------- */
   function initReducedMotion() {
     const targets = gsap.utils.toArray('[data-anim="hero-item"], .hero h1 .line-inner, .skill-card, .project, .xp-item, .contact-card, .about-grid > *');
@@ -447,8 +253,6 @@ window.PortfolioAnimations = (() => {
       stage.style.setProperty("--pipeline-fill", "100%");
       stage.classList.add("is-active");
     });
-
-    initCounters(true);
   }
 
   return { init };

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Elhadji Diatta">
+  <!-- ============================================================
+       FAVICON — un nœud de pipeline isolé.
+
+       Repris de la signature du site (la ligne verticale et ses nœuds
+       qui s'allument au scroll, css/layout.css). À 16 px il ne reste
+       qu'un anneau sur un trait : c'est volontaire, tout ce qui est
+       plus détaillé devient une tache à cette taille.
+
+       Fond transparent, et la couleur suit le thème du navigateur —
+       #1f4d5a n'a presque aucun contraste sur une barre d'onglets
+       sombre. Firefox et Chrome appliquent bien prefers-color-scheme
+       à l'intérieur d'un favicon SVG ; les navigateurs qui l'ignorent
+       gardent la valeur claire, qui reste lisible.
+       ============================================================ -->
+  <style>
+    .pipe { stroke: #1f4d5a; }
+    .node-fill { fill: #f4fbfa; }
+    @media (prefers-color-scheme: dark) {
+      .pipe { stroke: #5ea3a3; }
+      .node-fill { fill: #0f1f2b; }
+    }
+  </style>
+
+  <!-- le trait, du haut au bas de la zone -->
+  <path class="pipe" d="M16 0v32" stroke-width="3" fill="none"/>
+
+  <!-- le nœud : disque plein de la couleur du fond pour masquer le
+       trait, puis anneau par-dessus. Deux formes plutôt qu'un cercle
+       à fill+stroke : le fill d'un cercle déborde sous la moitié
+       interne du stroke, l'anneau paraissait plus fin qu'il ne l'est. -->
+  <circle class="node-fill" cx="16" cy="16" r="9.75"/>
+  <circle class="pipe" cx="16" cy="16" r="8" stroke-width="3.5" fill="none"/>
+</svg>
