@@ -24,16 +24,70 @@
 }
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glass-inset),0 8px 22px -10px var(--halo-accent)}
 
-/* bouton d'appel à l'action posé sur le panneau sombre du contact :
-   couleurs figées (le panneau ne s'inverse pas en mode sombre) */
+/* Bouton d'appel à l'action posé sur le panneau sombre du contact.
+   Le panneau ne s'inverse jamais (voir .contact-card) : ce bouton ne
+   doit donc PAS suivre le thème. Il utilisait var(--accent-bright),
+   qui change de valeur entre clair et sombre — le bouton changeait
+   donc de teinte sur un fond, lui, resté identique. Les trois
+   couleurs viennent maintenant de tokens dédiés « on-dark », définis
+   une seule fois et jamais redéfinis par un thème. */
 .btn-mail{
-  background:var(--accent-bright);
-  border-color:var(--accent-bright);
-  color:#0f1f2b;font-weight:500;
+  background:var(--on-dark-cta);
+  border-color:var(--on-dark-cta);
+  color:var(--on-dark-cta-ink);font-weight:500;
 }
 .btn-mail:hover{
-  background:#d9f1ef;border-color:#d9f1ef;color:#0f1f2b;
+  background:var(--on-dark-cta-hover);border-color:var(--on-dark-cta-hover);
+  color:var(--on-dark-cta-ink);
   box-shadow:0 12px 28px -10px rgba(94,163,163,.55);
+}
+
+/* ---------- sélecteurs de langue et de thème (barre de statut) ----------
+   Même matière que le reste de la barre : mono, verre, pastille.
+   Le thème affiche un mot en clair (auto / clair / sombre) en plus de
+   son pictogramme : trois icônes soleil/lune/auto ne lèvent pas
+   l'ambiguïté sur l'état courant, un mot de cinq lettres si — et la
+   barre est déjà en IBM Plex Mono, il y est chez lui. */
+.lang-toggle,
+.theme-toggle{
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  color:var(--ink-soft);
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+  backdrop-filter:blur(10px) saturate(160%);
+  border:1px solid var(--glass-border);
+  border-radius:99px;
+  padding:7px 12px;min-height:34px;
+  display:inline-flex;align-items:center;gap:7px;
+  cursor:pointer;
+  transition:color .18s ease, border-color .18s ease, background .18s ease;
+}
+.lang-toggle:hover,
+.theme-toggle:hover{
+  color:var(--accent);
+  border-color:var(--accent-bright);
+  background:var(--glass-bg-strong);
+}
+.lang-toggle{letter-spacing:.06em}
+.theme-ico{display:grid;place-items:center;width:15px;height:15px;flex:0 0 auto}
+.theme-ico svg{width:15px;height:15px;display:block}
+/* largeur réservée pour le plus long des trois libellés : sans elle,
+   la barre se réorganise à chaque clic sur le sélecteur */
+.theme-txt{min-width:4.2em;text-align:left}
+
+/* ---------- utilitaire : réservé aux lecteurs d'écran ----------
+   Le contenu reste dans l'arbre d'accessibilité (donc annoncé) mais
+   sort de l'affichage. Ni display:none ni visibility:hidden, qui le
+   retireraient aussi aux lecteurs d'écran. */
+.sr-only{
+  position:absolute;
+  width:1px;height:1px;
+  padding:0;margin:-1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  clip-path:inset(50%);
+  white-space:nowrap;
+  border:0;
 }
 
 /* ---------- avatar / photo de profil ---------- */
@@ -309,25 +363,24 @@
 
 .project-head{
   font-family:var(--mono);font-size:12px;
-  padding:13px 20px;border-bottom:1px solid var(--glass-border);
+  padding:13px 20px;border-bottom:1px solid var(--head-line);
   display:flex;align-items:center;gap:10px;color:var(--ink-soft);
-  background:linear-gradient(180deg,rgba(255,255,255,.28),transparent);
+  background:var(--head-veil);
 }
 /* numéro d'ordre, façon étape de pipeline */
 .project-head::before{
   content:counter(project,decimal-leading-zero);
   font-weight:500;color:var(--accent);
   padding-right:10px;margin-right:2px;
-  border-right:1px solid var(--glass-border);
+  border-right:1px solid var(--head-line);
 }
 /* Le filet et le voile blanc de l'en-tête sont pensés pour du verre
-   clair : --glass-border et le dégradé sont blancs, donc invisibles
-   sur fond clair. Sur fond sombre ils ressortaient et coupaient la
-   carte en deux. On aligne le rendu sur celui du thème clair. */
-@media (prefers-color-scheme: dark){
-  .project-head{border-bottom-color:transparent;background:none}
-  .project-head::before{border-right-color:transparent}
-}
+   clair : --glass-border et le dégradé sont blancs, donc discrets sur
+   fond clair. Sur fond sombre ils ressortaient et coupaient la carte
+   en deux — d'où deux tokens qui s'annulent dans le thème sombre.
+   C'était auparavant un @media (prefers-color-scheme: dark) posé ici ;
+   il ne pouvait pas suivre un choix manuel de thème. Toute la
+   connaissance du thème vit désormais dans variables.css. */
 .badge{
   font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;
   margin-left:auto;letter-spacing:.03em;white-space:nowrap;
@@ -356,66 +409,134 @@
   border-radius:var(--radius);
   padding:10px 13px;
 }
-/* ---- emplacement vidéo d'une carte projet ----
-   Format 16/9 réservé dès le chargement : la carte ne bouge pas
-   quand la vidéo arrive. Trois états, tous pilotés par js/media.js :
-   bouton prêt (fichier présent), .is-empty (fichier absent),
-   .is-playing (lecteur injecté). */
-.project-media{
+/* ============================================================
+   GALERIE DE CAPTURES D'UNE CARTE PROJET
+
+   Reprend l'esthétique de l'ancien emplacement vidéo : verre,
+   --radius, filet discret. Deux états seulement, posés par
+   js/gallery.js :
+
+     · sans .is-ready  → aucune capture trouvée (ou JS absent).
+       Le cadre en pointillés et le message « captures à venir »
+       du HTML restent en place : un emplacement en attente se
+       lit comme tel, pas comme un bug.
+     · avec .is-ready  → la galerie a remplacé le repli.
+
+   Le ratio 16/10 est porté par .gallery-viewport ET par l'état
+   d'attente : la carte occupe la même hauteur dans les deux cas,
+   la grille ne saute donc jamais — ni au chargement, ni au
+   changement d'image.
+   ============================================================ */
+.project-gallery{
   position:relative;
-  aspect-ratio:16 / 9;
   border-radius:var(--radius);
-  overflow:hidden;
-  background:var(--glass-bg-strong) center/cover no-repeat;
   border:1px solid var(--line);
-  display:grid;place-items:center;
-  flex:0 0 auto;
-}
-/* voile sombre sous le bouton quand une vignette est posée :
-   sans lui, le texte blanc se perd sur une capture claire */
-.project-media.has-poster::before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(15,31,43,.15),rgba(15,31,43,.55));
-}
-.media-play{
-  position:relative;z-index:1;
-  display:inline-flex;align-items:center;gap:10px;
-  font-family:var(--mono);font-size:13px;font-weight:500;
-  color:var(--ink);cursor:pointer;
-  padding:10px 18px 10px 12px;border-radius:99px;
   background:var(--glass-bg-strong);
-  border:1px solid var(--line);
-  box-shadow:var(--glass-inset),0 8px 20px -12px rgba(15,31,43,.5);
-  transition:transform .18s ease, border-color .18s ease, color .18s ease;
-}
-.project-media.has-poster .media-play{
-  background:rgba(244,251,250,.92);color:#0f1f2b;border-color:transparent;
-}
-.media-play:hover:not(:disabled){
-  transform:translateY(-2px);border-color:var(--accent-bright);color:var(--accent);
-}
-.media-ico{
-  display:grid;place-items:center;
-  width:28px;height:28px;border-radius:50%;
-  background:var(--accent);color:var(--bg);
+  box-shadow:var(--glass-inset);
+  overflow:hidden;
   flex:0 0 auto;
 }
-.media-ico svg{width:14px;height:14px;display:block;margin-left:1px}
-
-/* fichier absent : le bouton reste visible mais inerte, et le cadre
-   passe en pointillés — c'est un emplacement en attente, pas un bug */
-.project-media.is-empty{border-style:dashed;background-image:none}
-.project-media.is-empty .media-play{
-  cursor:default;opacity:.75;box-shadow:none;
-  background:transparent;border-style:dashed;
+/* état d'attente : cadre neutre, message discret */
+.project-gallery:not(.is-ready){
+  aspect-ratio:16 / 10;
+  display:grid;place-items:center;
+  border-style:dashed;
 }
-.project-media.is-empty .media-ico{background:var(--line);color:var(--ink-soft)}
-.media-empty{
+.gallery-empty{
   font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);
+  text-align:center;padding:0 12px;
 }
 
-.project-media.is-playing{background:#0f1f2b;border-color:var(--accent-bright)}
-.media-video{width:100%;height:100%;object-fit:contain;display:block;background:#0f1f2b}
+.gallery-viewport{
+  position:relative;
+  aspect-ratio:16 / 10;
+  overflow:hidden;
+  border-radius:var(--radius);
+}
+.gallery-track{
+  list-style:none;
+  position:absolute;inset:0;
+  margin:0;padding:0;
+}
+/* Toutes les diapositives sont superposées ; seule .is-current est
+   visible. La transition porte sur opacity et transform uniquement
+   (composables par le navigateur, donc pas de repaint du fond).
+   L'amplitude du translateX est posée en JS à l'entrée, ce qui rend
+   le glissement directionnel : la capture arrive du côté d'où on
+   vient. base.css coupe cette transition en mouvement réduit. */
+.gallery-slide{
+  position:absolute;inset:0;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .4s ease, transform .4s ease;
+}
+.gallery-slide.is-current{opacity:1;pointer-events:auto}
+/* image disparue entre la sonde et l'affichage : on la retire du
+   défilement plutôt que de laisser une case blanche */
+.gallery-slide.is-broken{display:none}
+.gallery-slide img{
+  width:100%;height:100%;
+  object-fit:cover;display:block;
+}
+
+/* ---- flèches ----
+   44 × 44 px : la cible tactile minimale recommandée. Pastille de
+   verre pour rester lisible aussi bien sur une capture claire que
+   sur une capture sombre. */
+.gallery-nav{
+  position:absolute;top:50%;z-index:2;
+  transform:translateY(-50%);
+  width:44px;height:44px;
+  display:grid;place-items:center;
+  border-radius:50%;cursor:pointer;
+  color:var(--ink);
+  background:var(--glass-bg-strong);
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+  backdrop-filter:blur(10px) saturate(160%);
+  border:1px solid var(--line-strong);
+  box-shadow:var(--glass-inset),0 6px 18px -10px rgba(15,31,43,.45);
+  transition:opacity .18s ease, color .18s ease, border-color .18s ease;
+}
+.gallery-prev{inset-inline-start:10px}
+.gallery-next{inset-inline-end:10px}
+.gallery-nav svg{width:18px;height:18px;display:block}
+.gallery-nav:hover{color:var(--accent);border-color:var(--accent-bright)}
+/* Sur souris uniquement : flèches atténuées, pleines au survol de la
+   carte. Sur tactile il n'y a pas de survol — elles y restent donc
+   visibles en permanence, ce qui est le comportement voulu. */
+@media (hover:hover){
+  .gallery-nav{opacity:.6}
+  .project-gallery:hover .gallery-nav,
+  .project-gallery:focus-within .gallery-nav{opacity:1}
+}
+
+/* ---- pastilles ----
+   Posées dans une pastille de verre : sur une capture claire, des
+   points seuls disparaissent. */
+.gallery-dots{
+  position:absolute;bottom:10px;left:50%;z-index:2;
+  transform:translateX(-50%);
+  display:flex;align-items:center;gap:6px;
+  padding:7px 10px;border-radius:99px;
+  background:var(--glass-bg-strong);
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+  backdrop-filter:blur(10px) saturate(160%);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-inset);
+}
+.gallery-dot{
+  position:relative;
+  width:8px;height:8px;
+  padding:0;border:none;border-radius:50%;
+  cursor:pointer;
+  background:var(--dot-idle);
+  transition:background .18s ease, transform .18s ease;
+}
+/* la cible tactile déborde largement la pastille visible : 8 px de
+   diamètre se ratent une fois sur deux au doigt */
+.gallery-dot::after{content:"";position:absolute;inset:-8px}
+.gallery-dot.is-current{background:var(--accent);transform:scale(1.25)}
+.gallery-dot:hover{background:var(--accent-bright)}
 
 .project-links{display:flex;gap:16px;padding-top:2px;margin-top:auto}
 .project-links a{
@@ -446,10 +567,10 @@
 }
 .project.is-featured h3{font-size:clamp(22px,2.4vw,28px);grid-column:1}
 .project.is-featured p:not(.impact){grid-column:1;flex:0}
-/* la démo occupe la colonne de droite, à hauteur du titre et du
+/* la galerie occupe la colonne de droite, à hauteur du titre et du
    descriptif ; le relevé d'apport passe en bandeau pleine largeur
    juste en dessous */
-.project.is-featured .project-media{grid-column:2;grid-row:1 / span 2;align-self:start}
+.project.is-featured .project-gallery{grid-column:2;grid-row:1 / span 2;align-self:start}
 .project.is-featured .impact{grid-column:1 / -1}
 .project.is-featured .tags{grid-column:1 / -1}
 .project.is-featured .project-links{grid-column:1 / -1;margin-top:4px}

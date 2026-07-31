@@ -3,8 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ══════════════════════════════════════════════════════════════
+     ⚠️  ADRESSE PUBLIQUE DU SITE
+     Les quatre balises ci-dessous (canonical, og:url, og:image,
+     twitter:image) doivent porter l'adresse RÉELLE du site en ligne.
+     Tant qu'elle n'est pas confirmée, la valeur ci-dessous est celle
+     suggérée par DEPLOIEMENT.md §5.
+
+     → Au premier déploiement : remplacer partout
+       https://elhadji-diatta.vercel.app
+       par l'adresse affichée par Vercel.
+
+     Un canonical erroné demande à Google d'indexer une page qui
+     n'existe pas : c'est pire que pas de canonical du tout.
+     ══════════════════════════════════════════════════════════════ -->
+
 <title>Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps</title>
 <meta name="description" content="Portfolio d'Elhadji Ba Diaby Diatta, développeur full stack et administrateur systèmes en transition vers l'ingénierie DevOps.">
+<meta name="author" content="Elhadji Ba Diaby Diatta">
+<link rel="canonical" href="https://elhadji-diatta.vercel.app/">
+
+<!-- ── Open Graph (LinkedIn, WhatsApp, Facebook, Slack…) ──
+     og:image doit être une URL ABSOLUE : les crawlers ne résolvent
+     pas les chemins relatifs. La photo de profil sert de visuel par
+     défaut ; une carte dédiée en 1200×630 serait meilleure (voir
+     DEPLOIEMENT.md §3.4). -->
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Elhadji Diatta">
+<meta property="og:url" content="https://elhadji-diatta.vercel.app/">
+<meta property="og:title" content="Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps">
+<meta property="og:description" content="Développeur full stack (Java/Spring Boot, PHP/Laravel, React) et administrateur systèmes Linux et Windows Server, en route vers l'ingénierie DevOps.">
+<meta property="og:image" content="https://elhadji-diatta.vercel.app/assets/elhadji.jpeg">
+<meta property="og:image:alt" content="Portrait d'Elhadji Ba Diaby Diatta">
+<!-- dimensions réelles du fichier : 1254 × 1254 (carré). À corriger si
+     la photo est remplacée — un og:image:width faux fait réserver au
+     réseau social une zone d'aperçu de la mauvaise forme. -->
+<meta property="og:image:width" content="1254">
+<meta property="og:image:height" content="1254">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="profile:first_name" content="Elhadji">
+<meta property="profile:last_name" content="Diatta">
+
+<!-- ── Twitter / X ──
+     « summary » et non « summary_large_image » : le visuel est un
+     portrait (810×1080). En large_image, X le recadrerait en 2:1 et
+     couperait la tête. À repasser en large_image le jour où une
+     carte 1200×630 remplace la photo. -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elhadji Diatta — Développeur Full Stack · Admin Systèmes · DevOps">
+<meta name="twitter:description" content="Développeur full stack et administrateur systèmes, en route vers l'ingénierie DevOps.">
+<meta name="twitter:image" content="https://elhadji-diatta.vercel.app/assets/elhadji.jpeg">
+
+<!-- ══════════════════════════════════════════════════════════════
+     ÉTAT INITIAL — thème et langue, posés AVANT tout rendu.
+
+     Ce script est volontairement inline et non différé : différé, il
+     s'exécuterait après le premier rendu et le visiteur verrait le
+     thème clair clignoter quelques dizaines de millisecondes avant
+     de basculer en sombre.
+
+     try/catch obligatoire : localStorage lève une exception en
+     navigation privée sur certaines configurations, et une erreur
+     non rattrapée ici bloquerait tout le reste du <head>.
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  var root = document.documentElement;
+
+  /* Les deux sélecteurs (thème, langue) ne servent à rien sans JS.
+     Cette classe les révèle ; sans elle le CSS les garde masqués,
+     plutôt que d'afficher deux boutons qui ne répondent pas. */
+  root.className += " js";
+
+  /* ---- thème : auto (défaut) | light | dark ---- */
+  try{
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") root.dataset.theme = t;
+  }catch(e){}
+
+  /* ---- langue : ?lang= > localStorage > navigator > fr ---- */
+  var lang = "fr";
+  try{
+    var q = new URLSearchParams(location.search).get("lang");
+    var stored = localStorage.getItem("lang");
+    if (q === "en" || q === "fr") lang = q;
+    else if (stored === "en" || stored === "fr") lang = stored;
+    else if ((navigator.language || "").toLowerCase().indexOf("en") === 0) lang = "en";
+  }catch(e){}
+  root.lang = lang;
+
+  /* La couleur de la barre d'adresse mobile suit le thème effectif.
+     Posée ici pour éviter, là aussi, un flash de la mauvaise teinte. */
+  try{
+    var dark = root.dataset.theme === "dark" ||
+      (!root.dataset.theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    var meta = document.createElement("meta");
+    meta.name = "theme-color";
+    meta.content = dark ? "#0f1f2b" : "#f4fbfa";
+    document.head.appendChild(meta);
+  }catch(e){}
+})();
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,14 +122,29 @@
 <!-- ══════════════════ BARRE DE STATUT ══════════════════ -->
 <header class="statusbar">
   <div class="statusbar-inner">
-    <span class="sys"><span class="dot" aria-hidden="true"></span>statut: disponible</span>
-    <nav aria-label="Navigation principale">
-      <a href="#apropos">à-propos</a>
-      <a href="#competences">compétences</a>
-      <a href="#projets">projets</a>
-      <a href="#parcours">parcours</a>
-      <a href="#contact">contact</a>
+    <span class="sys"><span class="dot" aria-hidden="true"></span><span data-i18n="nav.status">statut: disponible</span></span>
+    <nav aria-label="Navigation principale" data-i18n-attr="aria-label:nav.aria">
+      <a href="#apropos" data-i18n="nav.about">à-propos</a>
+      <a href="#competences" data-i18n="nav.skills">compétences</a>
+      <a href="#projets" data-i18n="nav.projects">projets</a>
+      <a href="#parcours" data-i18n="nav.path">parcours</a>
+      <a href="#contact" data-i18n="nav.contact">contact</a>
     </nav>
+
+    <!-- Langue puis thème. Le bouton de langue affiche la langue vers
+         laquelle on VA (« EN » quand on est en français), et porte
+         l'attribut lang correspondant pour qu'un lecteur d'écran le
+         prononce dans la bonne langue. -->
+    <div class="statusbar-controls">
+      <button class="lang-toggle" type="button" lang="en"
+              aria-label="Switch to English" title="Switch to English">EN</button>
+
+      <button class="theme-toggle" type="button"
+              aria-label="Thème : automatique" title="Thème : automatique">
+        <span class="theme-ico" aria-hidden="true"></span>
+        <span class="theme-txt">auto</span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -38,14 +154,14 @@
   <section class="stage hero" id="accueil">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="stage-label" data-anim="hero-item" data-hero-order="0">pipeline · init <span class="ok">✓</span></p>
+        <p class="stage-label" data-anim="hero-item" data-hero-order="0"><span data-i18n="hero.stage">pipeline · init</span> <span class="ok">✓</span></p>
 
         <h1 data-anim="hero-title">
-          <span class="line-mask"><span class="line-inner">Elhadji Diatta développe des applications,</span></span>
-          <span class="line-mask"><span class="line-inner">les déploie, et les <em>administre.</em></span></span>
+          <span class="line-mask"><span class="line-inner" data-i18n="hero.title.line1">Elhadji Diatta développe des applications,</span></span>
+          <span class="line-mask"><span class="line-inner" data-i18n-html="hero.title.line2">les déploie, et les <em>administre.</em></span></span>
         </h1>
 
-        <p class="lede" data-anim="hero-item" data-hero-order="2">
+        <p class="lede" data-anim="hero-item" data-hero-order="2" data-i18n-html="hero.lede">
           Développeur <strong>full stack</strong> — Java/Spring&nbsp;Boot, PHP/Laravel, de la
           modélisation Merise au déploiement — et <strong>administrateur systèmes</strong>
           Linux et Windows Server.
@@ -53,40 +169,51 @@
         </p>
 
         <div class="hero-actions" data-anim="hero-item" data-hero-order="3">
-          <a class="btn btn-primary" href="#projets">Voir les projets →</a>
-          <!-- CV : déposer le PDF sous assets/cv-elhadji-diatta.pdf.
-               S'il est absent, js/media.js neutralise le bouton plutôt
-               que de laisser le visiteur tomber sur une erreur 404. -->
+          <a class="btn btn-primary" href="#projets" data-i18n="hero.cta.projects">Voir les projets →</a>
+          <!-- CV : déposer le PDF sous assets/cv-elhadji-diatta.pdf
+               (et sa version anglaise sous …-en.pdf). S'il est absent,
+               js/media.js neutralise le bouton plutôt que de laisser le
+               visiteur tomber sur une erreur 404. -->
           <a class="btn btn-ghost" data-cv
-             href="assets/cv-elhadji-diatta.pdf" download="CV-Elhadji-Diatta.pdf">
+             href="assets/cv-elhadji-diatta.pdf" download="CV-Elhadji-Diatta.pdf"
+             data-i18n="hero.cta.cv">
             Télécharger mon CV ↓
           </a>
-          <!-- contact direct : ouvre le client mail, sujet pré-rempli -->
+          <!-- contact direct : ouvre le client mail, sujet pré-rempli.
+               data-i18n-query reconstruit la query depuis i18n/*.json,
+               en clair puis encodée une seule fois (pas de %2520). -->
           <a class="btn btn-ghost"
-             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio">
+             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio"
+             data-i18n="hero.cta.mail"
+             data-i18n-query="subject:mailto.contact.subject">
             M'écrire un mail ✉
           </a>
         </div>
 
-        <div class="hero-manifest" data-anim="hero-item" data-hero-order="4" aria-label="Profil résumé au format manifeste">
-          <div><span class="k">profil:</span></div>
-          <div>&nbsp;&nbsp;<span class="k">rôle:</span> <span class="v">développeur full stack · admin systèmes</span></div>
-          <div>&nbsp;&nbsp;<span class="k">diplôme:</span> <span class="v">licence pro DAA — <span class="t">validée</span></span></div>
-          <div>&nbsp;&nbsp;<span class="k">objectif:</span> <span class="a">ingénieur devops</span></div>
-          <div>&nbsp;&nbsp;<span class="k">localisation:</span> <span class="v">Bambey, Sénégal</span></div>
-          <div>&nbsp;&nbsp;<span class="k">email:</span> <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a></div>
-          <div>&nbsp;&nbsp;<span class="k">disponibilité:</span> <span class="t">true</span></div>
+        <div class="hero-manifest" data-anim="hero-item" data-hero-order="4"
+             aria-label="Profil résumé au format manifeste"
+             data-i18n-attr="aria-label:hero.manifest.aria">
+          <div><span class="k" data-i18n="hero.manifest.profile">profil:</span></div>
+          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.role">rôle:</span> <span class="v" data-i18n="hero.manifest.role.value">développeur full stack · admin systèmes</span></div>
+          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.diploma">diplôme:</span> <span class="v"><span data-i18n="hero.manifest.diploma.value">licence pro DAA —</span> <span class="t" data-i18n="hero.manifest.diploma.state">validée</span></span></div>
+          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.goal">objectif:</span> <span class="a" data-i18n="hero.manifest.goal.value">ingénieur devops</span></div>
+          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.location">localisation:</span> <span class="v" data-i18n="hero.manifest.location.value">Bambey, Sénégal</span></div>
+          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.email">email:</span> <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a></div>
+          <div>&nbsp;&nbsp;<span class="k" data-i18n="hero.manifest.availability">disponibilité:</span> <span class="t">true</span></div>
         </div>
       </div>
 
-      <aside class="hero-media" data-anim="hero-item" data-hero-order="2" aria-label="Photo de profil">
+      <aside class="hero-media" data-anim="hero-item" data-hero-order="2" aria-label="Photo de profil"
+             data-i18n-attr="aria-label:hero.photo.aria">
         <img
           class="profile-photo"
           src="assets/elhadji.jpeg"
           alt="Photo de profil d'Elhadji Ba Diaby Diatta, portrait utilisé dans le hero du portfolio"
+          data-i18n-attr="alt:hero.photo.alt"
           width="640" height="640"
           data-fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Crect width='640' height='640' rx='24' fill='%23FFFFFF'/%3E%3Cg stroke='%23CBE3E0' stroke-width='10'%3E%3Cpath d='M120 500c36-92 108-138 200-138s164 46 200 138' fill='none'/%3E%3Ccircle cx='320' cy='232' r='92' fill='none'/%3E%3C/g%3E%3Cpath d='M116 516h408' stroke='%235EA3A3' stroke-width='10' stroke-linecap='round'/%3E%3Ctext x='320' y='572' text-anchor='middle' font-family='IBM Plex Mono, monospace' font-size='28' fill='%234B626B'%3Ephoto pending%3C/text%3E%3C/svg%3E">
-        <div class="profile-meta" aria-label="Statut du fichier avatar">
+        <div class="profile-meta" aria-label="Statut du fichier avatar"
+             data-i18n-attr="aria-label:hero.avatar.aria">
           <span class="status" aria-hidden="true"></span>
           <span class="file">avatar: elhadji.jpeg</span>
           <span class="ok">✓</span>
@@ -97,11 +224,11 @@
 
   <!-- ══════════════════ À PROPOS ══════════════════ -->
   <section class="stage" id="apropos">
-    <p class="stage-label">stage: build — à-propos <span class="ok">✓</span></p>
-    <h2>Du code qui tourne, pas seulement du code qui compile.</h2>
+    <p class="stage-label"><span data-i18n="about.stage">stage: build — à-propos</span> <span class="ok">✓</span></p>
+    <h2 data-i18n="about.title">Du code qui tourne, pas seulement du code qui compile.</h2>
     <div class="about-grid">
       <div>
-        <p>
+        <p data-i18n-html="about.p1">
           <strong>Diplômé d'une Licence Professionnelle</strong> Développement et
           Administration d'Applications à l'Université Alioune Diop de Bambey
           — formation validée en 2026 —, je couvre
@@ -109,38 +236,38 @@
           (Merise, SQL), développement (Java/Spring&nbsp;Boot, PHP/Laravel), et déploiement
           sur serveur (Linux, Windows Server).
         </p>
-        <p>
+        <p data-i18n-html="about.p2">
           <strong>Spring Boot et React, je les ai appris seul</strong>, hors programme :
           c'est avec cette stack que j'ai conçu et livré mon projet de mémoire,
           une plateforme de suivi de dossiers judiciaires. Apprendre une
           technologie parce qu'un projet l'exige, c'est ma façon de travailler.
         </p>
-        <p>
+        <p data-i18n-html="about.p3">
           Ce qui me distingue : je ne fais pas que développer. J'installe,
           je configure et je sécurise les environnements sur lesquels mes
           applications tournent. Cette <strong>double casquette dev + ops</strong>
           est ma rampe de lancement naturelle vers le DevOps : CI/CD,
           conteneurisation, infrastructure as code.
         </p>
-        <p>
+        <p data-i18n="about.p4">
           Disponible pour un stage ou un premier emploi au sein d'une équipe
           technique ambitieuse.
         </p>
       </div>
       <aside class="trajectory">
-        <h3>trajectoire</h3>
+        <h3 data-i18n="about.trajectory.title">trajectoire</h3>
         <ol>
           <li>
-            <span class="when">acquis</span>
-            Développement full stack — Java/Spring Boot, React/TypeScript, PHP/Laravel, PostgreSQL
+            <span class="when" data-i18n="about.trajectory.1.when">acquis</span>
+            <span data-i18n="about.trajectory.1.text">Développement full stack — Java/Spring Boot, React/TypeScript, PHP/Laravel, PostgreSQL</span>
           </li>
           <li>
-            <span class="when">acquis</span>
-            Administration systèmes &amp; conteneurs — Linux, Windows Server, Docker
+            <span class="when" data-i18n="about.trajectory.2.when">acquis</span>
+            <span data-i18n="about.trajectory.2.text">Administration systèmes &amp; conteneurs — Linux, Windows Server, Docker</span>
           </li>
           <li class="next">
-            <span class="when">en cours</span>
-            CI/CD, orchestration et observabilité
+            <span class="when" data-i18n="about.trajectory.3.when">en cours</span>
+            <span data-i18n="about.trajectory.3.text">CI/CD, orchestration et observabilité</span>
           </li>
         </ol>
       </aside>
@@ -149,14 +276,14 @@
 
   <!-- ══════════════════ COMPÉTENCES ══════════════════ -->
   <section class="stage" id="competences">
-    <p class="stage-label">stage: test — compétences <span class="ok">✓</span></p>
-    <h2>Compétences</h2>
+    <p class="stage-label"><span data-i18n="skills.stage">stage: test — compétences</span> <span class="ok">✓</span></p>
+    <h2 data-i18n="skills.title">Compétences</h2>
     <div class="skills-grid">
 
       <article class="skill-card">
-        <h3>Développement</h3>
-        <span class="scope">langages &amp; frameworks</span>
-        <div class="skill-float" role="list" aria-label="Technologies : développement">
+        <h3 data-i18n="skills.dev.title">Développement</h3>
+        <span class="scope" data-i18n="skills.dev.scope">langages &amp; frameworks</span>
+        <div class="skill-float" role="list" aria-label="Technologies : développement" data-i18n-attr="aria-label:skills.dev.aria">
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
@@ -231,9 +358,9 @@
       </article>
 
       <article class="skill-card">
-        <h3>Données</h3>
-        <span class="scope">modélisation &amp; bases de données</span>
-        <div class="skill-float" role="list" aria-label="Technologies : données">
+        <h3 data-i18n="skills.data.title">Données</h3>
+        <span class="scope" data-i18n="skills.data.scope">modélisation &amp; bases de données</span>
+        <div class="skill-float" role="list" aria-label="Technologies : données" data-i18n-attr="aria-label:skills.data.aria">
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg"
@@ -260,7 +387,7 @@
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <svg class="logo-img" viewBox="0 0 24 24" role="img"
-                   aria-label="MinIO — stockage objet compatible S3"
+                   aria-label="MinIO — stockage objet compatible S3" data-i18n-attr="aria-label:skills.alt.minio"
                    fill="none" stroke="currentColor" stroke-width="1.6"
                    stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2.4 3.4 7.2v9.6L12 21.6l8.6-4.8V7.2Z"/>
@@ -273,7 +400,7 @@
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <svg class="logo-img" viewBox="0 0 24 24" role="img"
-                   aria-label="Merise et PowerAMC — modélisation de données"
+                   aria-label="Merise et PowerAMC — modélisation de données" data-i18n-attr="aria-label:skills.alt.merise"
                    fill="none" stroke="currentColor" stroke-width="1.6"
                    stroke-linecap="round" stroke-linejoin="round">
                 <ellipse cx="12" cy="5.8" rx="7.4" ry="2.9"/>
@@ -287,9 +414,9 @@
       </article>
 
       <article class="skill-card">
-        <h3>Systèmes &amp; DevOps</h3>
-        <span class="scope">administration &amp; automatisation</span>
-        <div class="skill-float" role="list" aria-label="Technologies : systèmes et devops">
+        <h3 data-i18n="skills.ops.title">Systèmes &amp; DevOps</h3>
+        <span class="scope" data-i18n="skills.ops.scope">administration &amp; automatisation</span>
+        <div class="skill-float" role="list" aria-label="Technologies : systèmes et devops" data-i18n-attr="aria-label:skills.ops.aria">
           <span class="logo" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg"
@@ -342,14 +469,16 @@
           <span class="logo is-learning" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-original.svg"
-                   alt="Kubernetes (en apprentissage)" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="Kubernetes (en apprentissage)" data-i18n-attr="alt:skills.alt.kubernetes"
+                   width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
             <span class="logo-label" aria-hidden="true">Kubernetes</span>
           </span>
           <span class="logo is-learning" role="listitem">
             <span class="logo-inner">
               <img class="logo-img" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg"
-                   alt="Ansible (en apprentissage)" width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
+                   alt="Ansible (en apprentissage)" data-i18n-attr="alt:skills.alt.ansible"
+                   width="44" height="44" loading="lazy" referrerpolicy="no-referrer">
             </span>
             <span class="logo-label" aria-hidden="true">Ansible</span>
           </span>
@@ -358,18 +487,18 @@
 
     </div>
     <p class="legend">
-      <span><span class="sw b"></span>maîtrisé</span>
-      <span><span class="sw a"></span>en apprentissage</span>
+      <span><span class="sw b"></span><span data-i18n="skills.legend.mastered">maîtrisé</span></span>
+      <span><span class="sw a"></span><span data-i18n="skills.legend.learning">en apprentissage</span></span>
     </p>
   </section>
 
   <!-- ══════════════════ PROJETS ══════════════════ -->
   <section class="stage" id="projets">
-    <p class="stage-label">stage: deploy — projets <span class="ok">✓</span></p>
-    <h2>Projets réalisés</h2>
-    <p class="projects-intro">
+    <p class="stage-label"><span data-i18n="projects.stage">stage: deploy — projets</span> <span class="ok">✓</span></p>
+    <h2 data-i18n="projects.title">Projets réalisés</h2>
+    <p class="projects-intro" data-i18n="projects.intro">
       Travaux académiques et personnels. Les dépôts sont privés — chaque projet
-      est donc présenté en vidéo, et le code reste consultable sur demande.
+      est donc présenté en captures d'écran, et le code reste consultable sur demande.
     </p>
 
     <div class="projects-grid">
@@ -377,31 +506,35 @@
       <article class="project is-featured">
         <div class="project-head">
           <span>dossiers-judiciaires.yml</span>
-          <span class="badge memoire">● projet de mémoire</span>
+          <span class="badge memoire" data-i18n="projects.badge.memoire">● projet de mémoire</span>
         </div>
         <div class="project-body">
-          <h3>Plateforme de suivi des dossiers judiciaires</h3>
-          <p>
+          <h3 data-i18n="projects.judicial.title">Plateforme de suivi des dossiers judiciaires</h3>
+          <p data-i18n="projects.judicial.text">
             Projet de mémoire de Licence Pro : une application de suivi et de
             traitement des dossiers judiciaires des personnes détenues.
             API métier en Spring Boot, interface React 18 en TypeScript,
             pièces numérisées stockées en objet sur MinIO, et mises à jour
             diffusées en direct aux agents via WebSocket STOMP.
           </p>
-          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
-               le bouton s'active tout seul (voir js/media.js) -->
-          <figure class="project-media"
-                  data-video="assets/videos/dossiers-judiciaires.mp4"
-                  data-poster="assets/videos/dossiers-judiciaires.jpg">
-            <button class="media-play" type="button"
-                    aria-label="Lire la vidéo de démonstration : Plateforme de suivi des dossiers judiciaires">
-              <span class="media-ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
-              </span>
-              <span class="media-txt">Voir la démo</span>
-            </button>
+          <!-- Galerie de captures : déposer les .webp dans
+               assets/shots/dossiers-judiciaires/. js/gallery.js sonde chaque
+               fichier et ne garde que ceux réellement présents ; s'il
+               n'en trouve aucun, le repli ci-dessous reste affiché.
+               data-alts est OBLIGATOIRE et suit l'ordre de data-shots :
+               une capture sans description est une image vide pour un
+               lecteur d'écran. -->
+          <figure class="project-gallery"
+                  data-shots="assets/shots/dossiers-judiciaires/01.webp,assets/shots/dossiers-judiciaires/02.webp,assets/shots/dossiers-judiciaires/03.webp"
+                  data-alts="Tableau de bord des dossiers en cours|Fiche détaillée d'un dossier avec pièces jointes|Notifications temps réel reçues par un agent"
+                  data-i18n-alts="shots.judicial"
+                  role="group"
+                  aria-roledescription="galerie"
+                  aria-label="Captures d'écran — Plateforme de suivi des dossiers judiciaires"
+                  data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.judicial.gallery">
+            <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
-          <p class="impact">→ Stack entièrement apprise en autodidacte, du modèle PostgreSQL au temps réel</p>
+          <p class="impact" data-i18n="projects.judicial.impact">→ Stack entièrement apprise en autodidacte, du modèle PostgreSQL au temps réel</p>
           <div class="tags">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
@@ -412,7 +545,9 @@
             <span class="tag">WebSocket STOMP</span>
           </div>
           <div class="project-links">
-            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20"
+               data-i18n="projects.link.code"
+               data-i18n-query="subject:mailto.code.subject,body:mailto.code.body">demander l'accès au code</a>
           </div>
         </div>
       </article>
@@ -420,29 +555,33 @@
       <article class="project is-featured">
         <div class="project-head">
           <span>thies-ville.yml</span>
-          <span class="badge private">● dépôt privé</span>
+          <span class="badge private" data-i18n="projects.badge.private">● dépôt privé</span>
         </div>
         <div class="project-body">
-          <h3>Refonte du site de la Ville de Thiès</h3>
-          <p>
+          <h3 data-i18n="projects.thies.title">Refonte du site de la Ville de Thiès</h3>
+          <p data-i18n="projects.thies.text">
             Migration complète du site municipal vers Joomla : analyse de
             l'architecture existante, refonte UI/UX pour faciliter l'accès
             des citoyens aux services, intégration de modules dynamiques.
           </p>
-          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
-               le bouton s'active tout seul (voir js/media.js) -->
-          <figure class="project-media"
-                  data-video="assets/videos/thies-ville.mp4"
-                  data-poster="assets/videos/thies-ville.jpg">
-            <button class="media-play" type="button"
-                    aria-label="Lire la vidéo de démonstration : Refonte du site de la Ville de Thiès">
-              <span class="media-ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
-              </span>
-              <span class="media-txt">Voir la démo</span>
-            </button>
+          <!-- Galerie de captures : déposer les .webp dans
+               assets/shots/thies-ville/. js/gallery.js sonde chaque
+               fichier et ne garde que ceux réellement présents ; s'il
+               n'en trouve aucun, le repli ci-dessous reste affiché.
+               data-alts est OBLIGATOIRE et suit l'ordre de data-shots :
+               une capture sans description est une image vide pour un
+               lecteur d'écran. -->
+          <figure class="project-gallery"
+                  data-shots="assets/shots/thies-ville/01.webp,assets/shots/thies-ville/02.webp"
+                  data-alts="Page d'accueil du site municipal après refonte|Rubrique des services aux citoyens"
+                  data-i18n-alts="shots.thies"
+                  role="group"
+                  aria-roledescription="galerie"
+                  aria-label="Captures d'écran — Refonte du site de la Ville de Thiès"
+                  data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.thies.gallery">
+            <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
-          <p class="impact">→ Refonte complète : architecture, UI/UX et modules d'administration</p>
+          <p class="impact" data-i18n="projects.thies.impact">→ Refonte complète : architecture, UI/UX et modules d'administration</p>
           <div class="tags">
             <span class="tag">Joomla</span>
             <span class="tag">PHP</span>
@@ -450,7 +589,9 @@
             <span class="tag">Sécurité</span>
           </div>
           <div class="project-links">
-            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20"
+               data-i18n="projects.link.code"
+               data-i18n-query="subject:mailto.code.subject,body:mailto.code.body">demander l'accès au code</a>
           </div>
         </div>
       </article>
@@ -458,29 +599,33 @@
       <article class="project">
         <div class="project-head">
           <span>tontine-app.yml</span>
-          <span class="badge private">● dépôt privé</span>
+          <span class="badge private" data-i18n="projects.badge.private">● dépôt privé</span>
         </div>
         <div class="project-body">
-          <h3>Gestion de Tontine &amp; Bibliothèque</h3>
-          <p>
+          <h3 data-i18n="projects.tontine.title">Gestion de Tontine &amp; Bibliothèque</h3>
+          <p data-i18n="projects.tontine.text">
             Application web full stack : conception des interfaces,
             modélisation et gestion des bases MySQL, sécurisation des accès
             et génération automatisée de rapports.
           </p>
-          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
-               le bouton s'active tout seul (voir js/media.js) -->
-          <figure class="project-media"
-                  data-video="assets/videos/tontine-app.mp4"
-                  data-poster="assets/videos/tontine-app.jpg">
-            <button class="media-play" type="button"
-                    aria-label="Lire la vidéo de démonstration : Gestion de Tontine &amp; Bibliothèque">
-              <span class="media-ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
-              </span>
-              <span class="media-txt">Voir la démo</span>
-            </button>
+          <!-- Galerie de captures : déposer les .webp dans
+               assets/shots/tontine-app/. js/gallery.js sonde chaque
+               fichier et ne garde que ceux réellement présents ; s'il
+               n'en trouve aucun, le repli ci-dessous reste affiché.
+               data-alts est OBLIGATOIRE et suit l'ordre de data-shots :
+               une capture sans description est une image vide pour un
+               lecteur d'écran. -->
+          <figure class="project-gallery"
+                  data-shots="assets/shots/tontine-app/01.webp,assets/shots/tontine-app/02.webp"
+                  data-alts="Tableau de bord des cotisations d'une tontine|Rapport de gestion généré automatiquement"
+                  data-i18n-alts="shots.tontine"
+                  role="group"
+                  aria-roledescription="galerie"
+                  aria-label="Captures d'écran — Gestion de Tontine &amp; Bibliothèque"
+                  data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.tontine.gallery">
+            <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
-          <p class="impact">→ Rapports de données générés automatiquement, zéro saisie manuelle</p>
+          <p class="impact" data-i18n="projects.tontine.impact">→ Rapports de données générés automatiquement, zéro saisie manuelle</p>
           <div class="tags">
             <span class="tag">PHP 8</span>
             <span class="tag">Laravel</span>
@@ -488,7 +633,9 @@
             <span class="tag">MVC</span>
           </div>
           <div class="project-links">
-            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20"
+               data-i18n="projects.link.code"
+               data-i18n-query="subject:mailto.code.subject,body:mailto.code.body">demander l'accès au code</a>
           </div>
         </div>
       </article>
@@ -496,36 +643,42 @@
       <article class="project">
         <div class="project-head">
           <span>insertion-pro.yml</span>
-          <span class="badge private">● dépôt privé</span>
+          <span class="badge private" data-i18n="projects.badge.private">● dépôt privé</span>
         </div>
         <div class="project-body">
-          <h3>Application d'Insertion Professionnelle</h3>
-          <p>
+          <h3 data-i18n="projects.insertion.title">Application d'Insertion Professionnelle</h3>
+          <p data-i18n="projects.insertion.text">
             Application desktop mettant en relation jeunes diplômés et
             recruteurs, avec une interface ergonomique pensée pour un
             public non technique.
           </p>
-          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
-               le bouton s'active tout seul (voir js/media.js) -->
-          <figure class="project-media"
-                  data-video="assets/videos/insertion-pro.mp4"
-                  data-poster="assets/videos/insertion-pro.jpg">
-            <button class="media-play" type="button"
-                    aria-label="Lire la vidéo de démonstration : Application d'Insertion Professionnelle">
-              <span class="media-ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
-              </span>
-              <span class="media-txt">Voir la démo</span>
-            </button>
+          <!-- Galerie de captures : déposer les .webp dans
+               assets/shots/insertion-pro/. js/gallery.js sonde chaque
+               fichier et ne garde que ceux réellement présents ; s'il
+               n'en trouve aucun, le repli ci-dessous reste affiché.
+               data-alts est OBLIGATOIRE et suit l'ordre de data-shots :
+               une capture sans description est une image vide pour un
+               lecteur d'écran. -->
+          <figure class="project-gallery"
+                  data-shots="assets/shots/insertion-pro/01.webp,assets/shots/insertion-pro/02.webp"
+                  data-alts="Écran de mise en relation diplômés / recruteurs|Fiche de profil d'un candidat"
+                  data-i18n-alts="shots.insertion"
+                  role="group"
+                  aria-roledescription="galerie"
+                  aria-label="Captures d'écran — Application d'Insertion Professionnelle"
+                  data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.insertion.gallery">
+            <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
-          <p class="impact">→ Interface JavaFX complète, conçue de zéro</p>
+          <p class="impact" data-i18n="projects.insertion.impact">→ Interface JavaFX complète, conçue de zéro</p>
           <div class="tags">
             <span class="tag">Java</span>
             <span class="tag">JavaFX</span>
             <span class="tag">MySQL</span>
           </div>
           <div class="project-links">
-            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20"
+               data-i18n="projects.link.code"
+               data-i18n-query="subject:mailto.code.subject,body:mailto.code.body">demander l'accès au code</a>
           </div>
         </div>
       </article>
@@ -533,36 +686,42 @@
       <article class="project">
         <div class="project-head">
           <span>infra-server.yml</span>
-          <span class="badge private">● dépôt privé</span>
+          <span class="badge private" data-i18n="projects.badge.private">● dépôt privé</span>
         </div>
         <div class="project-body">
-          <h3>Infrastructure Windows Server</h3>
-          <p>
+          <h3 data-i18n="projects.infra.title">Infrastructure Windows Server</h3>
+          <p data-i18n="projects.infra.text">
             Déploiement complet d'un environnement Windows Server 2012 :
             installation, configuration des rôles et fonctionnalités,
             sécurisation de l'ensemble.
           </p>
-          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
-               le bouton s'active tout seul (voir js/media.js) -->
-          <figure class="project-media"
-                  data-video="assets/videos/infra-server.mp4"
-                  data-poster="assets/videos/infra-server.jpg">
-            <button class="media-play" type="button"
-                    aria-label="Lire la vidéo de démonstration : Infrastructure Windows Server">
-              <span class="media-ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
-              </span>
-              <span class="media-txt">Voir la démo</span>
-            </button>
+          <!-- Galerie de captures : déposer les .webp dans
+               assets/shots/infra-server/. js/gallery.js sonde chaque
+               fichier et ne garde que ceux réellement présents ; s'il
+               n'en trouve aucun, le repli ci-dessous reste affiché.
+               data-alts est OBLIGATOIRE et suit l'ordre de data-shots :
+               une capture sans description est une image vide pour un
+               lecteur d'écran. -->
+          <figure class="project-gallery"
+                  data-shots="assets/shots/infra-server/01.webp"
+                  data-alts="Console d'administration Windows Server"
+                  data-i18n-alts="shots.infra"
+                  role="group"
+                  aria-roledescription="galerie"
+                  aria-label="Captures d'écran — Infrastructure Windows Server"
+                  data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.infra.gallery">
+            <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
-          <p class="impact">→ Mon premier vrai projet ops : le socle de ma transition DevOps</p>
+          <p class="impact" data-i18n="projects.infra.impact">→ Mon premier vrai projet ops : le socle de ma transition DevOps</p>
           <div class="tags">
             <span class="tag">Windows Server</span>
             <span class="tag">Réseaux</span>
             <span class="tag">Sécurité</span>
           </div>
           <div class="project-links">
-            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20"
+               data-i18n="projects.link.code"
+               data-i18n-query="subject:mailto.code.subject,body:mailto.code.body">demander l'accès au code</a>
           </div>
         </div>
       </article>
@@ -570,35 +729,41 @@
       <article class="project">
         <div class="project-head">
           <span>stock-model.yml</span>
-          <span class="badge private">● dépôt privé</span>
+          <span class="badge private" data-i18n="projects.badge.private">● dépôt privé</span>
         </div>
         <div class="project-body">
-          <h3>Modélisation d'un Système de Stock</h3>
-          <p>
+          <h3 data-i18n="projects.stock.title">Modélisation d'un Système de Stock</h3>
+          <p data-i18n="projects.stock.text">
             Recueil et analyse des besoins, puis réalisation du Modèle
             Conceptuel de Données complet sur PowerAMC.
           </p>
-          <!-- emplacement vidéo : déposer le fichier dans assets/videos/,
-               le bouton s'active tout seul (voir js/media.js) -->
-          <figure class="project-media"
-                  data-video="assets/videos/stock-model.mp4"
-                  data-poster="assets/videos/stock-model.jpg">
-            <button class="media-play" type="button"
-                    aria-label="Lire la vidéo de démonstration : Modélisation d'un Système de Stock">
-              <span class="media-ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.15a1 1 0 0 1 0 1.7l-8.2 5.15a1 1 0 0 1-1.52-.85Z"/></svg>
-              </span>
-              <span class="media-txt">Voir la démo</span>
-            </button>
+          <!-- Galerie de captures : déposer les .webp dans
+               assets/shots/stock-model/. js/gallery.js sonde chaque
+               fichier et ne garde que ceux réellement présents ; s'il
+               n'en trouve aucun, le repli ci-dessous reste affiché.
+               data-alts est OBLIGATOIRE et suit l'ordre de data-shots :
+               une capture sans description est une image vide pour un
+               lecteur d'écran. -->
+          <figure class="project-gallery"
+                  data-shots="assets/shots/stock-model/01.webp"
+                  data-alts="Modèle conceptuel de données réalisé sur PowerAMC"
+                  data-i18n-alts="shots.stock"
+                  role="group"
+                  aria-roledescription="galerie"
+                  aria-label="Captures d'écran — Modélisation d'un Système de Stock"
+                  data-i18n-attr="aria-roledescription:gallery.roledescription,aria-label:projects.stock.gallery">
+            <p class="gallery-empty" data-i18n="gallery.empty">captures à venir</p>
           </figure>
-          <p class="impact">→ Un MCD propre avant une ligne de code : la donnée d'abord</p>
+          <p class="impact" data-i18n="projects.stock.impact">→ Un MCD propre avant une ligne de code : la donnée d'abord</p>
           <div class="tags">
             <span class="tag">Merise</span>
             <span class="tag">PowerAMC</span>
             <span class="tag">Analyse</span>
           </div>
           <div class="project-links">
-            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20">demander l'accès au code</a>
+            <a href="mailto:elhadjidiatta25@gmail.com?subject=Demande%20d'acc%C3%A8s%20au%20code%20source&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0AJe%20souhaite%20consulter%20le%20code%20du%20projet%20suivant%20%3A%20"
+               data-i18n="projects.link.code"
+               data-i18n-query="subject:mailto.code.subject,body:mailto.code.body">demander l'accès au code</a>
           </div>
         </div>
       </article>
@@ -609,19 +774,19 @@
 
   <!-- ══════════════════ PARCOURS ══════════════════ -->
   <section class="stage" id="parcours">
-    <p class="stage-label">stage: monitor — parcours <span class="ok">✓</span></p>
-    <h2>Parcours</h2>
+    <p class="stage-label"><span data-i18n="path.stage">stage: monitor — parcours</span> <span class="ok">✓</span></p>
+    <h2 data-i18n="path.title">Parcours</h2>
     <div class="xp">
 
       <div class="xp-item">
-        <div class="when">2021 — 2026</div>
+        <div class="when" data-i18n="path.1.when">2021 — 2026</div>
         <div>
           <h3>
-            Licence Pro Développement et Administration d'Applications
-            <span class="badge diploma">● diplôme obtenu</span>
+            <span data-i18n="path.1.title">Licence Pro Développement et Administration d'Applications</span>
+            <span class="badge diploma" data-i18n="path.1.badge">● diplôme obtenu</span>
           </h3>
-          <span class="org">Université Alioune Diop de Bambey (UADB), Sénégal</span>
-          <p>
+          <span class="org" data-i18n="path.1.org">Université Alioune Diop de Bambey (UADB), Sénégal</span>
+          <p data-i18n="path.1.text">
             Développement d'applications d'entreprise, sécurité informatique,
             administration de bases de données. Mémoire de fin de cycle :
             plateforme de suivi des dossiers judiciaires des personnes détenues,
@@ -631,28 +796,28 @@
       </div>
 
       <div class="xp-item">
-        <div class="when">2026</div>
+        <div class="when" data-i18n="path.2.when">2026</div>
         <div>
-          <h3>Attestation de Pilotage de Drone</h3>
-          <span class="org">Formation certifiante</span>
-          <p>Techniques de vol, réglementation, systèmes embarqués et collecte de données aériennes.</p>
+          <h3 data-i18n="path.2.title">Attestation de Pilotage de Drone</h3>
+          <span class="org" data-i18n="path.2.org">Formation certifiante</span>
+          <p data-i18n="path.2.text">Techniques de vol, réglementation, systèmes embarqués et collecte de données aériennes.</p>
         </div>
       </div>
 
       <div class="xp-item">
-        <div class="when">2021</div>
+        <div class="when" data-i18n="path.3.when">2021</div>
         <div>
-          <h3>Baccalauréat Scientifique (Série S2)</h3>
-          <span class="org">Sénégal</span>
+          <h3 data-i18n="path.3.title">Baccalauréat Scientifique (Série S2)</h3>
+          <span class="org" data-i18n="path.3.org">Sénégal</span>
         </div>
       </div>
 
       <div class="xp-item">
-        <div class="when">Bénévolat</div>
+        <div class="when" data-i18n="path.4.when">Bénévolat</div>
         <div>
-          <h3>Secouriste Volontaire</h3>
-          <span class="org">Croix-Rouge Sénégalaise (Cellule UADB)</span>
-          <p>Travail en équipe, gestion de crise, sens de l'organisation.</p>
+          <h3 data-i18n="path.4.title">Secouriste Volontaire</h3>
+          <span class="org" data-i18n="path.4.org">Croix-Rouge Sénégalaise (Cellule UADB)</span>
+          <p data-i18n="path.4.text">Travail en équipe, gestion de crise, sens de l'organisation.</p>
         </div>
       </div>
 
@@ -661,20 +826,21 @@
 
   <!-- ══════════════════ CONTACT ══════════════════ -->
   <section class="stage" id="contact">
-    <p class="stage-label">pipeline · release <span class="ok">✓</span></p>
+    <p class="stage-label"><span data-i18n="contact.stage">pipeline · release</span> <span class="ok">✓</span></p>
     <div class="contact-card">
       <div class="contact-intro">
-        <h2>Un projet à développer, déployer ou administrer&nbsp;?</h2>
-        <p>
+        <h2 data-i18n="contact.title">Un projet à développer, déployer ou administrer&nbsp;?</h2>
+        <p data-i18n="contact.lede">
           Disponible pour un stage ou un premier emploi. Basé à Bambey,
           Sénégal — mobile et opérationnel à distance.
         </p>
 
         <!-- réseaux & messageries : un clic = une conversation ouverte -->
-        <div class="social" aria-label="Me contacter sur les réseaux">
+        <div class="social" aria-label="Me contacter sur les réseaux" data-i18n-attr="aria-label:contact.social.aria">
           <a class="social-link is-whatsapp"
              href="https://wa.me/221773994182?text=Bonjour%20Elhadji%2C%20je%20vous%20contacte%20depuis%20votre%20portfolio."
-             target="_blank" rel="noopener">
+             target="_blank" rel="noopener"
+             data-i18n-query="text:whatsapp.text">
             <span class="social-ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
             </span>
@@ -708,6 +874,9 @@
             </span>
           </a>
 
+          <!-- Le CV suit la langue : js/media.js bascule vers
+               assets/cv-elhadji-diatta-en.pdf en anglais, et retombe sur
+               la version française si elle n'existe pas encore. -->
           <a class="social-link is-cv" data-cv
              href="assets/cv-elhadji-diatta.pdf" download="CV-Elhadji-Diatta.pdf">
             <span class="social-ico" aria-hidden="true">
@@ -719,13 +888,14 @@
               </svg>
             </span>
             <span class="social-txt">
-              <span class="social-name">Mon CV</span>
-              <span class="social-sub">PDF à télécharger</span>
+              <span class="social-name" data-i18n="contact.social.cv.name">Mon CV</span>
+              <span class="social-sub" data-i18n="contact.social.cv.sub">PDF à télécharger</span>
             </span>
           </a>
 
           <a class="social-link is-mail"
-             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0A">
+             href="mailto:elhadjidiatta25@gmail.com?subject=Contact%20depuis%20votre%20portfolio&amp;body=Bonjour%20Elhadji%2C%0D%0A%0D%0A"
+             data-i18n-query="subject:mailto.contact.subject,body:mailto.contact.body">
             <span class="social-ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                    stroke-linecap="round" stroke-linejoin="round" focusable="false">
@@ -734,16 +904,16 @@
               </svg>
             </span>
             <span class="social-txt">
-              <span class="social-name">Email</span>
+              <span class="social-name" data-i18n="contact.social.mail.name">Email</span>
               <span class="social-sub">elhadjidiatta25@gmail.com</span>
             </span>
           </a>
         </div>
 
         <ul class="contact-list">
-          <li><span class="lbl">téléphone:</span><a href="tel:+221773994182">+221 77 399 41 82</a></li>
-          <li><span class="lbl">localisation:</span><span class="val">Bambey, Sénégal — ouvert au distanciel</span></li>
-          <li><span class="lbl">réponse:</span><span class="val">sous 24 h</span></li>
+          <li><span class="lbl" data-i18n="contact.list.phone">téléphone:</span><a href="tel:+221773994182">+221 77 399 41 82</a></li>
+          <li><span class="lbl" data-i18n="contact.list.location">localisation:</span><span class="val" data-i18n="contact.list.location.value">Bambey, Sénégal — ouvert au distanciel</span></li>
+          <li><span class="lbl" data-i18n="contact.list.response">réponse:</span><span class="val" data-i18n="contact.list.response.value">sous 24 h</span></li>
         </ul>
       </div>
 
@@ -752,45 +922,53 @@
             data-endpoint="https://api.web3forms.com/submit"
             data-access-key="f9d62409-51c3-4060-a833-1e3106d000bd"
             data-mailto="elhadjidiatta25@gmail.com">
-        <p class="form-title">écrivez-moi directement <span class="ok">✓</span></p>
+        <p class="form-title"><span data-i18n="form.title">écrivez-moi directement</span> <span class="ok">✓</span></p>
 
         <div class="field">
-          <label for="cf-name">Nom<span class="req" aria-hidden="true">*</span></label>
+          <label for="cf-name"><span data-i18n="form.name.label">Nom</span><span class="req" aria-hidden="true">*</span></label>
           <input id="cf-name" name="name" type="text" autocomplete="name"
-                 placeholder="Votre nom" required aria-describedby="cf-name-err">
+                 placeholder="Votre nom" required aria-describedby="cf-name-err"
+                 data-i18n-attr="placeholder:form.name.placeholder">
           <p class="field-error" id="cf-name-err" hidden></p>
         </div>
 
         <div class="field">
-          <label for="cf-email">Email<span class="req" aria-hidden="true">*</span></label>
+          <label for="cf-email"><span data-i18n="form.email.label">Email</span><span class="req" aria-hidden="true">*</span></label>
           <input id="cf-email" name="email" type="email" autocomplete="email"
-                 placeholder="vous@exemple.com" required aria-describedby="cf-email-err">
+                 placeholder="vous@exemple.com" required aria-describedby="cf-email-err"
+                 data-i18n-attr="placeholder:form.email.placeholder">
           <p class="field-error" id="cf-email-err" hidden></p>
         </div>
 
         <div class="field">
-          <label for="cf-subject">Sujet</label>
+          <label for="cf-subject" data-i18n="form.subject.label">Sujet</label>
           <input id="cf-subject" name="subject" type="text"
-                 placeholder="Proposition de stage, mission, question…">
+                 placeholder="Proposition de stage, mission, question…"
+                 data-i18n-attr="placeholder:form.subject.placeholder">
         </div>
 
         <div class="field">
-          <label for="cf-message">Message<span class="req" aria-hidden="true">*</span></label>
+          <label for="cf-message"><span data-i18n="form.message.label">Message</span><span class="req" aria-hidden="true">*</span></label>
           <textarea id="cf-message" name="message" rows="5"
                     placeholder="Décrivez votre besoin en quelques lignes."
-                    required aria-describedby="cf-message-err"></textarea>
+                    required aria-describedby="cf-message-err"
+                    data-i18n-attr="placeholder:form.message.placeholder"></textarea>
           <p class="field-error" id="cf-message-err" hidden></p>
         </div>
 
         <!-- piège à robots : invisible pour un humain, coché par les scripts -->
         <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
 
+        <!-- le libellé est dans son propre span : js/contact-form.js
+             y bascule « Envoi en cours… » sans écraser la flèche, et
+             data-i18n le retraduit au changement de langue -->
         <button class="btn btn-mail form-submit" type="submit">
-          Envoyer le message <span aria-hidden="true">→</span>
+          <span class="form-submit-txt" data-i18n="form.submit">Envoyer le message</span>
+          <span aria-hidden="true">→</span>
         </button>
 
         <p class="form-status" role="status" aria-live="polite"></p>
-        <p class="form-note">
+        <p class="form-note" data-i18n="form.note">
           Vos coordonnées ne servent qu'à vous répondre — aucun stockage, aucun partage.
         </p>
       </form>
@@ -800,15 +978,26 @@
 </main>
 
 <footer>
-  <span class="up">● uptime <span data-counter data-counter-to="100">100</span>%</span> &nbsp;·&nbsp; © 2026 Elhadji Ba Diaby Diatta &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; conçu et déployé à la main
+  <span class="up"><span data-i18n="footer.uptime">● uptime</span> <span data-counter data-counter-to="100">100</span>%</span> &nbsp;·&nbsp; <span data-i18n="footer.credit">© 2026 Elhadji Ba Diaby Diatta</span> &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; <span data-i18n="footer.handmade">conçu et déployé à la main</span>
 </footer>
 
 <!-- GSAP + ScrollTrigger (hébergés en local, v3.15 — offline-proof, plus de dépendance CDN) -->
 <script src="js/vendor/gsap.min.js" defer></script>
 <script src="js/vendor/ScrollTrigger.min.js" defer></script>
+
+<!-- defer garantit l'exécution dans l'ordre de déclaration : utils.js
+     expose exists() avant que gallery.js et media.js s'en servent, et
+     i18n.js installe window.PortfolioI18n avant que les autres
+     appellent t(). Aucun ne dépend d'un JSON déjà chargé : tous
+     retombent sur le français et se corrigent sur l'événement
+     « i18n:changed ». -->
+<script src="js/utils.js" defer></script>
+<script src="js/i18n.js" defer></script>
 <script src="js/animations.js" defer></script>
+<script src="js/gallery.js" defer></script>
 <script src="js/contact-form.js" defer></script>
 <script src="js/media.js" defer></script>
+<script src="js/theme.js" defer></script>
 <script src="js/main.js" defer></script>
 
 </body>

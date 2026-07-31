@@ -37,6 +37,16 @@
 }
 .statusbar nav a:hover{color:var(--accent)}
 
+/* ---- sélecteurs de langue et de thème ----
+   Masqués par défaut, révélés par la classe .js posée par le script
+   inline du <head> : sans JavaScript ces deux boutons ne feraient
+   rien, et un bouton mort est pire qu'un bouton absent. */
+.statusbar-controls{display:none}
+.js .statusbar-controls{
+  display:flex;align-items:center;gap:8px;
+  flex:0 0 auto;
+}
+
 /* ---------- conteneur & pipeline (signature du site) ---------- */
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 .stage{
@@ -131,7 +141,9 @@
      son relevé d'apport n'a plus la place de tenir sur le côté */
   .project.is-featured .project-body{grid-template-columns:1fr;gap:15px}
   .project.is-featured .impact{grid-column:1;grid-row:auto}
-  .project.is-featured .project-media{grid-column:1;grid-row:auto}
+  /* la galerie repasse en colonne unique : le ratio 16/10 est porté
+     par .gallery-viewport, elle s'étire donc sans déformer l'image */
+  .project.is-featured .project-gallery{grid-column:1;grid-row:auto}
   .skills-grid{grid-template-columns:repeat(2,1fr)}
   .about-grid{grid-template-columns:1fr}
   .contact-card{grid-template-columns:1fr;padding:40px 30px}
@@ -147,7 +159,15 @@
   .stage:last-of-type::before{height:80px}
   .projects-grid,.skills-grid{grid-template-columns:1fr}
   .xp-item{grid-template-columns:1fr;gap:6px}
-  .statusbar nav{width:100%;margin-left:0;padding-bottom:2px}
+  /* La barre passe sur deux lignes : statut + sélecteurs en haut,
+     navigation défilante en dessous. L'ordre visuel est réglé ici et
+     non dans le HTML, où l'ordre de lecture actuel (nav avant les
+     sélecteurs) est le bon pour le clavier et les lecteurs d'écran. */
+  .statusbar nav{width:100%;margin-left:0;padding-bottom:2px;order:3}
+  .statusbar .sys{order:1}
+  .js .statusbar-controls{order:2;margin-left:auto}
+  /* cibles tactiles plus confortables au doigt */
+  .lang-toggle,.theme-toggle{min-height:40px}
   .hero{padding-top:56px}
   .hero-grid{grid-template-columns:1fr;gap:28px}
   .hero-media{justify-self:start;order:-1;width:min(100%,240px)}

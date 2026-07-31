@@ -26,26 +26,27 @@ servir les fichiers tels quels, sans rien compiler.
 
 Faites-la **avant** le premier envoi, ça évite de tout recommencer :
 
+- [ ] **Adresse publique** — remplacer les 4 occurrences de
+      `https://elhadji-diatta.vercel.app` dans `index.html` (balises
+      `canonical`, `og:url`, `og:image`, `twitter:image`) par l'adresse
+      réelle donnée par Vercel à l'étape §3.2. **C'est le seul point de
+      cette liste qui a une conséquence négative s'il est oublié** : un
+      `canonical` faux demande à Google d'indexer une page qui n'existe pas.
 - [ ] **Clé Web3Forms** — remplacer `VOTRE_CLE_WEB3FORMS` par votre vraie clé
-      dans `index.html` (ligne 753). Sans ça, le formulaire bascule sur le
-      client mail du visiteur au lieu de vous envoyer le message.
-- [ ] **CV** — déposer le PDF en `assets/cv-elhadji-diatta.pdf`.
-- [ ] **Vidéos de démo** — déposer les `.mp4` dans `assets/videos/`
-      (`dossiers-judiciaires.mp4`, `thies-ville.mp4`, `tontine-app.mp4`,
-      `insertion-pro.mp4`, `infra-server.mp4`, `stock-model.mp4`).
-      Les vignettes `.jpg` du même nom sont facultatives.
+      dans `index.html` (attribut `data-access-key` du formulaire). Sans ça,
+      le formulaire bascule sur le client mail du visiteur au lieu de vous
+      envoyer le message.
+- [ ] **CV** — déposer le PDF en `assets/cv-elhadji-diatta.pdf`, et sa
+      version anglaise en `assets/cv-elhadji-diatta-en.pdf`. Si l'anglaise
+      manque, le site sert la française plutôt que de couper le bouton.
+- [ ] **Captures des projets** — déposer les `.webp` dans
+      `assets/shots/<projet>/`. Voir `assets/shots/README.md` pour le
+      format et la marche à suivre.
 
-> Rien de tout cela n'est bloquant : le site fonctionne et s'affiche
-> proprement même si ces fichiers manquent (boutons grisés, cadres
-> « démo à venir »). Vous pourrez les ajouter plus tard, chaque envoi
-> vers GitHub redéploie le site automatiquement.
-
-⚠️ **Attention à la taille des vidéos.** GitHub refuse tout fichier de plus
-de 100 Mo, et un site lourd met du temps à charger. Visez **moins de 20 Mo
-par vidéo** (compressez, réduisez en 720p, coupez au plus court).
-Si une démo dépasse largement, mettez-la sur YouTube en « non répertoriée »
-et remplacez le bloc `<figure class="project-media">` de la carte concernée
-par une iframe YouTube.
+> À part l'adresse publique, rien de tout cela n'est bloquant : le site
+> fonctionne et s'affiche proprement même si ces fichiers manquent (bouton
+> CV neutralisé, cadres « captures à venir »). Vous pourrez les ajouter
+> plus tard, chaque envoi vers GitHub redéploie le site automatiquement.
 
 ---
 
@@ -54,7 +55,7 @@ par une iframe YouTube.
 Ouvrez un terminal dans le dossier du projet :
 
 ```bash
-cd /home/diatta/Documents/porfolio
+cd /home/diatta/Documents/portfolio
 ```
 
 ### 1.1 Créer le fichier `.gitignore`
@@ -119,8 +120,6 @@ site web.
 
 1. Allez sur <https://github.com/new>.
 2. **Repository name** : `portfolio`
-   *(le dossier local s'appelle `porfolio` — une faute de frappe ; profitez-en
-   pour donner le bon nom au dépôt, ça n'a aucune conséquence technique).*
 3. **Description** : `Portfolio — développeur full stack & administrateur systèmes`
 4. Cochez **Public** (nécessaire pour que Vercel y accède gratuitement, et
    c'est le but d'un portfolio).
@@ -196,11 +195,58 @@ https://portfolio-xxxx.vercel.app
 - [ ] La page s'affiche, les animations se déclenchent au défilement
 - [ ] Les logos des technos apparaissent (ils viennent d'un CDN externe)
 - [ ] Le bouton **Télécharger mon CV** lance bien le téléchargement
-- [ ] Les boutons **Voir la démo** lisent les vidéos déposées
+- [ ] Les **galeries** défilent toutes seules ; au clic sur une flèche,
+      le défilement automatique s'arrête pour de bon (c'est voulu)
+- [ ] Le **sélecteur de thème** (barre du haut) : auto → clair → sombre →
+      auto, et le choix survit à un rechargement
+- [ ] Le **sélecteur de langue** : `EN` bascule tout le site, l'adresse
+      devient `…/?lang=en`, et ce lien rouvre bien le site en anglais
 - [ ] Le **formulaire** : envoyez-vous un message de test, vous devez le
       recevoir par mail en quelques secondes
 - [ ] Les liens **WhatsApp** et **LinkedIn** ouvrent les bonnes pages
+- [ ] Collez l'adresse du site dans un message WhatsApp ou LinkedIn :
+      l'aperçu doit montrer le titre, la description et la photo
 - [ ] Testez sur téléphone (l'adresse `.vercel.app` fonctionne partout)
+
+### 3.4 L'image d'aperçu des réseaux sociaux
+
+Le site utilise `assets/elhadji.jpeg` comme visuel d'aperçu. Ça fonctionne,
+mais une **carte dédiée en 1200 × 630** (nom + titre + un aplat de la
+charte) donnerait un aperçu nettement plus professionnel sur LinkedIn.
+Le jour où vous en créez une :
+
+1. déposez-la en `assets/og-card.png` ;
+2. dans `index.html`, faites pointer `og:image` et `twitter:image` dessus,
+   corrigez `og:image:width`/`height` en `1200`/`630` ;
+3. passez `twitter:card` de `summary` à `summary_large_image`.
+
+> ⚠️ `assets/elhadji.jpeg` est **en réalité un fichier PNG** portant une
+> extension `.jpeg`, et pèse 2,2 Mo. Les navigateurs s'en accommodent, mais
+> certains robots d'aperçu se fient au `Content-Type` (que Vercel déduit de
+> l'extension, donc `image/jpeg`) et refusent une image dont les octets ne
+> correspondent pas. Si l'aperçu ne s'affiche pas sur un réseau, c'est la
+> première chose à corriger : réenregistrez la photo en vrai JPEG, à
+> 1254 px de large et qualité 82 — vous passerez de 2,2 Mo à ~200 Ko, ce
+> qui accélérera aussi nettement le premier affichage du site.
+
+### 3.5 Contrôles réservés au développement
+
+Deux garde-fous ne s'exécutent qu'en local (ou avec `?i18ncheck` dans
+l'adresse), pour ne rien imposer aux visiteurs :
+
+- **Parité des traductions.** Ouvrez la console : `js/i18n.js` compare
+  `i18n/fr.json` et `i18n/en.json` et liste toute clé présente d'un côté
+  seulement. Le message attendu est
+  `[i18n] fr.json et en.json : N clés, parité OK.`
+- **Synchronisation des deux blocs sombres.** `css/variables.css` contient
+  deux règles sombres (choix manuel / suivi de l'OS) qui doivent rester
+  identiques. Pour le vérifier :
+
+  ```bash
+  grep -A30 'BLOC SOMBRE 1/2' css/variables.css | grep 'var(--d-' | sort > /tmp/a
+  grep -A30 'BLOC SOMBRE 2/2' css/variables.css | grep 'var(--d-' | sort > /tmp/b
+  diff /tmp/a /tmp/b && echo "blocs synchronisés"
+  ```
 
 ---
 
@@ -210,7 +256,7 @@ C'est là que tout devient simple : **chaque envoi vers GitHub redéploie
 le site automatiquement**, en une minute environ.
 
 ```bash
-cd /home/diatta/Documents/porfolio
+cd /home/diatta/Documents/portfolio
 
 # … vous ajoutez une vidéo, corrigez un texte …
 
@@ -222,6 +268,51 @@ git push
 Suivez l'avancement dans l'onglet **Deployments** de votre projet Vercel.
 En cas d'erreur, le déploiement précédent reste en ligne : le site public
 n'est jamais cassé entre deux versions.
+
+---
+
+## 4 bis. Ajouter une capture, corriger une traduction
+
+Les deux gestes d'entretien courants du site.
+
+### Ajouter des captures à un projet
+
+1. Exportez vos captures en WebP, 1280 px de large, qualité 80
+   (`cwebp -q 80 -resize 1280 0 capture.png -o 01.webp`).
+2. Déposez-les dans `assets/shots/<projet>/`, numérotées `01`, `02`, `03`…
+   — c'est cet ordre qui fait l'ordre de défilement.
+3. Dans `index.html`, sur la `<figure class="project-gallery">` du projet,
+   complétez `data-shots` (les chemins, séparés par des virgules) **et**
+   `data-alts` (les descriptions françaises, séparées par des barres `|`,
+   dans le même ordre).
+4. Dans `i18n/fr.json` et `i18n/en.json`, ajoutez les clés
+   `shots.<projet>.1`, `.2`, `.3`… avec les mêmes descriptions.
+5. `git add . && git commit -m "Captures du projet X" && git push`
+
+La description alternative n'est pas décorative : sans elle, la capture est
+une image vide pour un lecteur d'écran. Décrivez ce que la capture
+**montre**, pas ce qu'elle est.
+
+> Le nombre de captures est libre. Avec une seule, la galerie n'affiche ni
+> flèches ni pastilles — c'est voulu, des commandes qui ne commandent rien
+> sont du bruit. Avec zéro, la carte garde le cadre « captures à venir ».
+
+### Corriger ou ajouter une traduction
+
+Tout le texte anglais vit dans `i18n/en.json`. Le français vit à **deux**
+endroits : en dur dans `index.html` (c'est le repli si le JSON ne charge
+pas) et dans `i18n/fr.json` (pour revenir au français après un passage en
+anglais). Les deux doivent dire la même chose.
+
+Pour corriger une phrase française, modifiez donc **les deux**.
+Pour corriger une phrase anglaise, `i18n/en.json` suffit.
+
+`fr.json` et `en.json` doivent porter exactement le même jeu de clés.
+Ouvrez la console en local pour le vérifier (voir §3.5).
+
+⚠️ **Le mot « stage ».** Le site l'emploie dans deux sens :
+l'étape de pipeline (`stage: build`), qui reste `stage` en anglais, et la
+période en entreprise, qui devient `internship`. Ne les mélangez pas.
 
 ---
 
@@ -256,20 +347,16 @@ contient avant de le publier : une adresse postale complète ou un numéro de
 pièce d'identité n'ont rien à faire sur un site public. Le numéro de
 téléphone et l'email, eux, sont déjà affichés volontairement.
 
-**Le fichier `portfolio.html`** est l'ancienne version tout-en-un du site.
-Il sera envoyé sur GitHub et accessible à l'adresse `/portfolio.html`. Si
-vous ne voulez plus le garder :
+**Les captures sont hébergées avec le site.** En WebP à 60–120 Ko pièce,
+une dizaine de captures pèsent moins qu'une seule photo non compressée :
+les 100 Go de bande passante mensuels du plan gratuit de Vercel ne sont pas
+près d'être atteints. Les galeries ne chargent d'ailleurs que la capture
+affichée et la suivante.
 
-```bash
-git rm portfolio.html
-git commit -m "Suppression de l'ancienne version du portfolio"
-git push
-```
-
-**Les vidéos sont hébergées avec le site.** Le plan gratuit de Vercel offre
-100 Go de bande passante par mois — largement suffisant, sauf si le site
-reçoit énormément de visites avec des vidéos très lourdes. Une raison de
-plus pour les compresser.
+**Le thème et la langue sont mémorisés dans le navigateur du visiteur**
+(`localStorage`), pas sur un serveur. Rien n'est envoyé nulle part, et un
+visiteur en navigation privée retrouve simplement les réglages par défaut :
+thème automatique, et langue déduite de son navigateur.
 
 ---
 
@@ -282,7 +369,11 @@ plus pour les compresser.
 | `Updates were rejected` | le dépôt GitHub n'était pas vide | `git pull --rebase origin main` puis `git push` |
 | Page blanche sur Vercel | mauvais *Output Directory* | Settings → Build & Development : tout vider, redéployer |
 | Le formulaire n'envoie rien | clé Web3Forms absente | vérifier `index.html` ligne 753 |
-| Boutons vidéo/CV grisés | fichiers absents du dépôt | vérifier avec `git ls-files assets/` |
+| Bouton CV grisé | PDF absent du dépôt | vérifier avec `git ls-files assets/` |
+| Cartes « captures à venir » | `.webp` absents | vérifier `git ls-files assets/shots/` |
+| Le site s'ouvre en anglais | votre navigateur est en anglais | c'est voulu ; `?lang=fr` force le français |
+| La bascule de langue ne fait rien | `i18n/*.json` non déployés | vérifier `git ls-files i18n/` |
+| Aperçu absent sur LinkedIn | `og:image` en chemin relatif, ou URL non remplacée | voir §0 et §3.4 |
 | Les logos des technos manquent | CDN bloqué par le réseau du visiteur | sans gravité, le nom s'affiche à la place |
 
 ---
@@ -291,7 +382,7 @@ plus pour les compresser.
 
 ```bash
 # Lancer le site en local (port 8888)
-cd /home/diatta/Documents/porfolio && python3 -m http.server 8888
+cd /home/diatta/Documents/portfolio && python3 -m http.server 8888
 # → http://localhost:8888        (Ctrl+C pour arrêter)
 
 # Publier une modification

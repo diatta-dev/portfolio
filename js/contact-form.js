@@ -14,6 +14,13 @@
    mail du visiteur avec le message déjà rempli. Même chose si le
    réseau ou l'API tombe — un formulaire de contact ne doit jamais
    être un cul-de-sac.
+
+   ── Textes ──────────────────────────────────────────────────
+   Aucun message n'est écrit en dur : tout passe par t(), qui lit
+   i18n/<langue>.json et retombe sur le français si le dictionnaire
+   n'a pas chargé. Les messages d'erreur sont résolus AU MOMENT de
+   l'affichage, pas au chargement : un visiteur qui bascule en
+   anglais avec une erreur à l'écran la voit se traduire.
    ============================================================ */
 
 (function initContactForm() {
@@ -28,8 +35,13 @@
 
   const statusEl = form.querySelector(".form-status");
   const submitBtn = form.querySelector(".form-submit");
+  const submitTxt = form.querySelector(".form-submit-txt");
   const honeypot = form.querySelector(".hp");
-  const submitLabel = submitBtn ? submitBtn.innerHTML : "";
+
+  function t(key, fallback) {
+    const i18n = window.PortfolioI18n;
+    return i18n && typeof i18n.t === "function" ? i18n.t(key, fallback) : fallback;
+  }
 
   const fields = {
     name: form.querySelector("#cf-name"),
@@ -43,10 +55,12 @@
      frappe évidentes, c'est tout. */
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+  /* msg est une CLÉ i18n, pas un texte : elle n'est résolue qu'au
+     moment de l'affichage, donc toujours dans la langue courante. */
   const rules = [
-    { el: fields.name, test: (v) => v.length >= 2, msg: "Merci d'indiquer votre nom." },
-    { el: fields.email, test: (v) => EMAIL_RE.test(v), msg: "Cette adresse email semble incomplète." },
-    { el: fields.message, test: (v) => v.length >= 10, msg: "Votre message est trop court (10 caractères minimum)." }
+    { el: fields.name, test: (v) => v.length >= 2, key: "form.error.name", fr: "Merci d'indiquer votre nom." },
+    { el: fields.email, test: (v) => EMAIL_RE.test(v), key: "form.error.email", fr: "Cette adresse email semble incomplète." },
+    { el: fields.message, test: (v) => v.length >= 10, key: "form.error.message", fr: "Votre message est trop court (10 caractères minimum)." }
   ];
 
   /* ---------- affichage des erreurs, champ par champ ---------- */
@@ -54,12 +68,12 @@
     return form.querySelector("#" + input.id + "-err");
   }
 
-  function showError(input, msg) {
+  function showError(input, rule) {
     const node = errorNode(input);
     input.classList.add("is-invalid");
     input.setAttribute("aria-invalid", "true");
     if (node) {
-      node.textContent = msg;
+      node.textContent = t(rule.key, rule.fr);
       node.hidden = false;
     }
   }
@@ -83,7 +97,7 @@
       if (rule.test(value)) {
         clearError(rule.el);
       } else {
-        showError(rule.el, rule.msg);
+        showError(rule.el, rule);
         if (!firstInvalid) firstInvalid = rule.el;
       }
     });
@@ -103,30 +117,46 @@
     });
     rule.el.addEventListener("blur", () => {
       const value = rule.el.value.trim();
-      if (value && !rule.test(value)) showError(rule.el, rule.msg);
+      if (value && !rule.test(value)) showError(rule.el, rule);
     });
   });
 
   /* ---------- état visuel de l'envoi ---------- */
-  function setStatus(type, msg) {
+  let lastStatus = null; // { type, key, fr } — pour retraduire au vol
+
+  function setStatus(type, key, fr) {
+    lastStatus = key ? { type, key, fr } : null;
     if (!statusEl) return;
-    statusEl.textContent = msg;
+    statusEl.textContent = key ? t(key, fr) : "";
     statusEl.className = "form-status" + (type ? " is-" + type : "");
   }
 
   function setBusy(busy) {
     if (!submitBtn) return;
     submitBtn.disabled = busy;
-    submitBtn.innerHTML = busy ? "Envoi en cours…" : submitLabel;
+    if (submitTxt) {
+      submitTxt.textContent = busy
+        ? t("form.status.busy", "Envoi en cours…")
+        : t("form.submit", "Envoyer le message");
+    }
   }
+
+  /* Un changement de langue doit rattraper ce qui est déjà à
+     l'écran : messages d'erreur visibles et ligne de statut. */
+  document.addEventListener("i18n:changed", () => {
+    rules.forEach((rule) => {
+      if (rule.el && rule.el.classList.contains("is-invalid")) showError(rule.el, rule);
+    });
+    if (lastStatus) setStatus(lastStatus.type, lastStatus.key, lastStatus.fr);
+  });
 
   /* ---------- repli : ouverture du client mail pré-rempli ---------- */
   function openMailClient(data) {
     if (!mailto) return;
 
-    const subject = data.subject || "Contact depuis votre portfolio";
+    const subject = data.subject || t("mailto.contact.subject", "Contact depuis votre portfolio");
     const body =
-      "Bonjour Elhadji,\r\n\r\n" +
+      t("mailto.contact.greeting", "Bonjour Elhadji,") + "\r\n\r\n" +
       data.message + "\r\n\r\n— " +
       data.name + " (" + data.email + ")";
 
@@ -145,7 +175,7 @@
 
     const firstInvalid = validate();
     if (firstInvalid) {
-      setStatus("error", "Quelques champs sont à corriger avant l'envoi.");
+      setStatus("error", "form.status.invalid", "Quelques champs sont à corriger avant l'envoi.");
       firstInvalid.focus();
       return;
     }
@@ -158,15 +188,18 @@
     };
 
     if (!isConfigured) {
-      setStatus("info", "Ouverture de votre application mail avec le message pré-rempli…");
+      setStatus("info", "form.status.mailto", "Ouverture de votre application mail avec le message pré-rempli…");
       openMailClient(data);
       return;
     }
 
     setBusy(true);
-    setStatus("info", "Envoi du message…");
+    setStatus("info", "form.status.sending", "Envoi du message…");
 
     try {
+      const fallbackSubject = t("mailto.contact.named", "Contact depuis votre portfolio — {name}")
+        .replace("{name}", data.name);
+
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -175,7 +208,7 @@
           from_name: data.name,
           name: data.name,
           email: data.email,
-          subject: data.subject || "Contact depuis votre portfolio — " + data.name,
+          subject: data.subject || fallbackSubject,
           message: data.message
         })
       });
@@ -184,15 +217,12 @@
 
       if (response.ok && result.success !== false) {
         form.reset();
-        setStatus("ok", "Message envoyé — merci ! Je vous réponds sous 24 h.");
+        setStatus("ok", "form.status.sent", "Message envoyé — merci ! Je vous réponds sous 24 h.");
       } else {
         throw new Error(result.message || "Réponse invalide du service d'envoi");
       }
     } catch (error) {
-      setStatus(
-        "error",
-        "L'envoi automatique a échoué. Votre application mail va s'ouvrir avec le message."
-      );
+      setStatus("error", "form.status.failed", "L'envoi automatique a échoué. Votre application mail va s'ouvrir avec le message.");
       openMailClient(data);
     } finally {
       setBusy(false);

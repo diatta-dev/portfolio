@@ -24,9 +24,8 @@ desktop.ini
 # ── dépendances (si un outil de build est ajouté un jour) ──
 node_modules/
 
-# ── vidéos ─────────────────────────────────────────────────
-# GitHub refuse tout fichier de plus de 100 Mo. Si une démo dépasse,
-# hébergez-la ailleurs (YouTube non répertorié) plutôt que d'ignorer
-# le dossier : sans les fichiers, les cartes projet afficheront
-# « démo vidéo à venir » sur le site en ligne.
-# assets/videos/
+# ── captures d'écran des projets ───────────────────────────
+# Ne PAS ignorer assets/shots/ : sans les fichiers, les cartes projet
+# afficheront « captures à venir » sur le site en ligne. Les WebP font
+# 60 à 120 Ko pièce, il n'y a aucune raison de les tenir hors du dépôt.
+# (Les vidéos de démonstration ont été remplacées par ces captures.)
