@@ -72,10 +72,38 @@
   }
 
   function paint(state) {
+    /* Les transitions sont coupées le temps de l'échange : sans cela
+       chaque règle qui transitionne une couleur issue des variables
+       se met à animer, et la bascule part en pluie de repaints.
+       Voir le commentaire de .theme-swap dans css/base.css.
+
+       Deux précautions, l'une et l'autre mesurées :
+
+       · on ne coupe que si le thème change RÉELLEMENT. paint() est
+         aussi appelée au changement de langue, pour réétiqueter le
+         bouton ; y ajouter le moindre travail ralentit une bascule
+         qui n'a pourtant aucune couleur à échanger.
+
+       · le retrait passe par deux requestAnimationFrame et non par
+         une lecture de offsetWidth. Forcer le recalcul à la main
+         déplace simplement le coût dans le gestionnaire de clic
+         (mesuré : 1,7 ms de script qui deviennent 28 à 57 ms). Le
+         double rAF laisse la frame se peindre d'abord. */
+    const swapping = current() !== state;
+    if (swapping) root.classList.add("theme-swap");
+
     if (state === "auto") {
       delete root.dataset.theme;
     } else {
       root.dataset.theme = state;
+    }
+
+    if (swapping) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          root.classList.remove("theme-swap");
+        });
+      });
     }
 
     const short = t("theme." + state + ".short", FALLBACK[state].short);

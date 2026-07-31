@@ -12,6 +12,22 @@ html{scroll-behavior:smooth}
   *,*::before,*::after{animation:none !important;transition:none !important}
 }
 
+/* ---- bascule de thème : coupe les transitions le temps de l'échange ----
+   Changer data-theme redéfinit les variables sur :root. Une
+   quarantaine de règles transitionnent color, border-color,
+   background ou box-shadow à partir de ces variables : chacune
+   se met alors à animer pendant 150 à 400 ms. Mesuré en 4G bridée
+   avec le CPU au quart : 686 évènements Paint contre 176 au repos,
+   et une bascule à ~124 ms là où on en vise 100.
+
+   theme.js pose cette classe, force un reflow, puis la retire à la
+   frame suivante : le changement de couleurs devient instantané.
+   Le sélecteur reste sous le !important du bloc mouvement réduit
+   ci-dessus, qui doit continuer à primer. */
+.theme-swap,.theme-swap *,.theme-swap *::before,.theme-swap *::after{
+  transition:none !important;
+}
+
 body{
   background:var(--bg);
   color:var(--ink);
