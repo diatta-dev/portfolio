@@ -112,7 +112,7 @@
 .hero{padding-top:72px}
 .hero-grid{
   display:grid;
-  grid-template-columns:minmax(0,1.2fr) minmax(220px,320px);
+  grid-template-columns:minmax(0,1.2fr) minmax(240px,380px);
   gap:40px;
   align-items:start;
 }
@@ -146,7 +146,7 @@
 .hero-actions{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
 .hero-media{
   justify-self:end;
-  width:min(100%,320px);
+  width:min(100%,380px);
 }
 
 /* ---------- à propos : grille deux colonnes ---------- */
@@ -169,7 +169,7 @@
   .skills-grid{grid-template-columns:repeat(2,1fr)}
   .about-grid{grid-template-columns:1fr}
   .contact-card{grid-template-columns:1fr;padding:40px 30px}
-  .hero-grid{grid-template-columns:minmax(0,1fr) 260px}
+  .hero-grid{grid-template-columns:minmax(0,1fr) 300px}
 }
 @media (max-width:680px){
   .wrap{padding:0 16px}
@@ -230,7 +230,7 @@
   }
   .hero{padding-top:56px}
   .hero-grid{grid-template-columns:1fr;gap:28px}
-  .hero-media{justify-self:start;order:-1;width:min(100%,240px)}
+  .hero-media{justify-self:start;order:-1;width:min(100%,280px)}
   .hero h1{max-width:none}
   .hero-actions{gap:10px}
   .hero-manifest{padding:20px 18px;max-width:none}
