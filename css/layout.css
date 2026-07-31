@@ -197,9 +197,27 @@
   .contact-form{padding:22px 18px}
   .project-links{flex-wrap:wrap}
 }
-@media (max-width:420px){
+/* ------------------------------------------------------------
+   520 px : resserrement du conteneur et des logos.
+
+   Ces règles vivaient au seuil de 420 px. Conséquence mesurée :
+   à 420 px la section Compétences tenait sur 4 colonnes et 1339 px
+   de haut, à 421 px elle retombait à 3 colonnes et 1583 px, et elle
+   y restait jusqu'à 519 px. Élargir l'écran d'un pixel coûtait donc
+   244 px de hauteur, sur toute une bande de 99 px.
+
+   La cause était arithmétique et non structurelle : au-dessus de
+   420 px l'item repassait à 88 px pendant que les marges du
+   conteneur regrossissaient, et la largeur utile de la carte
+   tombait de 330 px à 299 px alors qu'il en fallait 326.
+
+   Le padding de .skill-card descend ici avec le reste : sans lui la
+   largeur utile reste à 317 px à 421 px, et les 4 colonnes ne
+   tiennent toujours pas. .trajectory et .project-body, eux, n'ont
+   aucun rôle dans ce calcul et restent au seuil de 420 px.
+   ------------------------------------------------------------ */
+@media (max-width:520px){
   .wrap{padding:0 12px}
-  .statusbar-inner{padding:10px 12px}
   .stage{
     padding-left:32px;
     padding-top:52px;
@@ -209,6 +227,20 @@
   .stage::after{left:0;top:66px}
   .stage:first-of-type::before{top:66px}
   .stage:last-of-type::before{height:66px}
+  /* logos plus compacts : l'item se resserre avec la pastille pour
+     garder une colonne de plus, sinon la section des compétences
+     s'étire sur deux écrans de haut. */
+  .skill-float{gap:14px 10px}
+  .logo{width:74px}
+  .logo-inner{width:56px;height:56px}
+  .logo-img{width:38px;height:38px}
+  /* l'étiquette suit la largeur de l'item : la laisser à 88 px ici
+     la ferait déborder sur sa voisine */
+  .logo-label{max-width:74px}
+  .skill-card{padding:20px 16px}
+}
+@media (max-width:420px){
+  .statusbar-inner{padding:10px 12px}
   .hero h1{font-size:clamp(28px,10vw,38px)}
   .hero .lede{font-size:16px}
   .btn{
@@ -227,15 +259,7 @@
     padding:6px 0;
   }
   .hero-media{width:min(100%,200px)}
-  /* logos plus compacts sur très petit écran. L'item se resserre
-     avec la pastille pour garder 4 colonnes plutôt que 3 : sinon la
-     section des compétences s'étire sur deux écrans de haut. */
-  .skill-float{gap:14px 10px}
-  .logo{width:74px}
-  .logo-inner{width:56px;height:56px}
-  .logo-img{width:38px;height:38px}
-  .logo-label{max-width:74px;font-size:10.5px}
-  .skill-card,.trajectory,.project-body{padding:20px 16px}
+  .trajectory,.project-body{padding:20px 16px}
   .project-head{padding:12px 16px}
   .contact-card{padding:28px 16px}
   .contact-form{padding:20px 14px}
