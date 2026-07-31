@@ -28,6 +28,48 @@
   }
 })();
 
+/* ============================================================
+   Navigation défilante : signaler qu'il reste des liens.
+
+   Sous 420 px la barre tient sur une ligne et la navigation défile
+   dans la place qui reste (194 px à 320 px, pour 375 px de liens).
+   Rien ne l'indiquait : le dernier lien visible était tranché net
+   au bord, ce qui se lit comme un défaut d'affichage et non comme
+   une invitation à faire glisser.
+
+   Le dégradé est posé par CSS, mais seulement quand il y a vraiment
+   quelque chose à révéler : appliqué en permanence, il estomperait
+   le dernier lien alors même que tout tient. D'où cette classe, que
+   le CSS seul ne peut pas décider (aucun sélecteur ne teste le
+   débordement).
+
+   ResizeObserver plutôt qu'un écouteur de resize : la largeur des
+   liens change aussi au changement de langue, sans que la fenêtre
+   ne bouge.
+   ============================================================ */
+(function initNavOverflow() {
+  const nav = document.querySelector(".statusbar nav");
+  if (!nav) return;
+
+  const update = () => {
+    /* 1 px de tolérance : les largeurs sont fractionnaires et
+       scrollWidth est arrondi à l'entier supérieur. */
+    nav.classList.toggle("is-overflowing", nav.scrollWidth > nav.clientWidth + 1);
+  };
+
+  update();
+
+  if (typeof ResizeObserver === "function") {
+    const observer = new ResizeObserver(update);
+    observer.observe(nav);
+    /* les liens eux-mêmes : c'est leur largeur qui change avec la
+       langue, pas celle de la barre */
+    nav.querySelectorAll("a").forEach((link) => observer.observe(link));
+  } else {
+    window.addEventListener("resize", update);
+  }
+})();
+
 if (window.PortfolioAnimations) {
   window.PortfolioAnimations.init();
 }

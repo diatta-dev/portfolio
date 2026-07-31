@@ -29,11 +29,26 @@
   margin-left:auto;display:flex;gap:20px;
   min-width:0;overflow-x:auto;overflow-y:hidden;
   scrollbar-width:thin;
+  /* le défilement se cale sur les liens : une fois relâché, on ne
+     retombe jamais au milieu d'un mot */
+  scroll-snap-type:x proximity;
+  scroll-padding-inline:8px;
+}
+/* Dégradé de fin de course, posé par main.js quand les liens
+   débordent réellement. Le masque estompe le dernier lien au lieu
+   de le trancher : le mot coupé net se lit comme un bug, le mot
+   qui s'efface se lit comme « ça continue ».
+   Double propriété : -webkit-mask-image reste nécessaire pour
+   Safari, qui ne reconnaît pas encore mask-image sans préfixe. */
+.statusbar nav.is-overflowing{
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);
+  mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);
 }
 .statusbar nav a{
   flex:0 0 auto;
   text-decoration:none;color:var(--ink-soft);
   transition:color .15s;
+  scroll-snap-align:start;
 }
 .statusbar nav a:hover{color:var(--accent)}
 
