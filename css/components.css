@@ -285,7 +285,11 @@
 .logo-label{
   margin-top:9px;
   color:var(--ink-soft);
-  font-family:var(--mono);font-size:11px;line-height:1.35;
+  /* 12 px : plancher de lisibilité. L'étiquette est descendue
+     jusqu'à 10,5 px sur petit écran, là où elle est justement le
+     plus sollicitée (pas de survol au doigt : c'est le seul moyen
+     d'identifier une icône). */
+  font-family:var(--mono);font-size:12px;line-height:1.35;
   text-align:center;text-wrap:balance;
   /* la pastille fait 64px, l'item 88px : l'étiquette peut déborder
      un peu sur la gouttière sans jamais toucher sa voisine */

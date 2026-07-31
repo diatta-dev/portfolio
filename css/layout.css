@@ -203,6 +203,21 @@
     display:inline-flex;align-items:center;
   }
   .lang-toggle,.theme-toggle{min-height:40px}
+  /* ---- plancher de lisibilité à 12 px ----
+     Ces libellés descendent à 11 ou 11,5 px, ce qui passe mal sur un
+     téléphone tenu à bout de bras. Relevés au plancher sur mobile
+     uniquement : au-delà, l'écran est plus loin mais aussi plus
+     grand, et la hiérarchie typographique du bureau ne gagne rien à
+     être aplatie.
+
+     .badge est volontairement EXCLU. Mesuré à 12 px : la pastille
+     passe de 108 à 116 px de large, ce qui suffit à renvoyer le nom
+     de fichier du projet sur une deuxième ligne et fait grandir
+     .project-head de 49 à 65 px sur trois cartes. Le gain de
+     lisibilité ne vaut pas ce déplacement ; la pastille reste à
+     11 px, au-dessus du plancher de 24 px de WCAG pour les cibles,
+     et ce n'en est pas une. */
+  .skill-card .scope,.social-sub,.contact-form .form-note{font-size:12px}
   /* liens de contact : 25 px de haut avant correction */
   .contact-list a,.social-link{min-height:44px}
   .contact-list a{display:inline-flex;align-items:center}
