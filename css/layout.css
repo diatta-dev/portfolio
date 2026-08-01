@@ -148,6 +148,9 @@
   justify-self:end;
   width:min(100%,380px);
 }
+/* <picture> est inline par defaut : sans cela il ajoute sous la photo
+   la demi-ligne de descente propre aux elements en ligne. */
+.hero-media picture{display:block}
 
 /* ---------- à propos : grille deux colonnes ---------- */
 .about-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:start}
