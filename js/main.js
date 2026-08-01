@@ -70,6 +70,81 @@
   }
 })();
 
+/* ============================================================
+   Menu de navigation replie (bouton hamburger).
+
+   Le repli lui-meme est entierement CSS (layout.css, seuil 680 px) ;
+   ce script ne fait que porter l'etat. Il tient dans un seul
+   attribut, aria-expanded sur le bouton, double par une classe sur
+   la barre parce qu'aucun selecteur ne permet de styler un frere
+   precedent depuis le bouton.
+
+   Le nom accessible du bouton ne change pas a l'ouverture : c'est
+   aria-expanded qui porte l'etat. Un libelle « Fermer le menu » se
+   ferait ecraser au premier changement de langue, i18n.js
+   reappliquant la valeur de data-i18n-attr.
+
+   Le panneau se referme sur un lien, sur Echap, sur un clic
+   exterieur, et au passage en grand ecran. Les trois premiers sont
+   des attentes de base ; le quatrieme evite un aria-expanded reste
+   a true devant une navigation redevenue visible en clair.
+   ============================================================ */
+(function initNavMenu() {
+  const toggle = document.querySelector(".nav-toggle");
+  const bar = document.querySelector(".statusbar");
+  if (!toggle || !bar) return;
+
+  const nav = document.getElementById(toggle.getAttribute("aria-controls"));
+  if (!nav) return;
+
+  const isOpen = () => toggle.getAttribute("aria-expanded") === "true";
+
+  function open() {
+    toggle.setAttribute("aria-expanded", "true");
+    bar.classList.add("nav-open");
+  }
+
+  /* focusBack : rendre la main au bouton n'a de sens que si la
+     fermeture vient du clavier. Apres un clic exterieur, deplacer le
+     focus deroberait celui que l'utilisateur vient de poser. */
+  function close(focusBack) {
+    if (!isOpen()) return;
+    toggle.setAttribute("aria-expanded", "false");
+    bar.classList.remove("nav-open");
+    if (focusBack) toggle.focus();
+  }
+
+  toggle.addEventListener("click", () => (isOpen() ? close(false) : open()));
+
+  /* Un lien de la barre pointe vers une ancre de la meme page : sans
+     cette fermeture, le panneau resterait ouvert par-dessus la
+     section qu'on vient de demander. */
+  nav.addEventListener("click", (event) => {
+    if (event.target.closest("a")) close(false);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") close(true);
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!isOpen()) return;
+    if (nav.contains(event.target) || toggle.contains(event.target)) return;
+    close(false);
+  });
+
+  /* Le seuil est repete ici et dans layout.css. Il n'y a pas de
+     moyen de le lire depuis la feuille sans le coder en dur d'un
+     cote ou de l'autre ; les deux occurrences sont commentees. */
+  const wide = window.matchMedia("(min-width:681px)");
+  const onChange = () => { if (wide.matches) close(false); };
+  if (typeof wide.addEventListener === "function") {
+    wide.addEventListener("change", onChange);
+  } else {
+    wide.addListener(onChange);
+  }
+})();
+
 if (window.PortfolioAnimations) {
   window.PortfolioAnimations.init();
 }

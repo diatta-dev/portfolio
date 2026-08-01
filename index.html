@@ -166,7 +166,21 @@
 <header class="statusbar">
   <div class="statusbar-inner">
     <span class="sys"><span class="dot" aria-hidden="true"></span><span data-i18n="nav.status">statut: disponible</span></span>
-    <nav aria-label="Navigation principale" data-i18n-attr="aria-label:nav.aria">
+
+    <!-- Bouton menu. Comme les sélecteurs de langue et de thème, il est
+         masqué tant que la classe .js n'est pas posée : sans JavaScript
+         il ne replierait rien, et la navigation reste alors affichée en
+         clair. Son nom accessible ne change pas à l'ouverture ; c'est
+         aria-expanded qui porte l'état, ce qui évite de lutter avec le
+         ré-affichage des libellés au changement de langue. -->
+    <button class="nav-toggle" type="button"
+            aria-expanded="false" aria-controls="nav-principale"
+            aria-label="Menu de navigation" title="Menu de navigation"
+            data-i18n-attr="aria-label:nav.menu,title:nav.menu">
+      <span class="nav-toggle-box" aria-hidden="true"><span class="nav-toggle-bar"></span></span>
+    </button>
+
+    <nav id="nav-principale" aria-label="Navigation principale" data-i18n-attr="aria-label:nav.aria">
       <a href="#apropos" data-i18n="nav.about">à-propos</a>
       <a href="#competences" data-i18n="nav.skills">compétences</a>
       <a href="#projets" data-i18n="nav.projects">projets</a>

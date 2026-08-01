@@ -184,20 +184,64 @@
   .stage:last-of-type::before{height:80px}
   .projects-grid,.skills-grid{grid-template-columns:1fr}
   .xp-item{grid-template-columns:1fr;gap:6px}
-  /* La barre passe sur deux lignes : statut + sélecteurs en haut,
-     navigation défilante en dessous. L'ordre visuel est réglé ici et
-     non dans le HTML, où l'ordre de lecture actuel (nav avant les
-     sélecteurs) est le bon pour le clavier et les lecteurs d'écran. */
-  .statusbar nav{width:100%;margin-left:0;padding-bottom:2px;order:3}
+  /* ---- navigation repliée derrière un bouton menu ----
+     La barre tenait ici sur deux lignes : statut et sélecteurs en
+     haut, navigation défilante en dessous. Elle repasse sur une seule
+     ligne, et les cinq liens vont dans un panneau déroulant.
+
+     Sans JavaScript, rien de tout cela : le bouton reste masqué (voir
+     .nav-toggle, components.css) et la navigation garde son affichage
+     en ligne, défilante comme avant. D'où le .js sur chacune des
+     règles de repli. C'est la même précaution que pour les sélecteurs
+     de langue et de thème, pour la même raison : une navigation qu'on
+     ne peut pas déplier serait une navigation perdue.
+
+     Le panneau est en position:absolute et non dans le flux : la
+     barre est sticky, un panneau qui pousse le contenu ferait sauter
+     la page à chaque ouverture. */
   .statusbar .sys{order:1}
   .js .statusbar-controls{order:2;margin-left:auto}
+  .js .nav-toggle{display:inline-flex;order:3;flex:0 0 auto}
+
+  .js .statusbar nav{
+    display:none;
+    position:absolute;left:0;right:0;top:100%;
+    flex-direction:column;gap:0;
+    padding:6px 16px 10px;
+    /* Fond opaque, et non le verre de la barre : le panneau recouvre
+       le contenu de la page au lieu de le surmonter comme un bandeau.
+       Mesure a 320 px avec --glass-bg-strong : le titre du hero
+       restait lisible A TRAVERS les cinq liens. Un backdrop-filter
+       n'y changeait rien, la barre parente en pose deja un et le
+       flou ne se cumule pas. */
+    background:var(--bg);
+    border-bottom:1px solid var(--glass-border);
+    box-shadow:var(--glass-shadow);
+    /* le masque de fin de course ne vaut que pour la version
+       défilante : en colonne, il estomperait le dernier lien */
+    -webkit-mask-image:none;mask-image:none;
+    overflow:visible;
+  }
+  .js .statusbar.nav-open nav{display:flex}
+  /* Separateur en --glass-border et non --head-line : ce dernier est
+     transparent dans le theme sombre, ce qui est voulu pour l'en-tete
+     des cartes projet (voir components.css) mais viderait le panneau
+     de ses filets sur la moitie des visites. */
+  .js .statusbar nav a{
+    min-height:44px;
+    display:flex;align-items:center;
+    border-bottom:1px solid var(--glass-border);
+  }
+  .js .statusbar nav a:last-child{border-bottom:0}
+
+  /* version sans JavaScript : l'ancienne barre sur deux lignes */
+  .statusbar nav{width:100%;margin-left:0;padding-bottom:2px;order:4}
+  .js .statusbar nav{width:auto}
   /* ---- cibles tactiles ----
      WCAG 2.5.8 (AA) impose 24 x 24 px, WCAG 2.5.5 (AAA) recommande
      44 x 44. Les liens de navigation faisaient 19,8 px de haut :
-     sous le seuil AA. Ils passent a 36 px ici et a 44 px sous
-     420 px, ou la barre tient sur une ligne et peut se le permettre.
-     Monter tout de suite a 44 px dans cette tranche ajouterait 28 px
-     a une barre qui est deja sur deux lignes. */
+     sous le seuil AA. Ils passent a 36 px ici, et a 44 px dans le
+     panneau deroulant, qui a la place de se le permettre. */
   .statusbar nav a{
     min-height:36px;
     display:inline-flex;align-items:center;
@@ -229,17 +273,35 @@
     display:inline-flex;align-items:center;justify-content:center;
   }
   .hero{padding-top:56px}
-  .hero-grid{grid-template-columns:1fr;gap:28px}
-  .hero-media{justify-self:start;order:-1;width:min(100%,280px)}
-  /* La photo passe devant le titre dans cette tranche (order:-1).
-     Un portrait 4/5 y coûtait toute la hauteur utile : à 360 px la
-     photo faisait 250 px de haut et le h1 partait sous la ligne de
-     flottaison. Le carré rend au titre les 50 px qui manquaient,
-     sans changer le cadrage du portrait sur le bureau. */
+  /* ---- ordre du hero en colonne ----
+     La photo passait devant tout le bloc de texte (order:-1) : on
+     ouvrait le site sur un visage, sans savoir de qui ni de quoi il
+     s'agissait, et « pipeline · init » comme le nom arrivaient sous
+     l'image. L'ordre de lecture redevient celui du bureau : on
+     annonce, on nomme, puis on montre.
+
+     .hero-copy passe en display:contents pour que ses enfants
+     deviennent eux-mêmes des éléments de la grille : sans cela, la
+     photo ne peut que précéder ou suivre le bloc de texte entier,
+     jamais se glisser entre le titre et le résumé. La div n'a aucun
+     style propre (pas de fond, pas de marge), rien n'est donc perdu
+     en la retirant du rendu.
+
+     L'ordre de lecture du HTML, lui, ne bouge pas : c'est bien le
+     même document qui est servi à toutes les largeurs. */
+  .hero-grid{grid-template-columns:1fr;gap:24px}
+  .hero-copy{display:contents}
+  .hero-grid > *{min-width:0}
+  .hero .stage-label{order:1;margin-bottom:0}
+  .hero h1{order:2;max-width:none}
+  .hero-media{order:3;justify-self:start;width:min(100%,280px)}
+  .hero .lede{order:4;margin-top:0}
+  .hero-actions{order:5;margin-top:0;gap:10px}
+  .hero-manifest{order:6;margin-top:16px;padding:20px 18px;max-width:none}
+  /* Un portrait 4/5 coûtait ici toute la hauteur utile : à 360 px la
+     photo faisait 250 px de haut. Le carré rend au titre les 50 px
+     qui manquaient, sans changer le cadrage sur le bureau. */
   .profile-photo{aspect-ratio:1 / 1}
-  .hero h1{max-width:none}
-  .hero-actions{gap:10px}
-  .hero-manifest{padding:20px 18px;max-width:none}
   .contact-card{padding:32px 20px;gap:28px}
   .contact-list li{
     display:flex;
@@ -302,16 +364,20 @@
   /* ---- barre de statut sur une seule ligne ----
      A 320 px elle occupait 127 px de haut, soit un cinquieme de
      l'ecran, en trois lignes : statut, puis selecteurs, puis
-     navigation. Le badge de statut cede sa place ; navigation et
-     selecteurs tiennent alors sur une ligne unique, avec des cibles
-     de 44 px. Mesure a 320 px : 127 px -> 57 px.
+     navigation. Le badge de statut cedait sa place pour que
+     navigation et selecteurs tiennent sur une ligne unique.
 
-     Le badge est retire de l'affichage mais PAS de l'arbre
-     d'accessibilite : « statut: disponible » est une information
-     utile, et un lecteur d'ecran n'a pas de probleme de place.
-     C'est la technique de .sr-only (components.css), recopiee ici
-     plutot que posee en classe dans le HTML, qui doit rester le
-     meme document a toutes les largeurs. */
+     Le bouton menu a leve cette contrainte : les cinq liens ne
+     prennent plus aucune place en ligne, le badge peut donc rester
+     affiche. Il n'est masque que dans la version sans JavaScript,
+     ou la navigation est toujours etalee sur la barre.
+
+     Masque de l'affichage mais PAS de l'arbre d'accessibilite :
+     « statut: disponible » est une information utile, et un lecteur
+     d'ecran n'a pas de probleme de place. C'est la technique de
+     .sr-only (components.css), recopiee ici plutot que posee en
+     classe dans le HTML, qui doit rester le meme document a toutes
+     les largeurs. */
   .statusbar .sys{
     position:absolute;
     width:1px;height:1px;
@@ -321,12 +387,19 @@
     clip-path:inset(50%);
     white-space:nowrap;
   }
+  .js .statusbar .sys{
+    position:static;
+    width:auto;height:auto;
+    padding:0;margin:0;
+    overflow:visible;
+    clip:auto;
+    clip-path:none;
+  }
   .statusbar-inner{
     padding:6px 12px;gap:8px;
     flex-wrap:nowrap;
   }
-  /* la navigation prend la place restante et defile ; les selecteurs
-     gardent leur largeur propre */
+  /* sans JavaScript : la navigation prend la place restante et defile */
   .statusbar nav{
     order:1;
     width:auto;flex:1 1 auto;min-width:0;
@@ -334,7 +407,8 @@
     gap:6px;
   }
   .statusbar nav a{min-height:44px;padding:0 6px}
-  .js .statusbar-controls{order:2;margin-left:0;gap:6px;flex:0 0 auto}
+  .js .statusbar nav{padding:6px 12px 10px;gap:0}
+  .js .statusbar-controls{order:2;margin-left:auto;gap:6px;flex:0 0 auto}
   /* le mot du theme (auto / clair / sombre) cede la place a cette
      largeur : le bouton devient une pastille de 44 px. L'etat reste
      porte par aria-label et title, qui sont deja mis a jour a chaque

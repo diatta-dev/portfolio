@@ -97,6 +97,49 @@
   background:var(--glass-bg-strong);
 }
 .lang-toggle{letter-spacing:.06em}
+
+/* ---------- bouton menu (navigation repliée) ----------
+   Même pastille que les deux sélecteurs voisins, pour que les trois
+   commandes de la barre se lisent comme une seule famille. Il n'a de
+   sens qu'une fois la navigation repliée : c'est layout.css qui
+   l'affiche, au seuil où le repli a lieu.
+
+   Les trois barres sont dessinées par un seul élément et ses deux
+   pseudo-éléments. À l'ouverture, celle du milieu s'efface et les
+   deux autres se croisent : la croix est la même forme, pivotée,
+   donc l'animation est continue plutôt qu'un remplacement d'icône. */
+.nav-toggle{
+  display:none;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+  backdrop-filter:blur(10px) saturate(160%);
+  border:1px solid var(--glass-border);
+  border-radius:99px;
+  cursor:pointer;
+  padding:0;
+  min-width:44px;min-height:44px;
+  align-items:center;justify-content:center;
+  transition:border-color .18s ease, background .18s ease;
+}
+.nav-toggle:hover{border-color:var(--accent-bright);background:var(--glass-bg-strong)}
+.nav-toggle-box{display:block;position:relative;width:18px;height:12px}
+.nav-toggle-bar,
+.nav-toggle-bar::before,
+.nav-toggle-bar::after{
+  position:absolute;left:0;
+  width:18px;height:2px;border-radius:2px;
+  background:var(--ink-soft);
+  transition:transform .22s ease, opacity .18s ease, background .18s ease;
+}
+.nav-toggle-bar{top:5px}
+.nav-toggle-bar::before{content:"";top:-5px}
+.nav-toggle-bar::after{content:"";top:5px}
+.nav-toggle:hover .nav-toggle-bar,
+.nav-toggle:hover .nav-toggle-bar::before,
+.nav-toggle:hover .nav-toggle-bar::after{background:var(--accent)}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar{background:transparent}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar::before{transform:translateY(5px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar::after{transform:translateY(-5px) rotate(-45deg)}
 .theme-ico{display:grid;place-items:center;width:15px;height:15px;flex:0 0 auto}
 .theme-ico svg{width:15px;height:15px;display:block}
 /* largeur réservée pour le plus long des trois libellés : sans elle,
