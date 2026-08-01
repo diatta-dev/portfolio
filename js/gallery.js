@@ -74,6 +74,17 @@
     const viewport = document.createElement("div");
     viewport.className = "gallery-viewport";
 
+    /* Squelette pendant le chargement de la PREMIERE capture.
+       A ne pas confondre avec .gallery-empty (« captures à venir »),
+       qui dit tout autre chose : ici les images existent et arrivent,
+       là il n'y en a aucune. Les deux états restent distincts, et
+       build() n'est de toute façon appelée que s'il y a des captures.
+
+       Le ratio 16/10 est deja porte par .gallery-viewport : le
+       squelette occupe exactement la place de l'image a venir. */
+    viewport.classList.add("skeleton", "is-loading");
+    viewport.setAttribute("aria-busy", "true");
+
     const track = document.createElement("ul");
     track.className = "gallery-track";
 
@@ -94,6 +105,22 @@
          jamais. Les suivantes sont préchargées une par une, au fil
          du défilement (voir preload()). */
       if (i > 1) img.loading = "lazy";
+
+      /* La premiere capture commande le squelette : c'est elle que le
+         visiteur attend, les suivantes arrivent hors champ. error
+         compte aussi, sinon une capture manquante laisserait le
+         cadre battre indefiniment. */
+      if (i === 0) {
+        const settle = () => {
+          viewport.classList.remove("skeleton", "is-loading");
+          viewport.removeAttribute("aria-busy");
+        };
+        if (img.complete) settle();
+        else {
+          img.addEventListener("load", settle, { once: true });
+          img.addEventListener("error", settle, { once: true });
+        }
+      }
 
       li.appendChild(img);
       track.appendChild(li);

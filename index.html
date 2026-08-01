@@ -1077,6 +1077,55 @@
   <span data-i18n="footer.credit">© 2026 Elhadji Ba Diaby Diatta</span> &nbsp;·&nbsp; <a href="mailto:elhadjidiatta25@gmail.com">elhadjidiatta25@gmail.com</a> &nbsp;·&nbsp; <span data-i18n="footer.handmade">conçu et déployé à la main</span>
 </footer>
 
+<!-- ══════════════════════════════════════════════════════════════
+     SQUELETTE DES ICÔNES DE COMPÉTENCES.
+
+     Inline et non différé, contrairement au reste du JavaScript.
+     Les scripts différés s'exécutent dans l'ordre de déclaration :
+     tous attendent donc que les 115 Ko de GSAP soient descendus.
+     Mesuré à 180 kbit/s : plus de 3 secondes, pendant lesquelles
+     un squelette posé depuis main.js n'existe pas encore et les
+     icônes finissent d'arriver sans que rien ne l'ait annoncé.
+     Un script inline placé ici s'exécute à l'analyse, donc avant.
+
+     Il ne peut PAS vivre dans le HTML sous forme de classe : sans
+     JavaScript, aucun évènement load ne viendrait la retirer et
+     les pastilles battraient indéfiniment sous une icône pourtant
+     affichée. C'est la même précaution que la classe .js de la
+     barre de statut, pour la même raison.
+
+     La taille finale est déjà réservée par .logo-inner (64 px) :
+     le squelette ne déplace rien. CLS mesuré inchangé.
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+(function initIconSkeleton(){
+  var imgs = document.querySelectorAll(".logo-img");
+  Array.prototype.forEach.call(imgs, function(img){
+    var box = img.closest(".logo-inner");
+    var item = img.closest(".logo");
+    if (!box) return;
+
+    /* Déjà peinte (cache, ou image arrivée avant ce script) : poser
+       le squelette maintenant ne ferait que clignoter. currentSrc
+       est le bon témoin, pas naturalWidth : un SVG sans dimension
+       intrinsèque laisse ce dernier à 0 même une fois chargé. */
+    if (img.complete && img.currentSrc) return;
+
+    box.classList.add("skeleton", "is-loading");
+    if (item) item.setAttribute("aria-busy", "true");
+
+    var done = function(){
+      box.classList.remove("skeleton", "is-loading");
+      if (item) item.removeAttribute("aria-busy");
+    };
+    /* error aussi : une icône manquante doit rendre la pastille au
+       repos, pas la laisser battre pour toujours. */
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", done, { once: true });
+  });
+})();
+</script>
+
 <!-- GSAP + ScrollTrigger (hébergés en local, v3.15, offline-proof, plus de dépendance CDN) -->
 <script src="js/vendor/gsap.min.js" defer></script>
 <script src="js/vendor/ScrollTrigger.min.js" defer></script>
