@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnostic bascule de theme</title>
+
+<!-- ══════════════════════════════════════════════════════════════
+     BANC DE TEST : bascule de theme sur appareil reel.
+
+     Page jetable, hors du site. Elle charge les VRAIES feuilles de
+     style du portfolio, donc le vrai halo anime, le vrai verre et
+     les vrais tokens. Ce qui casse ici casse sur le site.
+
+     Elle affiche a l'ecran ce qu'on ne peut pas voir autrement :
+     l'attribut pose, la valeur CALCULEE de --bg, et la couleur
+     REELLEMENT rendue. Comparer les deux tranche entre les deux
+     familles d'hypotheses sans brancher un cable :
+
+       calcule FAUX  -> invalidation du selecteur          (H2)
+       calcule JUSTE -> les pixels sont en retard, rendu   (H1/H3)
+
+     Les trois interrupteurs isolent ensuite la couche fautive,
+     une variable a la fois, sans redeployer.
+
+     Le bandeau de lecture n'utilise AUCUNE variable de theme :
+     couleurs ecrites en dur, sinon il serait sujet au bug qu'il
+     est cense mesurer.
+     ══════════════════════════════════════════════════════════════ -->
+
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/animations.css">
+
+<style>
+  /* ---- bandeau de lecture : couleurs en dur, jamais du theme ---- */
+  #readout{
+    position:fixed; left:0; right:0; bottom:0; z-index:99999;
+    background:#ffd400; color:#000;
+    font:600 12px/1.5 ui-monospace,"Courier New",monospace;
+    padding:10px 12px; white-space:pre;
+    border-top:3px solid #000;
+    max-height:52vh; overflow:auto;
+  }
+  #verdict{
+    display:block; font-size:14px; font-weight:800;
+    padding:6px 8px; margin:0 0 8px; border:2px solid #000;
+    white-space:normal; /* le verdict doit tenir a l'ecran, il est photographie */
+  }
+  .v-ok{background:#0a7d33; color:#fff}
+  .v-ko{background:#b3000f; color:#fff}
+  .v-na{background:#333; color:#fff}
+
+  /* ---- commandes : hors theme elles aussi ---- */
+  #panel{
+    position:fixed; left:0; right:0; top:0; z-index:99999;
+    background:#111; color:#fff; padding:8px;
+    display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+    font:600 13px/1 ui-monospace,monospace;
+  }
+  #panel button{
+    font:700 14px/1 ui-monospace,monospace;
+    padding:10px 12px; border:2px solid #fff; border-radius:6px;
+    background:#000; color:#fff; cursor:pointer;
+  }
+  #panel button[aria-pressed="true"]{background:#ffd400; color:#000}
+  #cycle{background:#ffd400; color:#000; font-size:16px; padding:12px 16px}
+
+  /* ---- bandes temoins : le pixel rendu, a cote du texte ---- */
+  .swatch{
+    height:64px; display:flex; align-items:center; justify-content:center;
+    font:700 13px/1 ui-monospace,monospace; border:1px solid #888;
+  }
+  .sw-bg{background:var(--bg); color:var(--ink)}
+  .sw-surface{background:var(--surface); color:var(--ink)}
+  .sw-accent{background:var(--accent); color:var(--bg)}
+
+  main{padding:96px 12px 40vh; max-width:640px; margin:0 auto}
+  h2{font-size:15px; margin:18px 0 8px; color:var(--ink)}
+  .box{padding:14px; border-radius:12px; margin-bottom:10px; color:var(--ink)}
+
+  /* ---- interrupteurs d'isolation ---- */
+  body.kill-halo-anim::before{animation:none !important}
+  body.kill-halo::before{display:none !important}
+  body.kill-glass *{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+</style>
+</head>
+<body>
+
+<div id="panel">
+  <button id="cycle" type="button">BASCULER LE THEME</button>
+  <button id="t-halo-anim" type="button" aria-pressed="false">1. halo fige</button>
+  <button id="t-halo"      type="button" aria-pressed="false">2. halo retire</button>
+  <button id="t-glass"     type="button" aria-pressed="false">3. verre retire</button>
+  <button id="t-explicit"  type="button" aria-pressed="false">4. attr explicite</button>
+</div>
+
+<main>
+  <div class="swatch sw-bg">bande --bg</div>
+  <div class="swatch sw-surface">bande --surface</div>
+  <div class="swatch sw-accent">bande --accent</div>
+
+  <h2>Surfaces en verre (backdrop-filter)</h2>
+  <div class="box project">carte .project</div>
+  <div class="box skill-card">carte .skill-card</div>
+  <div class="box trajectory">bloc .trajectory</div>
+  <div class="box hero-manifest">bloc .hero-manifest</div>
+</main>
+
+<div id="readout"><span id="verdict" class="v-na">en attente</span><span id="lines"></span></div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var body = document.body;
+  var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
+  var mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var ORDER = ["auto","light","dark"];
+  var clicks = 0;
+  var explicit = false;
+
+  /* Les deux couleurs de reference, recopiees de variables.css.
+     On compare la valeur calculee a celle qu'on ATTEND, plutot que
+     de se fier a l'oeil : c'est tout l'interet de la page. */
+  var EXPECT = { light:"#f4fbfa", dark:"#0f1f2b" };
+
+  function attr(){
+    var v = root.dataset.theme;
+    return (v === "light" || v === "dark") ? v : "auto";
+  }
+
+  /* En mode "attr explicite" (interrupteur 4) l'etat logique ne vit
+     plus sur l'attribut, qui porte toujours light ou dark. On le
+     garde donc a part, comme le ferait le correctif H2. */
+  var logical = "auto";
+
+  function effective(state){
+    return state === "auto" ? (mqDark.matches ? "dark" : "light") : state;
+  }
+
+  function apply(state){
+    logical = state;
+    root.classList.add("theme-swap");
+    if (explicit) {
+      /* correctif H2 simule : jamais d'attribut absent, donc le
+         selecteur :not():not() de la media query ne sert plus */
+      root.dataset.theme = effective(state);
+    } else {
+      if (state === "auto") delete root.dataset.theme;
+      else root.dataset.theme = state;
+    }
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        root.classList.remove("theme-swap");
+        read("apres 2 rAF");
+      });
+    });
+    read("immediat");
+    setTimeout(function(){ read("apres 600 ms"); }, 600);
+  }
+
+  function cs(el, prop){
+    return getComputedStyle(el).getPropertyValue(prop).trim();
+  }
+
+  function read(moment){
+    var eff = effective(logical);
+    var want = EXPECT[eff];
+    var got = cs(root, "--bg");
+    var bodyBg = cs(body, "background-color");
+    var card = document.querySelector(".project");
+    var cardBg = card ? cs(card, "background-color") : "n/a";
+
+    var match = got.toLowerCase() === want.toLowerCase();
+
+    var v = document.getElementById("verdict");
+    if (match) {
+      v.className = "v-ok";
+      v.textContent = "STYLE CALCULE JUSTE -> si les pixels sont faux, c'est le RENDU (H1/H3)";
+    } else {
+      v.className = "v-ko";
+      v.textContent = "STYLE CALCULE FIGE -> invalidation du selecteur (H2)";
+    }
+
+    document.getElementById("lines").textContent =
+      "clic #"        + clicks + "   (" + moment + ")\n" +
+      "etat logique : " + logical + "  -> effectif : " + eff + "\n" +
+      "data-theme   : " + (root.dataset.theme || "(absent)") + "\n" +
+      "OS sombre    : " + (mqDark.matches ? "OUI" : "non") + "\n" +
+      "mouv. reduit : " + (mqMotion.matches ? "OUI" : "non") + "\n" +
+      "--bg attendu : " + want + "\n" +
+      "--bg calcule : " + got + "\n" +
+      "body bg rendu: " + bodyBg + "\n" +
+      "verre .project: " + cardBg + "\n" +
+      "interrupteurs: " +
+        (body.classList.contains("kill-halo-anim") ? "1 " : "- ") +
+        (body.classList.contains("kill-halo")      ? "2 " : "- ") +
+        (body.classList.contains("kill-glass")     ? "3 " : "- ") +
+        (explicit                                  ? "4"  : "-");
+  }
+
+  document.getElementById("cycle").addEventListener("click", function(){
+    clicks++;
+    apply(ORDER[(ORDER.indexOf(logical) + 1) % ORDER.length]);
+  });
+
+  function toggle(id, cls){
+    var b = document.getElementById(id);
+    b.addEventListener("click", function(){
+      var on = body.classList.toggle(cls);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      read("interrupteur");
+    });
+  }
+  toggle("t-halo-anim", "kill-halo-anim");
+  toggle("t-halo",      "kill-halo");
+  toggle("t-glass",     "kill-glass");
+
+  var be = document.getElementById("t-explicit");
+  be.addEventListener("click", function(){
+    explicit = !explicit;
+    be.setAttribute("aria-pressed", explicit ? "true" : "false");
+    apply(logical);
+  });
+
+  mqDark.addEventListener("change", function(){ read("changement OS"); });
+
+  apply("auto");
+})();
+</script>
+</body>
+</html>
