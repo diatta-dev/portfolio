@@ -299,12 +299,12 @@ une image vide pour un lecteur d'écran. Décrivez ce que la capture
 
 ### Corriger ou ajouter une traduction
 
-Tout le texte anglais vit dans `i18n/en.json`. Le français vit à **deux**
-endroits : en dur dans `index.html` (c'est le repli si le JSON ne charge
-pas) et dans `i18n/fr.json` (pour revenir au français après un passage en
-anglais). Les deux doivent dire la même chose.
+Tout le texte anglais vit dans `i18n/en.json`. Le français éditable vit dans
+`i18n/fr.json` : au chargement, `js/i18n.js` applique ce dictionnaire même
+quand la page est en français. Les textes en dur dans `index.html` restent
+seulement le repli si le JSON ne charge pas.
 
-Pour corriger une phrase française, modifiez donc **les deux**.
+Pour corriger une phrase française, modifiez `i18n/fr.json`.
 Pour corriger une phrase anglaise, `i18n/en.json` suffit.
 
 `fr.json` et `en.json` doivent porter exactement le même jeu de clés.

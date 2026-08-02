@@ -262,13 +262,13 @@ lien pré-traduit dans une candidature. À chaque bascule, l'URL est
 réécrite en `history.replaceState` : `replaceState` et non `pushState`, la
 bascule n'étant pas une navigation.
 
-### Le HTML reste la source française
+### Le JSON reste la source éditable
 
-Les textes français sont écrits en dur dans `index.html`. Les JSON ne sont
-qu'un dictionnaire et un repli : si le réseau tombe, le site reste
-intégralement lisible en français. En français, **aucune requête n'est
-faite** : on ne paie le dictionnaire que si le visiteur arrive en anglais
-ou bascule.
+Les textes français sont écrits en dur dans `index.html`, mais seulement
+comme repli : au chargement, `js/i18n.js` applique `i18n/fr.json` même si la
+page reste en français. Modifier `fr.json` suffit donc à mettre à jour le
+français ; si le JSON ne charge pas, le HTML brut reste intégralement
+lisible.
 
 ### Attributs reconnus
 

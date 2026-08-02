@@ -128,12 +128,22 @@ convient pas, corriger `en.json` à la main puis :
 node tools/i18n.js accept
 ```
 
+Les valeurs neutres comme une date, un nombre ou une version peuvent être
+recopiées sans traduction :
+
+```bash
+node tools/i18n.js sync
+```
+
+Le hook pre-commit lance cette synchronisation automatiquement avant le
+contrôle.
+
 `check` sort en code 1 dès qu'une clé manque, est périmée ou est orpheline.
 Le hook pre-commit s'en sert quand `fr.json` fait partie du commit.
 
 ### Clé API
 
-`translate` appelle l'API Claude. `check` et `accept` fonctionnent hors ligne.
+`translate` appelle l'API Claude. `check`, `sync` et `accept` fonctionnent hors ligne.
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...

@@ -1,5 +1,5 @@
 {
-  "_comment": "Français, langue de référence. Le HTML porte ces mêmes textes en dur : ce fichier n'est PAS nécessaire pour afficher le site en français, il ne sert qu'à revenir au français après un passage en anglais. en.json doit avoir EXACTEMENT les mêmes clés (contrôle automatique au chargement, voir js/i18n.js).",
+  "_comment": "Français, langue de référence. Au chargement, js/i18n.js applique ce fichier même en français ; le HTML porte ces textes en dur seulement comme repli si le JSON ne charge pas. en.json doit avoir EXACTEMENT les mêmes clés (contrôle automatique au chargement, voir js/i18n.js).",
 
   "meta.title": "Elhadji Diatta | Développeur Full Stack · Admin Systèmes · DevOps",
   "meta.description": "Portfolio d'Elhadji Ba Diaby Diatta, développeur full stack et administrateur systèmes en transition vers l'ingénierie DevOps.",
@@ -150,7 +150,7 @@
   "path.2.title": "Attestation de Pilotage de Drone",
   "path.2.org": "Formation certifiante",
   "path.2.text": "Techniques de vol, réglementation, systèmes embarqués et collecte de données aériennes.",
-  "path.3.when": "2021",
+  "path.3.when": "2022",
   "path.3.title": "Baccalauréat Scientifique (Série S2)",
   "path.3.org": "Sénégal",
   "path.4.when": "Bénévolat",

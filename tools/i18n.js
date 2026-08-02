@@ -16,6 +16,7 @@
 
    Usage :
      node tools/i18n.js check       état des lieux, code 1 si désynchronisé
+     node tools/i18n.js sync        recopie les valeurs neutres (dates, nombres)
      node tools/i18n.js translate   traduit les clés manquantes/périmées
      node tools/i18n.js accept      enregistre l'état actuel comme référence
 
@@ -141,6 +142,10 @@ function traduisible(cle) {
   return cle.charAt(0) !== "_"; // _comment et consorts ne sont pas du contenu
 }
 
+function neutre(texte) {
+  return /^[0-9][0-9A-Za-z .,:/()+-]*[0-9A-Za-z)]$/.test(texte);
+}
+
 function lireSync() {
   if (!fs.existsSync(SYNC)) return {};
   try {
@@ -180,6 +185,36 @@ function etat() {
   }
 
   return { fr, en, sync, manquantes, perimees, orphelines };
+}
+
+/* ---------- commande : sync ---------- */
+
+function syncAuto() {
+  const s = etat();
+  const aVerifier = s.manquantes.concat(s.perimees);
+  const recopiees = [];
+
+  for (const cle of aVerifier) {
+    const valeur = s.fr.entrees.get(cle).valeur;
+    if (!neutre(valeur)) continue;
+
+    if (s.en.entrees.has(cle)) remplacer(s.en, cle, valeur);
+    else inserer(s.en, cle, valeur, precedenteCommune(s, cle));
+    s.sync[cle] = empreinte(valeur);
+    recopiees.push(cle);
+  }
+
+  if (!recopiees.length) {
+    console.log("i18n : aucune valeur neutre à synchroniser.");
+    return 0;
+  }
+
+  ecrire(EN, s.en);
+  ecrireSync(s.sync);
+
+  console.log("i18n : " + recopiees.length + " valeur(s) neutre(s) synchronisée(s).");
+  recopiees.forEach((cle) => console.log("  " + cle));
+  return 0;
 }
 
 /* ---------- commande : check ---------- */
@@ -459,12 +494,12 @@ function precedenteCommune(s, cle) {
 
 /* ---------- entrée ---------- */
 
-const COMMANDES = { check, accept, translate };
+const COMMANDES = { check, sync: syncAuto, accept, translate };
 
 async function main() {
   const commande = process.argv[2];
   if (!COMMANDES[commande]) {
-    console.error("usage : node tools/i18n.js check | translate | accept");
+    console.error("usage : node tools/i18n.js check | sync | translate | accept");
     process.exit(2);
   }
   try {

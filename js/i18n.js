@@ -15,12 +15,12 @@
    traductions sont déjà dans i18n/*.json : générer une page /en/
    au build devient une formalité.
 
-   ── Le HTML reste la source française ───────────────────────
-   Les textes français sont écrits en dur dans index.html. Ce
-   fichier ne sert QUE de repli et de dictionnaire : si le JSON ne
-   charge pas (réseau, file://), le site reste intégralement
-   lisible en français. On n'a jamais de page vide en attente
-   d'un fetch.
+   ── Le JSON devient la source éditable ──────────────────────
+   Les textes français sont aussi écrits en dur dans index.html,
+   mais seulement comme repli : au chargement, fr.json est appliqué
+   comme en.json. Modifier i18n/fr.json suffit donc à mettre à jour
+   l'affichage français, tout en gardant une page lisible si le JSON
+   ne charge pas (réseau, file://).
 
    ── Les attributs reconnus ──────────────────────────────────
      data-i18n="clé"                     → textContent
@@ -251,12 +251,10 @@
 
   window.PortfolioI18n = { lang, t, setLang, check, apply: applyText };
 
-  /* En français, le HTML fait déjà foi : rien à charger, rien à
-     appliquer, aucune requête. On ne paie le dictionnaire que si le
-     visiteur arrive en anglais ou bascule. */
-  if (lang !== DEFAULT) {
-    setLang(lang, { persist: false, url: false });
-  }
+  /* Même en français, on applique le dictionnaire : fr.json est la
+     source éditable. Si le chargement échoue, le HTML français reste
+     en place comme repli. */
+  setLang(lang, { persist: false, url: false });
 
   const isDev = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) ||
                 location.search.indexOf("i18ncheck") >= 0;

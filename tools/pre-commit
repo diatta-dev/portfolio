@@ -11,6 +11,7 @@
 # Deux contrôles :
 #   1. aucun tiret cadratin dans le contenu du site (html, json)
 #   2. si fr.json change, les traductions doivent suivre
+#      (dates/nombres recopiés automatiquement)
 # ══════════════════════════════════════════════════════════════
 
 racine=$(git rev-parse --show-toplevel) || exit 1
@@ -47,6 +48,8 @@ if git diff --cached --name-only --diff-filter=ACM | grep -q '^i18n/fr\.json$'; 
     echo "node introuvable : contrôle des traductions ignoré."
     exit 0
   fi
+  node tools/i18n.js sync
+  git add i18n/en.json i18n/.sync.json
   if ! node tools/i18n.js check; then
     echo ""
     echo "Traductions désynchronisées. Lancer : node tools/i18n.js translate"
