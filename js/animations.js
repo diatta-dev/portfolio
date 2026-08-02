@@ -257,3 +257,15 @@ window.PortfolioAnimations = (() => {
 
   return { init };
 })();
+
+/* Auto-démarrage. L'appel venait de main.js, qui s'exécute
+   maintenant AVANT ce fichier : GSAP étant le plus lourd des
+   scripts, tout ce qui n'en dépend pas est passé devant lui
+   (voir l'ordre des <script> dans index.html).
+
+   Ce fichier est le dernier déclaré, donc le dernier exécuté :
+   s'initialiser ici revient exactement à ce que faisait main.js,
+   et garantit toujours que gallery.js a fini de construire ses
+   galeries. init() porte déjà sa propre garde `typeof gsap`, il
+   n'y a donc rien à vérifier de plus ici. */
+window.PortfolioAnimations.init();

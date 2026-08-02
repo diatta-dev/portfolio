@@ -145,6 +145,9 @@
   }
 })();
 
-if (window.PortfolioAnimations) {
-  window.PortfolioAnimations.init();
-}
+/* L'appel à PortfolioAnimations.init() vivait ici. Il est passé à la
+   fin de js/animations.js : main.js s'exécute désormais AVANT lui
+   (voir l'ordre des <script> dans index.html), et le garde
+   `if (window.PortfolioAnimations)` serait donc toujours faux. Un
+   garde qui protège d'une erreur en supprimant silencieusement la
+   fonctionnalité est pire que l'erreur. */

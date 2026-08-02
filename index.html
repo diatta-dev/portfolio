@@ -1126,24 +1126,47 @@
 })();
 </script>
 
+<!-- ══════════════════════════════════════════════════════════════
+     ORDRE DES SCRIPTS : le site d'abord, GSAP ensuite.
+
+     defer garantit l'exécution dans l'ordre de DÉCLARATION, pas
+     dans l'ordre d'arrivée. GSAP déclaré en premier faisait donc
+     attendre les sept scripts du site derrière ses 115 Ko, alors
+     qu'aucun d'eux n'en dépend. Mesure du délai avant que
+     theme.js soit exécutable, c'est-à-dire avant que le bouton de
+     thème réponde à un clic :
+
+                          avant      après
+       4G bridée         1293 ms     609 ms
+       lien à 180 kbit/s 9856 ms    3221 ms
+
+     Dix secondes de bouton inerte sur un lien lent : un premier
+     clic y était purement perdu.
+
+     animations.js RESTE après GSAP, c'est lui seul qui en dépend.
+     Sa garde `typeof gsap === "undefined"` est ainsi toujours
+     satisfaite, et il est le dernier à s'exécuter, donc après que
+     gallery.js a construit ses galeries.
+
+     L'ordre interne du premier groupe est inchangé et reste
+     signifiant : utils.js expose exists() avant que gallery.js et
+     media.js s'en servent, i18n.js installe window.PortfolioI18n
+     avant que les autres appellent t(). Aucun ne dépend d'un JSON
+     déjà chargé : tous retombent sur le français et se corrigent
+     sur l'événement « i18n:changed ».
+     ══════════════════════════════════════════════════════════════ -->
+<script src="js/utils.js" defer></script>
+<script src="js/i18n.js" defer></script>
+<script src="js/theme.js" defer></script>
+<script src="js/media.js" defer></script>
+<script src="js/gallery.js" defer></script>
+<script src="js/contact-form.js" defer></script>
+<script src="js/main.js" defer></script>
+
 <!-- GSAP + ScrollTrigger (hébergés en local, v3.15, offline-proof, plus de dépendance CDN) -->
 <script src="js/vendor/gsap.min.js" defer></script>
 <script src="js/vendor/ScrollTrigger.min.js" defer></script>
-
-<!-- defer garantit l'exécution dans l'ordre de déclaration : utils.js
-     expose exists() avant que gallery.js et media.js s'en servent, et
-     i18n.js installe window.PortfolioI18n avant que les autres
-     appellent t(). Aucun ne dépend d'un JSON déjà chargé : tous
-     retombent sur le français et se corrigent sur l'événement
-     « i18n:changed ». -->
-<script src="js/utils.js" defer></script>
-<script src="js/i18n.js" defer></script>
 <script src="js/animations.js" defer></script>
-<script src="js/gallery.js" defer></script>
-<script src="js/contact-form.js" defer></script>
-<script src="js/media.js" defer></script>
-<script src="js/theme.js" defer></script>
-<script src="js/main.js" defer></script>
 
 </body>
 </html>
