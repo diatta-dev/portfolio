@@ -104,6 +104,72 @@
     meta.content = dark ? "#0f1f2b" : "#f4fbfa";
     document.head.appendChild(meta);
   }catch(e){}
+
+  /* ---- le bouton de thème répond dès la première frame ----
+     js/theme.js est différé : il n'était exécutable qu'à 609 ms en
+     4G bridée, et 3221 ms sur un lien à 180 kbit/s. Un clic émis
+     avant cela ne posait aucun gestionnaire et était perdu pour
+     de bon : data-theme ne bougeait pas, et rien ne le rattrapait.
+
+     Ce gestionnaire est délégué sur document, et non posé sur le
+     bouton : nous sommes dans le <head>, le <body> n'est pas
+     encore analysé et .theme-toggle n'existe pas. Un <button>
+     émet aussi un click au clavier, Entrée comme Espace, la
+     délégation couvre donc les deux.
+
+     Il ne fait QUE l'essentiel : data-theme, localStorage et la
+     couleur de la barre d'adresse. Le libellé, le pictogramme et
+     aria-label restent à theme.js, qui a besoin des traductions.
+     Ils se corrigent d'eux-mêmes à son initialisation, laquelle
+     lit l'état déjà posé ici plutôt que de le recalculer.
+
+     .theme-swap est posée comme dans theme.js : sans elle, la
+     quarantaine de règles qui transitionnent une couleur partent
+     toutes en animation (686 évènements Paint mesurés contre
+     176). Retrait au second requestAnimationFrame, jamais par une
+     lecture de offsetWidth. */
+  var ORDER = ["auto", "light", "dark"];
+
+  function earlyToggle(event){
+    var el = event.target;
+    if (!el || !el.closest || !el.closest(".theme-toggle")) return;
+
+    var now = root.dataset.theme === "light" || root.dataset.theme === "dark"
+      ? root.dataset.theme : "auto";
+    var next = ORDER[(ORDER.indexOf(now) + 1) % ORDER.length];
+
+    root.classList.add("theme-swap");
+    if (next === "auto") delete root.dataset.theme;
+    else root.dataset.theme = next;
+
+    try{
+      if (next === "auto") localStorage.removeItem("theme");
+      else localStorage.setItem("theme", next);
+    }catch(e){}
+
+    try{
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (m) {
+        m.content = (next === "dark" ||
+          (next === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches))
+          ? "#0f1f2b" : "#f4fbfa";
+      }
+    }catch(e){}
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ root.classList.remove("theme-swap"); });
+    });
+  }
+
+  document.addEventListener("click", earlyToggle);
+
+  /* theme.js appelle ceci AVANT de poser son propre gestionnaire.
+     Sans ce retrait, les deux répondraient au même clic et le
+     thème avancerait de deux crans d'un coup. */
+  window.__themeEarlyOff = function(){
+    document.removeEventListener("click", earlyToggle);
+    window.__themeEarlyOff = null;
+  };
 })();
 </script>
 

@@ -134,6 +134,19 @@
     }
   }
 
+  /* Reprise de main sur le gestionnaire précoce du <head>.
+     Celui-ci rend le bouton opérant dès la première frame, bien
+     avant que ce fichier soit exécutable (mesuré : 609 ms en 4G
+     bridée, 3221 ms sur un lien lent). Il DOIT être retiré ici :
+     laissé en place, les deux gestionnaires répondraient au même
+     clic et le thème avancerait de deux crans.
+
+     Rien à reprendre par ailleurs : l'état vit sur data-theme, que
+     current() lit juste en dessous, et le paint(current()) final
+     de ce fichier réétiquette le bouton avec les traductions que
+     le script du <head> n'a pas. */
+  if (typeof window.__themeEarlyOff === "function") window.__themeEarlyOff();
+
   button.addEventListener("click", () => {
     const next = ORDER[(ORDER.indexOf(current()) + 1) % ORDER.length];
     store(next);
