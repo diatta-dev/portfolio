@@ -1099,7 +1099,13 @@
      ══════════════════════════════════════════════════════════════ -->
 <script>
 (function initIconSkeleton(){
-  var imgs = document.querySelectorAll(".logo-img");
+  /* img.logo-img, et non .logo-img : deux pictogrammes (MinIO,
+     Merise) n'existent pas chez devicon et sont des <svg> INLINE.
+     Ils sont donc déjà dans la première réponse, il n'y a rien à
+     attendre. Un squelette les masquait pourtant jusqu'à leur
+     évènement SVGLoad : du contenu déjà là rendu visible PLUS
+     TARD, exactement ce que ce lot doit éviter. */
+  var imgs = document.querySelectorAll("img.logo-img");
   Array.prototype.forEach.call(imgs, function(img){
     var box = img.closest(".logo-inner");
     var item = img.closest(".logo");
