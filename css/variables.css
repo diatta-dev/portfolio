@@ -14,32 +14,48 @@
    couleurs, uniquement là où le contraste l'exige.
 
    ── ORGANISATION DU THÈME ────────────────────────────────────
-   Trois états, cycliques : auto → clair → sombre → auto.
+   DEUX états visibles, et data-theme TOUJOURS renseigné :
 
-     · auto (défaut)  : aucun attribut sur <html>, on suit l'OS
-     · clair          : <html data-theme="light">
-     · sombre         : <html data-theme="dark">
+     · clair  : <html data-theme="light">
+     · sombre : <html data-theme="dark">
 
-   Le thème sombre doit donc être atteignable par DEUX voies : le
-   choix manuel et la préférence système. Une seule règle
-   @media (prefers-color-scheme: dark) ne suffit pas : elle n'est
-   pas surchargeable par un attribut, ce qui rendait le thème
-   sombre impossible à quitter manuellement.
+   « Auto » existe toujours, mais comme état de DÉPART, pas comme
+   choix proposé. Tant que le visiteur n'a rien choisi, le script
+   du <head> lit prefers-color-scheme et écrit lui-même light ou
+   dark ; theme.js continue d'écouter l'OS et réécrit l'attribut à
+   chaque changement système. Le suivi automatique est donc intact,
+   simplement il ne s'affiche plus dans le bouton. C'est theme.js
+   qui garde la trace de l'origine du choix, dans data-theme-source
+   (« system » ou « user ») ; le CSS ne regarde jamais cet attribut.
 
-   Pour ne pas écrire deux fois les vingt valeurs sombres (deux
-   listes qui divergent au premier oubli), elles sont définies une
-   seule fois en --d-* ci-dessous. Les deux règles sombres ne font
-   que les brancher. On duplique donc la liste des branchements,
-   jamais les couleurs : un token oublié saute aux yeux (l'élément
-   reste clair), là où deux valeurs désynchronisées ne se voient
-   qu'en comparant les deux thèmes côte à côte.
+   Pourquoi CSS-side c'est un gain, et pas seulement une simplification :
+   l'ancien état auto n'avait aucun attribut, le thème sombre était
+   donc atteint par une seconde règle
+   @media (prefers-color-scheme: dark) + :root:not([data-theme=…]).
+   Deux chemins pour un même rendu, dont un qui dépend d'un :not()
+   sous media query (l'hypothèse H2 du banc diagnostic.html, la
+   plus difficile à invalider proprement sur mobile). En écrivant
+   toujours l'attribut, il ne reste qu'un chemin, celui qui marche
+   partout : le sélecteur d'attribut simple.
 
-   ⚠️ Les deux blocs « branchements sombres » doivent rester
-   identiques ligne pour ligne. Le contrôle est dans la checklist
-   de DEPLOIEMENT.md §3.5.
+   Les vingt valeurs sombres sont définies une seule fois en --d-*
+   ci-dessous, et branchées sur les tokens réels par une seule
+   règle. Un token oublié saute aux yeux (l'élément reste clair).
+
+   La règle @media qui subsiste plus bas ne sert QUE si JavaScript
+   est absent : sans lui, personne n'écrit data-theme et le site
+   resterait clair sur un OS sombre. Elle est donc bornée à
+   html:not(.js) : la classe .js est posée par le script du <head>.
    ============================================================ */
 
 :root{
+  /* Indique au navigateur la nature du thème courant. Sert au rendu
+     des contrôles natifs (caret, remplissage automatique, barres de
+     défilement) et surtout au fond du canevas racine : sans lui, le
+     rebond élastique en haut de page sur mobile découvre un blanc
+     franc au milieu d'un thème sombre. */
+  color-scheme: light;
+
   /* ---------- 1. tokens CLAIRS : valeurs par défaut ---------- */
 
   /* couleurs */
@@ -145,10 +161,15 @@
 }
 
 /* ============================================================
-   BLOC SOMBRE 1/2 : choix manuel « sombre »
-   ⚠️ doit rester identique au bloc 2/2 ci-dessous.
+   BRANCHEMENTS SOMBRES : l'unique chemin vers le thème sombre.
+
+   Un seul sélecteur, qu'on soit arrivé là par choix explicite ou
+   par suivi de l'OS : dans les deux cas le JavaScript a écrit
+   data-theme="dark" sur <html>. Voir l'en-tête du fichier.
    ============================================================ */
 :root[data-theme="dark"]{
+  color-scheme: dark;
+
   --bg:        var(--d-bg);
   --surface:   var(--d-surface);
   --ink:       var(--d-ink);
@@ -176,25 +197,33 @@
 }
 
 /* ============================================================
-   BLOC SOMBRE 2/2 : état « auto » sur un OS en thème sombre.
+   REPLI SANS JAVASCRIPT : OS sombre, et personne pour écrire
+   data-theme.
 
-   Le sélecteur exclut explicitement les deux valeurs manuelles :
-   en « auto » l'attribut est absent, donc les deux :not() passent.
-   Si le visiteur a choisi « clair », la règle ne s'applique pas et
-   il garde le thème clair même sur un OS sombre : c'est tout
-   l'intérêt d'avoir gardé trois états plutôt que deux.
+   html:not(.js) borne la règle à ce seul cas : la classe .js est
+   posée par le script du <head>, avant tout rendu. Dès que le
+   JavaScript tourne, ce bloc ne s'applique plus jamais et le
+   sélecteur d'attribut ci-dessus reste seul maître. Les deux ne
+   peuvent donc pas se contredire.
 
-   ⚠️ doit rester identique au bloc 1/2 ci-dessus.
+   Sans JavaScript le bouton de thème est masqué (voir la règle
+   .js dans layout.css) : il n'y a rien à surcharger, on suit l'OS
+   et c'est tout.
+
+   ⚠️ Cette liste doit rester identique à celle du bloc ci-dessus.
+   Contrôle dans la checklist de DEPLOIEMENT.md §3.5.
    ============================================================ */
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]):not([data-theme="dark"]){
+  html:not(.js){
+    color-scheme: dark;
+
     --bg:        var(--d-bg);
     --surface:   var(--d-surface);
     --ink:       var(--d-ink);
     --ink-soft:  var(--d-ink-soft);
     --line:      var(--d-line);
     --line-strong: var(--d-line-strong);
-  --dot-idle:    var(--d-dot-idle);
+    --dot-idle:    var(--d-dot-idle);
 
     --accent:        var(--d-accent);
     --accent-bright: var(--d-accent-bright);

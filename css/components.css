@@ -72,10 +72,15 @@
 
 /* ---------- sélecteurs de langue et de thème (barre de statut) ----------
    Même matière que le reste de la barre : mono, verre, pastille.
-   Le thème affiche un mot en clair (auto / clair / sombre) en plus de
-   son pictogramme : trois icônes soleil/lune/auto ne lèvent pas
-   l'ambiguïté sur l'état courant, un mot de cinq lettres si, et la
-   barre est déjà en IBM Plex Mono, il y est chez lui. */
+   Le thème affiche un mot en clair (clair / sombre) en plus de son
+   pictogramme : soleil et lune se lisent bien une fois qu'on sait
+   lequel est l'état courant et lequel serait le résultat du clic, un
+   mot de cinq lettres tranche, et la barre est déjà en IBM Plex Mono,
+   il y est chez lui. Les deux nomment l'état COURANT, pas la
+   destination (contrairement au bouton de langue voisin, qui affiche
+   la langue vers laquelle on va). La différence est assumée : « EN »
+   est un nom de langue, pas un état de l'interface, alors que le
+   thème, lui, est visible tout autour du bouton. */
 .lang-toggle,
 .theme-toggle{
   font-family:var(--mono);font-size:12px;font-weight:500;
@@ -142,8 +147,8 @@
 .nav-toggle[aria-expanded="true"] .nav-toggle-bar::after{transform:translateY(-5px) rotate(-45deg)}
 .theme-ico{display:grid;place-items:center;width:15px;height:15px;flex:0 0 auto}
 .theme-ico svg{width:15px;height:15px;display:block}
-/* largeur réservée pour le plus long des trois libellés : sans elle,
-   la barre se réorganise à chaque clic sur le sélecteur */
+/* largeur réservée pour le plus long des deux libellés (« sombre ») :
+   sans elle, la barre se réorganise à chaque clic sur le sélecteur */
 .theme-txt{min-width:4.2em;text-align:left}
 
 /* ---------- utilitaire : réservé aux lecteurs d'écran ----------

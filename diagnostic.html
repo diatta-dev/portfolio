@@ -20,8 +20,25 @@
        calcule FAUX  -> invalidation du selecteur          (H2)
        calcule JUSTE -> les pixels sont en retard, rendu   (H1/H3)
 
-     Les trois interrupteurs isolent ensuite la couche fautive,
-     une variable a la fois, sans redeployer.
+     ── CE QUE L'ENQUETE A DONNE ────────────────────────────────
+     Deux causes, corrigees toutes les deux :
+
+       H2  data-theme est desormais TOUJOURS renseigne, light ou
+           dark. L'ancien etat "auto" n'avait aucun attribut et
+           passait par une seconde regle CSS, un :not() sous media
+           query. Ce chemin-la n'existe plus.
+
+       H1  les surfaces en backdrop-filter gardent un instantane de
+           leur arriere-plan, que le compositeur ne rafraichit qu'au
+           prochain evenement le concernant : sur mobile le premier
+           defilement. D'ou "il faut scroller pour voir". La classe
+           .theme-swap retire le flou pendant les deux frames de
+           l'echange, ce qui force a reprendre l'instantane a zero.
+
+     La page reste utile pour verifier tout cela sur un vrai
+     telephone, et surtout pour l'interrupteur 4 : il rejoue la
+     bascule SANS le correctif. Si le symptome revient un jour, ce
+     bouton dit en un clic si c'est encore cette cause-la.
 
      Le bandeau de lecture n'utilise AUCUNE variable de theme :
      couleurs ecrites en dur, sinon il serait sujet au bug qu'il
@@ -97,7 +114,7 @@
   <button id="t-halo-anim" type="button" aria-pressed="false">1. halo fige</button>
   <button id="t-halo"      type="button" aria-pressed="false">2. halo retire</button>
   <button id="t-glass"     type="button" aria-pressed="false">3. verre retire</button>
-  <button id="t-explicit"  type="button" aria-pressed="false">4. attr explicite</button>
+  <button id="t-nofix"     type="button" aria-pressed="false">4. sans correctif</button>
 </div>
 
 <main>
@@ -120,40 +137,34 @@
   var body = document.body;
   var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
   var mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var ORDER = ["auto","light","dark"];
   var clicks = 0;
-  var explicit = false;
+  var nofix = false;
 
   /* Les deux couleurs de reference, recopiees de variables.css.
      On compare la valeur calculee a celle qu'on ATTEND, plutot que
      de se fier a l'oeil : c'est tout l'interet de la page. */
   var EXPECT = { light:"#f4fbfa", dark:"#0f1f2b" };
 
-  function attr(){
-    var v = root.dataset.theme;
-    return (v === "light" || v === "dark") ? v : "auto";
-  }
-
-  /* En mode "attr explicite" (interrupteur 4) l'etat logique ne vit
-     plus sur l'attribut, qui porte toujours light ou dark. On le
-     garde donc a part, comme le ferait le correctif H2. */
-  var logical = "auto";
-
-  function effective(state){
-    return state === "auto" ? (mqDark.matches ? "dark" : "light") : state;
-  }
+  /* Le site pose data-theme des le <head> ; ici la page est nue, on
+     part donc du theme de l'appareil, comme le ferait le vrai site
+     a sa premiere visite. */
+  var theme = mqDark.matches ? "dark" : "light";
 
   function apply(state){
-    logical = state;
-    root.classList.add("theme-swap");
-    if (explicit) {
-      /* correctif H2 simule : jamais d'attribut absent, donc le
-         selecteur :not():not() de la media query ne sert plus */
-      root.dataset.theme = effective(state);
-    } else {
-      if (state === "auto") delete root.dataset.theme;
-      else root.dataset.theme = state;
-    }
+    theme = state;
+
+    /* Toute la difference tient a cette classe. Sans elle : les
+       transitions de couleur partent en animation, ET les surfaces
+       en verre gardent l'instantane d'arriere-plan de l'ancien
+       theme jusqu'au premier defilement. C'est ce que l'on rejoue
+       avec l'interrupteur 4. */
+    if (!nofix) root.classList.add("theme-swap");
+
+    /* Jamais d'attribut absent : c'est le modele du site depuis le
+       correctif H2. Le CSS n'a plus qu'un seul chemin vers le
+       sombre, le selecteur d'attribut. */
+    root.dataset.theme = state;
+
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         root.classList.remove("theme-swap");
@@ -169,8 +180,7 @@
   }
 
   function read(moment){
-    var eff = effective(logical);
-    var want = EXPECT[eff];
+    var want = EXPECT[theme];
     var got = cs(root, "--bg");
     var bodyBg = cs(body, "background-color");
     var card = document.querySelector(".project");
@@ -189,8 +199,9 @@
 
     document.getElementById("lines").textContent =
       "clic #"        + clicks + "   (" + moment + ")\n" +
-      "etat logique : " + logical + "  -> effectif : " + eff + "\n" +
+      "theme        : " + theme + "\n" +
       "data-theme   : " + (root.dataset.theme || "(absent)") + "\n" +
+      "flou pendant : " + cs(document.querySelector(".project"), "backdrop-filter") + "\n" +
       "OS sombre    : " + (mqDark.matches ? "OUI" : "non") + "\n" +
       "mouv. reduit : " + (mqMotion.matches ? "OUI" : "non") + "\n" +
       "--bg attendu : " + want + "\n" +
@@ -201,12 +212,12 @@
         (body.classList.contains("kill-halo-anim") ? "1 " : "- ") +
         (body.classList.contains("kill-halo")      ? "2 " : "- ") +
         (body.classList.contains("kill-glass")     ? "3 " : "- ") +
-        (explicit                                  ? "4"  : "-");
+        (nofix                                     ? "4"  : "-");
   }
 
   document.getElementById("cycle").addEventListener("click", function(){
     clicks++;
-    apply(ORDER[(ORDER.indexOf(logical) + 1) % ORDER.length]);
+    apply(theme === "dark" ? "light" : "dark");
   });
 
   function toggle(id, cls){
@@ -221,16 +232,25 @@
   toggle("t-halo",      "kill-halo");
   toggle("t-glass",     "kill-glass");
 
-  var be = document.getElementById("t-explicit");
-  be.addEventListener("click", function(){
-    explicit = !explicit;
-    be.setAttribute("aria-pressed", explicit ? "true" : "false");
-    apply(logical);
+  /* Interrupteur 4 : rejoue la bascule sans .theme-swap, donc sans
+     le correctif. Sur un telephone ou le symptome existait, le verre
+     doit alors redevenir en retard d'un theme jusqu'au defilement,
+     et redevenir instantane une fois l'interrupteur relache. */
+  var bf = document.getElementById("t-nofix");
+  bf.addEventListener("click", function(){
+    nofix = !nofix;
+    bf.setAttribute("aria-pressed", nofix ? "true" : "false");
+    read("interrupteur");
   });
 
-  mqDark.addEventListener("change", function(){ read("changement OS"); });
+  /* Tant qu'on n'a pas bascule a la main, on suit l'appareil, comme
+     le site le fait par data-theme-source="system". */
+  mqDark.addEventListener("change", function(){
+    if (clicks === 0) apply(mqDark.matches ? "dark" : "light");
+    else read("changement OS");
+  });
 
-  apply("auto");
+  apply(theme);
 })();
 </script>
 </body>

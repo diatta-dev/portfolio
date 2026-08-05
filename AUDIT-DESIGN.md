@@ -176,20 +176,48 @@ et marche à suivre. En attendant, les six cartes affichent proprement
 `js/theme.js` (nouveau), restructuration de `css/variables.css`, script
 inline dans le `<head>`, bouton dans `.statusbar`.
 
-### Trois états, pas deux
+### Deux états visibles, le suivi de l'appareil en défaut
 
-`auto → clair → sombre → auto`. `auto` est le défaut et suit l'OS.
+`clair ⇄ sombre`. « Auto » a d'abord été un troisième cran du cycle, puis
+il est redevenu ce qu'il aurait dû rester : l'**état de départ**, pas un
+choix à proposer.
 
-Deux états auraient suffi à basculer, mais auraient piégé le visiteur : sur
-un OS en sombre, essayer le clair l'aurait enfermé dans un choix explicite
-ne suivant plus jamais son système.
+Le raisonnement d'origine (trois états pour ne pas enfermer le visiteur
+dans un choix explicite) tenait sur le papier et s'est mal comporté à
+l'usage, pour deux raisons qui se cumulent sur téléphone :
+
+- **Le mot disparaît sous 640 px** (`layout.css`), il ne reste que le
+  pictogramme. À 15 px, le cercle mi-plein d'« auto » ne se distinguait ni
+  du soleil ni de la lune : le cycle devenait une loterie à trois faces.
+- **Deux clics pour aller du clair au sombre**, alors que c'est le seul
+  parcours que quiconque emprunte.
+
+Ce qui est perdu : on ne peut plus revenir au suivi automatique depuis
+l'interface (il faut effacer les données du site). Ce qui est gagné :
+la bascule fait ce qu'elle annonce, et le suivi de l'appareil reste
+complet tant qu'on n'y a pas touché : `js/theme.js` écoute
+`prefers-color-scheme` et réécrit le thème en direct, sans rechargement,
+tant que `data-theme-source` vaut `system`.
 
 ### La restructuration des tokens
 
 Le bloc sombre vivait dans un `@media (prefers-color-scheme: dark)`, donc
-impossible à surcharger par un attribut. Le thème sombre doit être
-atteignable par deux voies (choix manuel et préférence système), ce que
-CSS ne sait pas exprimer sans dupliquer.
+impossible à surcharger par un attribut. Il a d'abord fallu deux règles
+sombres, parce que le thème sombre était atteignable par deux voies : le
+choix manuel (`[data-theme="dark"]`) et l'absence de choix sur un OS
+sombre (`:root:not([data-theme="light"]):not([data-theme="dark"])` sous
+media query).
+
+**Ce second chemin n'existe plus.** Depuis que « auto » n'est plus un état
+sans attribut, le script du `<head>` résout lui-même
+`prefers-color-scheme` et écrit toujours `data-theme="light"` ou `"dark"`.
+Il ne reste qu'un sélecteur d'attribut simple, et accessoirement le
+suspect `H2` du banc `diagnostic.html` (invalidation d'un `:not()` sous
+media query sur mobile) a disparu avec lui.
+
+La règle `@media` restante ne sert plus qu'aux navigateurs **sans
+JavaScript**, où personne n'écrit l'attribut ; elle est bornée à
+`html:not(.js)` et ne peut donc pas entrer en conflit avec l'autre.
 
 **Ce qui est dupliqué : la liste des branchements. Pas les valeurs.** Les
 vingt et une couleurs sombres sont définies une seule fois en `--d-*` dans
@@ -199,6 +227,31 @@ reste clair) ; deux valeurs désynchronisées, elles, ne se verraient qu'en
 comparant les deux thèmes côte à côte.
 
 Un contrôle `diff` figure en `DEPLOIEMENT.md` §3.5.
+
+### Le thème qui n'arrivait qu'au défilement (mobile)
+
+Symptôme : sur téléphone, basculer le thème ne changeait rien à l'écran ;
+il fallait faire défiler d'un cran pour que tout se mette à jour d'un
+coup.
+
+Cause : un élément en `backdrop-filter` ne relit pas son arrière-plan à
+chaque image. Il en garde un instantané, que le compositeur ne rafraîchit
+qu'au prochain évènement qui le concerne (sur mobile, le défilement).
+Changer une variable CSS repeignait bien le fond de page et les halos,
+mais laissait ces instantanés intacts : la barre de statut, les cartes et
+les boutons restaient peints dans l'ancien thème. Le site en compte une
+douzaine, et `.project` est en plus promue sur sa propre couche par son
+`will-change:transform`.
+
+Correctif : la classe `.theme-swap`, déjà posée le temps de l'échange pour
+couper les transitions, retire aussi le flou pendant ces deux images. Quand
+il revient, l'instantané est repris à zéro, sur un fond déjà repeint. Le
+verre est plat une image ou deux pendant qu'on change toutes les couleurs
+de la page, ce qui ne se voit pas ; le thème en retard, lui, se voyait.
+
+`diagnostic.html` garde un interrupteur « 4. sans correctif » qui rejoue la
+bascule sans cette classe, pour trancher en un clic si le symptôme
+réapparaît un jour.
 
 ### Effets de bord traités
 
@@ -334,11 +387,20 @@ sans capture conservant son repli · en `prefers-reduced-motion` aucun
 défilement automatique mais navigation manuelle intacte (`transition-duration`
 mesurée à `0s`).
 
-**Thème** : cycle `auto → clair → sombre → auto` confirmé ·
-`localStorage` écrit puis effacé au retour en `auto` · sur un OS en sombre,
-« auto » rend bien un fond `#0f1f2b` et le choix « clair » l'emporte ·
-`theme-color` suit les trois états · les deux blocs sombres sont identiques
-(21 branchements, `diff` vide) · `.btn-mail` stable dans les trois états.
+**Thème** : bascule `clair ⇄ sombre` confirmée en un clic dans les deux
+sens · sur un appareil en sombre et sans choix mémorisé, le site démarre
+sur `data-theme="dark"` / `source="system"` et un changement de réglage de
+l'appareil le suit **en direct, sans rechargement** · après un clic, la
+source passe à `user` et le choix résiste à un changement système ·
+`localStorage` et `theme-color` suivent les deux états · `color-scheme`
+suit également, ce qui supprime le blanc du rebond élastique en haut de
+page sur mobile · pendant l'échange, `backdrop-filter` passe bien à `none`
+puis revient (vérifié sur `.statusbar` et `.project`), et le halo est mis
+en pause puis relancé · aucun décalage de mise en page à la bascule (98,39
+px avant et après) · repli sans JavaScript vérifié : sur un OS sombre,
+`html:not(.js)` rend `#0f1f2b` et les commandes restent masquées · les deux
+blocs sombres sont identiques (21 branchements, `diff` vide) ·
+`.btn-mail` stable dans les deux états.
 
 **Langues** : `?lang=en` et `?lang=fr` corrects dès le premier rendu ·
 `<html lang>` suit · bascule au clic dans les deux sens · URL réécrite ·
@@ -347,7 +409,8 @@ mesurée à `0s`).
 ligne de statut sont en anglais, et se retraduisent à chaud à la bascule ·
 **balayage complet du DOM** (texte, `aria-label`, `title`, `placeholder`,
 `alt`) : aucune chaîne française résiduelle en mode anglais · parité des
-clés : 187 / 187.
+clés : 180 / 180 (les deux clés `theme.auto.*` sont tombées avec le
+troisième état).
 
 ## Reste à faire
 

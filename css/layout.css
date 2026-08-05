@@ -412,10 +412,13 @@
   .statusbar nav a{min-height:44px;padding:0 6px}
   .js .statusbar nav{padding:6px 12px 10px;gap:0}
   .js .statusbar-controls{order:2;margin-left:auto;gap:6px;flex:0 0 auto}
-  /* le mot du theme (auto / clair / sombre) cede la place a cette
-     largeur : le bouton devient une pastille de 44 px. L'etat reste
-     porte par aria-label et title, qui sont deja mis a jour a chaque
-     bascule par theme.js, donc rien n'est perdu pour personne. */
+  /* le mot du theme (clair / sombre) cede la place a cette largeur :
+     le bouton devient une pastille de 44 px. L'etat reste porte par
+     aria-label et title, qui sont deja mis a jour a chaque bascule
+     par theme.js, donc rien n'est perdu pour personne. C'est aussi
+     ce qui a fait supprimer le troisieme cran « auto » : ici il ne
+     restait de lui qu'un cercle mi-plein, indistinguable du soleil
+     et de la lune a 15 px. */
   .theme-txt{display:none}
   .lang-toggle,.theme-toggle{
     min-height:44px;min-width:44px;

@@ -12,7 +12,10 @@ html{scroll-behavior:smooth}
   *,*::before,*::after{animation:none !important;transition:none !important}
 }
 
-/* ---- bascule de thème : coupe les transitions le temps de l'échange ----
+/* ---- bascule de thème : la classe posée le temps de l'échange ----
+   Deux rôles, pour deux problèmes distincts.
+
+   1. COUPER LES TRANSITIONS.
    Changer data-theme redéfinit les variables sur :root. Une
    quarantaine de règles transitionnent color, border-color,
    background ou box-shadow à partir de ces variables : chacune
@@ -20,12 +23,42 @@ html{scroll-behavior:smooth}
    avec le CPU au quart : 686 évènements Paint contre 176 au repos,
    et une bascule à ~124 ms là où on en vise 100.
 
-   theme.js pose cette classe, force un reflow, puis la retire à la
-   frame suivante : le changement de couleurs devient instantané.
+   2. FORCER LES SURFACES EN VERRE À SE REMESURER.  ← le correctif mobile
+   Un élément en backdrop-filter ne relit pas son arrière-plan à
+   chaque frame : il en garde un instantané, que le compositeur ne
+   rafraîchit qu'au prochain évènement qui le concerne. Sur mobile,
+   changer une variable CSS repeint bien le fond de page et les
+   halos, mais laisse ces instantanés intacts : les cartes, la barre
+   de statut et les boutons restent peints dans l'ancien thème.
+   Le premier geste de défilement force la recomposition, et tout se
+   met à jour d'un coup : d'où le symptôme « il faut scroller pour
+   voir le changement ». Le cas est aggravé par .project, promu en
+   couche propre par son will-change:transform (animations.css).
+
+   Retirer le flou pendant les deux frames de l'échange oblige à
+   reprendre l'instantané à zéro quand il revient : il est alors pris
+   sur un fond déjà repeint. Le verre reste plat le temps d'une ou
+   deux frames pendant qu'on change tout le reste des couleurs, ce
+   qui ne se voit pas ; le thème en retard, lui, se voyait.
+
+   theme.js et le script du <head> posent la classe, changent
+   l'attribut, et la retirent au second requestAnimationFrame.
    Le sélecteur reste sous le !important du bloc mouvement réduit
    ci-dessus, qui doit continuer à primer. */
 .theme-swap,.theme-swap *,.theme-swap *::before,.theme-swap *::after{
   transition:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+
+/* Le halo de body::before est fixe et anime un transform en continu :
+   le compositeur le garde donc sur sa propre couche, rasterisée une
+   fois. Ses quatre dégradés sont pourtant tous en var(--halo-*), donc
+   ils changent avec le thème. La pause le rend au fil principal le
+   temps de l'échange ; l'animation reprend où elle en était, et sur
+   un cycle de 26 s deux frames de pause sont invisibles. */
+.theme-swap body::before{
+  animation-play-state:paused !important;
 }
 
 body{

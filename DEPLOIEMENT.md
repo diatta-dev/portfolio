@@ -197,8 +197,15 @@ https://portfolio-xxxx.vercel.app
 - [ ] Le bouton **Télécharger mon CV** lance bien le téléchargement
 - [ ] Les **galeries** défilent toutes seules ; au clic sur une flèche,
       le défilement automatique s'arrête pour de bon (c'est voulu)
-- [ ] Le **sélecteur de thème** (barre du haut) : auto → clair → sombre →
-      auto, et le choix survit à un rechargement
+- [ ] Le **sélecteur de thème** (barre du haut) : clair ⇄ sombre, le
+      changement est visible **immédiatement, sans avoir à faire défiler**
+      (à vérifier sur téléphone : c'est là que le défaut se voyait), et le
+      choix survit à un rechargement
+- [ ] **Suivi de l'appareil**, à vérifier dans une fenêtre de navigation
+      privée (sinon un choix mémorisé masque le comportement) : à la
+      première visite le site prend le thème du téléphone, et changer ce
+      réglage pendant la visite change le site sans recharger. Après un
+      clic sur le bouton, le choix l'emporte et ne bouge plus
 - [ ] Le **sélecteur de langue** : `EN` bascule tout le site, l'adresse
       devient `…/?lang=en`, et ce lien rouvre bien le site en anglais
 - [ ] Le **formulaire** : envoyez-vous un message de test, vous devez le
@@ -238,15 +245,23 @@ l'adresse), pour ne rien imposer aux visiteurs :
   `i18n/fr.json` et `i18n/en.json` et liste toute clé présente d'un côté
   seulement. Le message attendu est
   `[i18n] fr.json et en.json : N clés, parité OK.`
-- **Synchronisation des deux blocs sombres.** `css/variables.css` contient
-  deux règles sombres (choix manuel / suivi de l'OS) qui doivent rester
-  identiques. Pour le vérifier :
+- **Synchronisation des blocs sombres.** `css/variables.css` contient la
+  règle sombre principale (`:root[data-theme="dark"]`, celle que voient
+  tous les visiteurs) et un repli pour les navigateurs sans JavaScript
+  (`html:not(.js)` sous media query). Les deux listes de branchements
+  doivent rester identiques. Pour le vérifier :
 
   ```bash
-  grep -A30 'BLOC SOMBRE 1/2' css/variables.css | grep 'var(--d-' | sort > /tmp/a
-  grep -A30 'BLOC SOMBRE 2/2' css/variables.css | grep 'var(--d-' | sort > /tmp/b
-  diff /tmp/a /tmp/b && echo "blocs synchronisés"
+  awk '/^:root\[data-theme="dark"\]\{/,/^\}/'  css/variables.css \
+    | grep 'var(--d-' | sed 's/^ *//' | sort > /tmp/a
+  awk '/^  html:not\(\.js\)\{/,/^  \}/'        css/variables.css \
+    | grep 'var(--d-' | sed 's/^ *//' | sort > /tmp/b
+  diff /tmp/a /tmp/b && echo "blocs synchronisés ($(wc -l < /tmp/a) tokens)"
   ```
+
+  Le découpage se fait sur les accolades, et non sur un `grep -A30` :
+  les deux blocs n'ont pas la même indentation ni la même longueur
+  d'en-tête, un nombre de lignes fixe en tronquait un des deux.
 
 ---
 

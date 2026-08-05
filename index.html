@@ -77,11 +77,26 @@
      plutôt que d'afficher deux boutons qui ne répondent pas. */
   root.className += " js";
 
-  /* ---- thème : auto (défaut) | light | dark ---- */
+  /* ---- thème : data-theme TOUJOURS renseigné, light ou dark ----
+     Le suivi du système n'est plus un troisième état sans attribut :
+     faute de choix mémorisé, on interroge prefers-color-scheme ici
+     et on écrit nous-mêmes la valeur qui en résulte. Le CSS n'a donc
+     plus qu'un seul chemin vers le thème sombre (le sélecteur
+     d'attribut), au lieu de deux dont un :not() sous media query.
+     Voir l'en-tête de css/variables.css.
+
+     data-theme-source retient d'où vient la valeur : tant qu'elle
+     vaut "system", theme.js réécrit l'attribut à chaque changement
+     de thème de l'appareil. Un clic sur le bouton la passe à "user"
+     et fige le choix. Le CSS ne lit jamais cet attribut. */
+  var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
+  var stored = null;
   try{
     var t = localStorage.getItem("theme");
-    if (t === "light" || t === "dark") root.dataset.theme = t;
+    if (t === "light" || t === "dark") stored = t;
   }catch(e){}
+  root.dataset.theme = stored || (mqDark.matches ? "dark" : "light");
+  root.dataset.themeSource = stored ? "user" : "system";
 
   /* ---- langue : ?lang= > localStorage > navigator > fr ---- */
   var lang = "fr";
@@ -94,14 +109,13 @@
   }catch(e){}
   root.lang = lang;
 
-  /* La couleur de la barre d'adresse mobile suit le thème effectif.
-     Posée ici pour éviter, là aussi, un flash de la mauvaise teinte. */
+  /* La couleur de la barre d'adresse mobile suit le thème. Posée ici
+     pour éviter, là aussi, un flash de la mauvaise teinte. Plus rien
+     à résoudre : data-theme porte déjà la valeur effective. */
   try{
-    var dark = root.dataset.theme === "dark" ||
-      (!root.dataset.theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
     var meta = document.createElement("meta");
     meta.name = "theme-color";
-    meta.content = dark ? "#0f1f2b" : "#f4fbfa";
+    meta.content = root.dataset.theme === "dark" ? "#0f1f2b" : "#f4fbfa";
     document.head.appendChild(meta);
   }catch(e){}
 
@@ -123,37 +137,30 @@
      Ils se corrigent d'eux-mêmes à son initialisation, laquelle
      lit l'état déjà posé ici plutôt que de le recalculer.
 
-     .theme-swap est posée comme dans theme.js : sans elle, la
-     quarantaine de règles qui transitionnent une couleur partent
-     toutes en animation (686 évènements Paint mesurés contre
-     176). Retrait au second requestAnimationFrame, jamais par une
-     lecture de offsetWidth. */
-  var ORDER = ["auto", "light", "dark"];
+     Une seule bascule, clair ⇄ sombre : « auto » n'est plus un cran
+     du cycle. Le suivi du système reste le comportement de départ,
+     il se perd simplement au premier clic : c'est le sens de
+     data-theme-source, qui passe alors à "user".
 
-  function earlyToggle(event){
-    var el = event.target;
-    if (!el || !el.closest || !el.closest(".theme-toggle")) return;
-
-    var now = root.dataset.theme === "light" || root.dataset.theme === "dark"
-      ? root.dataset.theme : "auto";
-    var next = ORDER[(ORDER.indexOf(now) + 1) % ORDER.length];
-
+     .theme-swap est posée comme dans theme.js. Elle coupe les
+     transitions (sans elle, la quarantaine de règles qui
+     transitionnent une couleur partent toutes en animation : 686
+     évènements Paint mesurés contre 176) ET remet à zéro les
+     instantanés des surfaces en backdrop-filter, qui restaient
+     autrement peintes dans l'ancien thème jusqu'au premier
+     défilement. Voir le commentaire de .theme-swap dans base.css.
+     Retrait au second requestAnimationFrame, jamais par une lecture
+     de offsetWidth. */
+  function earlySwap(next){
     root.classList.add("theme-swap");
-    if (next === "auto") delete root.dataset.theme;
-    else root.dataset.theme = next;
+    root.dataset.theme = next;
+    root.dataset.themeSource = "user";
 
-    try{
-      if (next === "auto") localStorage.removeItem("theme");
-      else localStorage.setItem("theme", next);
-    }catch(e){}
+    try{ localStorage.setItem("theme", next); }catch(e){}
 
     try{
       var m = document.querySelector('meta[name="theme-color"]');
-      if (m) {
-        m.content = (next === "dark" ||
-          (next === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches))
-          ? "#0f1f2b" : "#f4fbfa";
-      }
+      if (m) m.content = next === "dark" ? "#0f1f2b" : "#f4fbfa";
     }catch(e){}
 
     requestAnimationFrame(function(){
@@ -161,11 +168,24 @@
     });
   }
 
+  function earlyToggle(event){
+    var el = event.target;
+    if (!el || !el.closest || !el.closest(".theme-toggle")) return;
+    earlySwap(root.dataset.theme === "dark" ? "light" : "dark");
+  }
+
   document.addEventListener("click", earlyToggle);
 
   /* theme.js appelle ceci AVANT de poser son propre gestionnaire.
      Sans ce retrait, les deux répondraient au même clic et le
-     thème avancerait de deux crans d'un coup. */
+     thème ferait deux bascules, donc reviendrait à son point de
+     départ : le bouton paraîtrait mort.
+
+     Un changement de thème système pendant cette fenêtre (600 ms en
+     4G bridée) n'est pas rattrapé ici : c'est theme.js qui pose
+     l'écoute, et il repart de l'état courant. Le cas demanderait de
+     changer le thème de son téléphone pendant le chargement de la
+     page. */
   window.__themeEarlyOff = function(){
     document.removeEventListener("click", earlyToggle);
     window.__themeEarlyOff = null;
@@ -262,10 +282,20 @@
       <button class="lang-toggle" type="button" lang="en"
               aria-label="Switch to English" title="Switch to English">EN</button>
 
+      <!-- Bascule clair ⇄ sombre. Le libellé et le pictogramme sont
+           posés par js/theme.js, qui a besoin des traductions ; le
+           balisage porte donc l'état par défaut du CSS (clair, cf.
+           :root dans variables.css) et theme.js le corrige à son
+           initialisation. Le bouton, lui, répond dès la première
+           frame grâce au gestionnaire précoce du <head>.
+
+           « Auto » n'est plus proposé : tant que le visiteur n'a rien
+           choisi, le thème suit celui de son appareil, y compris s'il
+           en change pendant la visite. -->
       <button class="theme-toggle" type="button"
-              aria-label="Thème : automatique" title="Thème : automatique">
+              aria-label="Thème : clair" title="Thème : clair">
         <span class="theme-ico" aria-hidden="true"></span>
-        <span class="theme-txt">auto</span>
+        <span class="theme-txt">clair</span>
       </button>
     </div>
   </div>
