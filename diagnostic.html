@@ -243,11 +243,11 @@
     read("interrupteur");
   });
 
-  /* Tant qu'on n'a pas bascule a la main, on suit l'appareil, comme
-     le site le fait par data-theme-source="system". */
+  /* L'appareil commande, y compris apres un clic : le site applique
+     la meme regle d'arbitrage (voir l'en-tete de js/theme.js), un
+     changement de reglage efface la derogation en cours. */
   mqDark.addEventListener("change", function(){
-    if (clicks === 0) apply(mqDark.matches ? "dark" : "light");
-    else read("changement OS");
+    apply(mqDark.matches ? "dark" : "light");
   });
 
   apply(theme);

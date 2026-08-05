@@ -192,12 +192,40 @@ l'usage, pour deux raisons qui se cumulent sur téléphone :
 - **Deux clics pour aller du clair au sombre**, alors que c'est le seul
   parcours que quiconque emprunte.
 
-Ce qui est perdu : on ne peut plus revenir au suivi automatique depuis
-l'interface (il faut effacer les données du site). Ce qui est gagné :
-la bascule fait ce qu'elle annonce, et le suivi de l'appareil reste
-complet tant qu'on n'y a pas touché : `js/theme.js` écoute
-`prefers-color-scheme` et réécrit le thème en direct, sans rechargement,
-tant que `data-theme-source` vaut `system`.
+### La règle d'arbitrage, et la première version qui se trompait
+
+Livré d'abord ainsi : le clic figeait le choix **définitivement**, plus
+aucun changement de réglage de l'appareil ne le déplaçait. Cohérent sur le
+papier, intenable à l'usage, et signalé en production dès la première
+manipulation : un seul clic, un jour, suffisait à couper le suivi
+automatique pour toujours, sans aucun moyen de revenir en arrière depuis
+l'interface. Le suivi annoncé ne s'appliquait plus, et rien ne le disait.
+
+Règle actuelle, par ordre de priorité :
+
+1. un changement de réglage de l'appareil **pendant la visite** l'emporte
+   sur tout, et efface la dérogation en cours ;
+2. sinon, la dérogation mémorisée par un clic ;
+3. sinon, le thème de l'appareil.
+
+Autrement dit : le clic vaut pour l'état actuel de l'appareil, pas contre
+ses états futurs. Contrepartie assumée : un téléphone réglé pour basculer
+en sombre au coucher du soleil reprendra la main à ce moment-là, même si le
+visiteur avait demandé le clair. C'est le seul arbitrage qui laisse le
+suivi automatique récupérable sans vider le stockage du site.
+
+**La clé de stockage a changé de nom en même temps que de sens.** Sous
+`theme`, l'absence voulait dire « auto » et la présence « figé pour
+toujours » ; sous `theme-choice`, la seule présence signifie « dérogation
+en cours ». Le script du `<head>` retire donc `theme` de façon
+inconditionnelle : la laisser en place aurait enfermé tous les visiteurs de
+la version précédente dans un choix qu'ils ne pouvaient plus défaire, y
+compris en changeant le thème de leur téléphone, c'est-à-dire exactement le
+défaut corrigé ici.
+
+`data-theme-source` (`system` ou `user`) survit comme information de
+diagnostic, lisible dans l'inspecteur : ni le CSS ni la logique ne la
+consultent plus.
 
 ### La restructuration des tokens
 
@@ -388,11 +416,16 @@ défilement automatique mais navigation manuelle intacte (`transition-duration`
 mesurée à `0s`).
 
 **Thème** : bascule `clair ⇄ sombre` confirmée en un clic dans les deux
-sens · sur un appareil en sombre et sans choix mémorisé, le site démarre
-sur `data-theme="dark"` / `source="system"` et un changement de réglage de
+sens · sur un appareil en sombre et sans dérogation, le site démarre sur
+`data-theme="dark"` / `source="system"` et un changement de réglage de
 l'appareil le suit **en direct, sans rechargement** · après un clic, la
-source passe à `user` et le choix résiste à un changement système ·
-`localStorage` et `theme-color` suivent les deux états · `color-scheme`
+dérogation survit au rechargement, puis **le premier changement de réglage
+de l'appareil la reprend** (`theme-choice` effacée, source repassée à
+`system`), vérifié dans les deux sens · migration vérifiée : un visiteur
+porteur de l'ancienne clé `theme` sur un appareil sombre repart bien en
+sombre au premier chargement, `theme` retirée · `color-scheme` doit être
+sans effet sur `prefers-color-scheme`, vérifié : la media query dit vrai
+dans les deux thèmes · `localStorage` et `theme-color` suivent · `color-scheme`
 suit également, ce qui supprime le blanc du rebond élastique en haut de
 page sur mobile · pendant l'échange, `backdrop-filter` passe bien à `none`
 puis revient (vérifié sur `.statusbar` et `.project`), et le halo est mis

@@ -201,11 +201,11 @@ https://portfolio-xxxx.vercel.app
       changement est visible **immédiatement, sans avoir à faire défiler**
       (à vérifier sur téléphone : c'est là que le défaut se voyait), et le
       choix survit à un rechargement
-- [ ] **Suivi de l'appareil**, à vérifier dans une fenêtre de navigation
-      privée (sinon un choix mémorisé masque le comportement) : à la
-      première visite le site prend le thème du téléphone, et changer ce
-      réglage pendant la visite change le site sans recharger. Après un
-      clic sur le bouton, le choix l'emporte et ne bouge plus
+- [ ] **Suivi de l'appareil** : à la première visite le site prend le thème
+      du téléphone, et changer ce réglage pendant la visite change le site
+      sans recharger. Après un clic sur le bouton, la dérogation tient et
+      survit à un rechargement, **mais le premier changement de réglage du
+      téléphone la reprend** : c'est l'appareil qui a le dernier mot
 - [ ] Le **sélecteur de langue** : `EN` bascule tout le site, l'adresse
       devient `…/?lang=en`, et ce lien rouvre bien le site en anglais
 - [ ] Le **formulaire** : envoyez-vous un message de test, vous devez le

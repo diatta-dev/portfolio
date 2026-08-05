@@ -4,19 +4,38 @@
    Une bascule, deux états visibles : clair ⇄ sombre.
 
    « Auto » n'a pas disparu, il a cessé d'être un choix à proposer.
-   Tant que le visiteur n'a rien décidé, le thème suit celui de
-   l'appareil, en direct : data-theme-source vaut "system" et tout
-   changement de réglage de l'OS réécrit data-theme sans recharger
-   la page. Le premier clic sur le bouton fait passer la source à
-   "user" et fige le choix, jusqu'à effacement du stockage local.
+   C'est le thème de l'appareil qui commande ; le bouton n'est qu'une
+   DÉROGATION, et l'appareil reprend la main dès qu'il change d'avis.
 
    Pourquoi ne plus l'exposer : c'était un troisième cran de cycle
    dont le libellé (« auto ») décrivait un mécanisme, pas un
    résultat. Sur mobile, où layout.css masque le mot et ne laisse
    que le pictogramme, le cercle mi-plein de l'auto ne se
    distinguait ni du soleil ni de la lune, et il fallait deux clics
-   pour aller du clair au sombre. Le prix payé : on ne peut plus
-   revenir au suivi automatique depuis l'interface.
+   pour aller du clair au sombre.
+
+   ── LA RÈGLE D'ARBITRAGE, ET POURQUOI ELLE A CHANGÉ ──
+   Première version : le clic figeait le choix DÉFINITIVEMENT, et
+   plus aucun changement de réglage de l'appareil ne le déplaçait.
+   Cohérent sur le papier, intenable à l'usage : un seul clic, un
+   jour, suffisait à couper le suivi automatique pour toujours, sans
+   aucun moyen de revenir en arrière depuis l'interface. Le suivi
+   annoncé ne s'appliquait plus, et rien ne le disait.
+
+   Règle actuelle, par ordre de priorité :
+
+     1. un changement de réglage de l'appareil PENDANT la visite
+        l'emporte sur tout, et efface la dérogation en cours ;
+     2. sinon, la dérogation mémorisée par un clic ;
+     3. sinon, le thème de l'appareil.
+
+   Autrement dit : le clic vaut pour l'état actuel de l'appareil, pas
+   contre ses états futurs. Contrepartie assumée : un téléphone réglé
+   pour basculer en sombre au coucher du soleil reprendra la main à
+   ce moment-là, même si le visiteur avait demandé le clair. C'est le
+   sens de la demande (« ça s'applique en fonction du thème du
+   système de l'appareil ») et c'est le seul arbitrage qui laisse le
+   suivi automatique récupérable sans vider le stockage du site.
 
    ── data-theme est TOUJOURS renseigné ──
    C'est le second effet de ce changement, et le plus important.
@@ -80,9 +99,22 @@
     return root.dataset.theme === "dark" ? "dark" : "light";
   }
 
-  /* "system" tant que le visiteur n'a pas tranché lui-même. */
-  function follows() {
-    return root.dataset.themeSource !== "user";
+  /* La clé de stockage a changé de nom en même temps que de sens.
+     Sous "theme", elle pouvait être absente pour dire « auto » ;
+     sous "theme-choice", sa seule présence signifie « dérogation en
+     cours ». Deux significations differentes sous un même nom
+     auraient laissé les visiteurs de la version precedente avec une
+     valeur qui ne veut plus dire ce qu'elle disait : d'où le retrait
+     de l'ancienne clé au chargement, dans le script du <head>. */
+  const CLE = "theme-choice";
+
+  function oublierLaDerogation() {
+    root.dataset.themeSource = "system";
+    try {
+      localStorage.removeItem(CLE);
+    } catch (e) {
+      /* navigation privée : rien à retirer, il n'y avait rien */
+    }
   }
 
   function paint(state) {
@@ -146,33 +178,38 @@
      clic, le thème ferait deux bascules et reviendrait à son point
      de départ : le bouton paraîtrait mort.
 
-     Rien à reprendre par ailleurs : l'état vit sur data-theme et
-     data-theme-source, que current() et follows() lisent juste
-     au-dessus, et le paint(current()) final de ce fichier
-     réétiquette le bouton avec les traductions que le script du
-     <head> n'a pas. */
+     Rien à reprendre par ailleurs : l'état vit sur data-theme, que
+     current() lit juste au-dessus, et le paint(current()) final de
+     ce fichier réétiquette le bouton avec les traductions que le
+     script du <head> n'a pas. */
   if (typeof window.__themeEarlyOff === "function") window.__themeEarlyOff();
 
   button.addEventListener("click", () => {
     const next = current() === "dark" ? "light" : "dark";
-    /* La source passe à "user" AVANT le paint : à partir d'ici, un
-       changement de thème système ne doit plus rien écraser. */
     root.dataset.themeSource = "user";
     try {
-      localStorage.setItem("theme", next);
+      localStorage.setItem(CLE, next);
     } catch (e) {
-      /* navigation privée : le choix ne survivra pas à la session,
-         mais la bascule fonctionne pour la visite en cours */
+      /* navigation privée : la dérogation ne survivra pas à la
+         session, mais la bascule fonctionne pour la visite en cours */
     }
     paint(next);
   });
 
-  /* Tant que le visiteur n'a rien choisi, changer le thème de son
-     appareil change celui de la page, en direct et sans rechargement.
-     C'est ici que ça se joue désormais, et plus dans une media query
-     CSS : data-theme portant toujours une valeur explicite, c'est
-     nous qui devons la réécrire. */
-  const onSystemChange = () => { if (follows()) paint(media.matches ? "dark" : "light"); };
+  /* Changer le thème de son appareil change celui de la page, en
+     direct et sans rechargement. C'est ici que ça se joue désormais,
+     et plus dans une media query CSS : data-theme portant toujours
+     une valeur explicite, c'est nous qui devons la réécrire.
+
+     Et c'est l'appareil qui gagne, y compris contre une dérogation
+     posée au clic : on l'oublie au passage, sans quoi elle se
+     réappliquerait au prochain chargement et le réglage que le
+     visiteur vient de toucher serait ignoré. Voir la règle
+     d'arbitrage en tête de fichier. */
+  const onSystemChange = () => {
+    oublierLaDerogation();
+    paint(media.matches ? "dark" : "light");
+  };
   if (typeof media.addEventListener === "function") {
     media.addEventListener("change", onSystemChange);
   } else if (typeof media.addListener === "function") {

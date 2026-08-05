@@ -79,20 +79,32 @@
 
   /* ---- thème : data-theme TOUJOURS renseigné, light ou dark ----
      Le suivi du système n'est plus un troisième état sans attribut :
-     faute de choix mémorisé, on interroge prefers-color-scheme ici
-     et on écrit nous-mêmes la valeur qui en résulte. Le CSS n'a donc
-     plus qu'un seul chemin vers le thème sombre (le sélecteur
+     faute de dérogation mémorisée, on interroge prefers-color-scheme
+     ici et on écrit nous-mêmes la valeur qui en résulte. Le CSS n'a
+     donc plus qu'un seul chemin vers le thème sombre (le sélecteur
      d'attribut), au lieu de deux dont un :not() sous media query.
      Voir l'en-tête de css/variables.css.
 
-     data-theme-source retient d'où vient la valeur : tant qu'elle
-     vaut "system", theme.js réécrit l'attribut à chaque changement
-     de thème de l'appareil. Un clic sur le bouton la passe à "user"
-     et fige le choix. Le CSS ne lit jamais cet attribut. */
+     C'est le thème de l'appareil qui commande ; "theme-choice" n'est
+     qu'une dérogation posée au clic, et theme.js l'efface dès que
+     l'appareil change de réglage. data-theme-source dit laquelle des
+     deux a servi : c'est une information de diagnostic, lisible dans
+     l'inspecteur, que ni le CSS ni la logique ne consultent.
+
+     Le retrait de "theme" n'est pas un oubli. C'est l'ancienne clé,
+     du temps où le cycle comptait trois états : son absence voulait
+     alors dire « auto », sa présence « figé pour toujours ». Ce
+     second sens n'existe plus. La laisser en place aurait enfermé
+     tous les visiteurs de la version précédente dans un choix qu'ils
+     ne pouvaient plus défaire, y compris en changeant le thème de
+     leur téléphone : exactement le défaut que cette version corrige.
+     Le retrait est inconditionnel, donc rejouer un ancien état est
+     impossible. */
   var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
   var stored = null;
   try{
-    var t = localStorage.getItem("theme");
+    localStorage.removeItem("theme");
+    var t = localStorage.getItem("theme-choice");
     if (t === "light" || t === "dark") stored = t;
   }catch(e){}
   root.dataset.theme = stored || (mqDark.matches ? "dark" : "light");
@@ -138,9 +150,9 @@
      lit l'état déjà posé ici plutôt que de le recalculer.
 
      Une seule bascule, clair ⇄ sombre : « auto » n'est plus un cran
-     du cycle. Le suivi du système reste le comportement de départ,
-     il se perd simplement au premier clic : c'est le sens de
-     data-theme-source, qui passe alors à "user".
+     du cycle. Le clic pose une dérogation au thème de l'appareil,
+     que theme.js efface au prochain changement de réglage de
+     celui-ci. Voir la règle d'arbitrage en tête de js/theme.js.
 
      .theme-swap est posée comme dans theme.js. Elle coupe les
      transitions (sans elle, la quarantaine de règles qui
@@ -156,7 +168,7 @@
     root.dataset.theme = next;
     root.dataset.themeSource = "user";
 
-    try{ localStorage.setItem("theme", next); }catch(e){}
+    try{ localStorage.setItem("theme-choice", next); }catch(e){}
 
     try{
       var m = document.querySelector('meta[name="theme-color"]');
